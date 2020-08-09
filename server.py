@@ -19,6 +19,8 @@ class Server(ChatIO, Channel):
         super(Server, self).__init__()
         self.BFFR = 4096
         self.RECIP_SOCK = None
+        self.target = 'other'
+        self.file_transfer = False
 
     def accepting(self):
         """Continuous Thread that listens for and accepts new socket cnxns.
@@ -54,6 +56,8 @@ class Server(ChatIO, Channel):
             self.data_router(client_cnxn, data)
 
     def data_router(self, client_cnxn, data):
+        # print('data is', data)
+
         """Handles incoming data based on its message type."""
         # Send confirm dialog to recip if user is sending file.
         if data == "/".encode():
@@ -67,25 +71,34 @@ class Server(ChatIO, Channel):
                 print(status)
                 self.broadcast(status, sockets, client_cnxn, target="all")
                 
+        if data == b'M':
+            buff_text = client_cnxn.recv(self.BFFR)
+            data = data + buff_text
+            self.target = 'other'
 
         # U-type handler
-        if data == b'U':
+        elif data == b'U':
             self._serv_u_hndlr(client_cnxn)
+            self.target = None
 
-        elif data == b'F' or data == b'X':
+        elif data == b'F' or data == b'X' or data == b'Z':
             buff_text = client_cnxn.recv(self.BFFR)
             data = data + buff_text
-            self.broadcast(data, sockets, client_cnxn, target='recip', recip_socket=self.RECIP_SOCK)
-            
+            self.target = 'recip'
+    
+        elif data == b'A':
+            buff_text = client_cnxn.recv(self.BFFR)
+            data = data + buff_text
+            self.target = 'other'
 
         else:
-            # Reattach prefix before sending to server.
-            # print('data is', data)
             buff_text = client_cnxn.recv(self.BFFR)
-            # print('buffer text is', buff_text)
             data = data + buff_text
+            self.target = 'recip'
+            # print('buffer text is', buff_text)
             # print('combined they are', data)
-            self.broadcast(data, sockets, client_cnxn, target="other")
+        
+        self.broadcast(data, sockets, client_cnxn, target=self.target, recip_socket=self.RECIP_SOCK)
 
             #===
             # for sock in sockets:
