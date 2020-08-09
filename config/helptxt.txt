@@ -1,0 +1,18 @@
+
+-?- -----------------------------
+-?- Encryptochat v 2.0 Beta: help
+-?- -----------------------------
+
+Accepted commands:
+=================
+
+/about - Encryptochat details.
+/exit or /close - Shuts down socket connectionn.
+/help - Shows this info (duhdoy!) 
+/ping or ping - Sends ping to server and get's response.
+/mute - Stop channel sounds.
+/unmute - Resume channel sounds.
+/sendfile - Send file to chosen recipient by nickname.
+/status - Server status. Shows who is currently online.
+
+-:- End. Start chatting again.
