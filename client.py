@@ -9,7 +9,7 @@ import argparse
 
 import cryptography
 
-from chatutils import 
+from chatutils import utils
 from chatutils.xfer import FileXfer
 from chatutils.chatio import ChatIO
 from chatutils.channel import Chime
@@ -167,7 +167,7 @@ class Client(ChatIO):
             self._f_hndlr()
         elif typ_pfx == 'A':
             # Response from RECIPIENT for confirmation of file acceptance.
-            self._a_hndlr(
+            self._a_hndlr()
         elif typ_pfx == 'X':
             # Routes data from SENDER, passes thru SERVER, and stored by RECIPIENT.
             self._x_hndlr()

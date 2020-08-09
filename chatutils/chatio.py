@@ -42,11 +42,42 @@ class ChatIO(Chime):
         packed_msg = f'{typ_pfx}{len_pfx}{msg}'
         sock.send(packed_msg.encode())
 
-    def broadcast(self, sock):
-        for s in sock:
-            print(s)
-            exit()
+    def broadcast(self, packed_msg, all_sockets, sender_socket, target='other', recip_socket=None):
+        """
+        uses
+            all_sockets[sender_socket] to get SENDER address.
+        """
+        if type(packed_msg) != bytes:
+            packed_msg = packed_msg.encode()
 
+        if target == 'all':
+            for sock in all_sockets:
+                sock.send(packed_msg)
+        elif target == 'self':
+            for sock in all_sockets:
+                if sock == sender_socket:
+                    sock.send(packed_msg)
+        elif target == 'other':
+            for sock in all_sockets:
+                if sock != sender_socket:
+                    sock.send(packed_msg)
+        elif target == 'recip':
+            for sock in all_sockets:
+                try:
+                    if sock == recip_socket:
+                        sock.send(packed_msg)
+                except:
+                    print('Provide valid recipient socket object.')
+        else:
+            print('Target type error: Must be "other", "self", "all", or "recip"')
+        
+        print('sender socket:', sender_socket)
+        print(f'all_sockets[sender_socket]', all_sockets[sender_socket])
+
+        for socket in enumerate(all_sockets):
+            print(f'Socket: {socket}')
+
+        
     def unpack_msg(self, sock, shed_byte=False):
         """Unpacks prefix for file size, and returns trimmed message as bytes.
         
