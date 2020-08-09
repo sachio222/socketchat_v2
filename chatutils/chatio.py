@@ -14,7 +14,12 @@ class ChatIO(Chime):
         self.muted = muted
 
     def pack_n_send(self, sock, typ_pfx, msg):
-        """Called by sender. Adds message type and length prefixes and sends.
+        """Adds message type and message length to any message, and then sends.
+
+        Converts any string to a prefixed bytes transmission that includes
+        given message type prefix and a calculated length prefix. Receiving
+        methods on SERVER and CLIENT both require this prefix and length for
+        routing messages to their appropriate functions.
         
         typ_pfx: (Type prefix) 1 byte. tells recipient how to handle message. 
         len_pfx: (Length prefix) 4 bytes. tells socket when to stop receiving message.
@@ -37,8 +42,10 @@ class ChatIO(Chime):
         packed_msg = f'{typ_pfx}{len_pfx}{msg}'
         sock.send(packed_msg.encode())
 
-    def broadcast(self, sock, sender, target='other'):
-        pass
+    def broadcast(self, sock):
+        for s in sock:
+            print(s)
+            exit()
 
     def unpack_msg(self, sock, shed_byte=False):
         """Unpacks prefix for file size, and returns trimmed message as bytes.

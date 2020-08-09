@@ -10,8 +10,8 @@ from chatutils.chatio import ChatIO
 from chatutils.channel import Channel 
 
 sockets = {}
-nicks_by_sock = {}
-addrs_by_nick = {}
+sock_nick_dict = {}
+nick_addy_dict = {}
 
 class Server(ChatIO, Channel):
     """Server class"""
@@ -20,6 +20,9 @@ class Server(ChatIO, Channel):
         self.BFFR = 1
 
     def accepting(self):
+        """Continuous Thread that listens for and accepts new socket cnxns.
+        
+        """
         # Accept connections.
         while True:
             client_cnxn, client_addr = sock.accept()
@@ -38,10 +41,10 @@ class Server(ChatIO, Channel):
 
             if not data:
                 #TODO: Run through connected sockets, clean up list.
-                del (addrs_by_nick[nicks_by_sock[client_cnxn]])
-                print('addrs_by_nick: ', addrs_by_nick)
-                del (nicks_by_sock[client_cnxn])
-                print('nicks_by_sock: ', nicks_by_sock)
+                del (nick_addy_dict[sock_nick_dict[client_cnxn]])
+                print('nick_addy_dict: ', nick_addy_dict)
+                del (sock_nick_dict[client_cnxn])
+                print('sock_nick_dict: ', sock_nick_dict)
                 del (sockets[client_cnxn])  # remove address
                 print('sockets: ', sockets)
 
@@ -50,8 +53,7 @@ class Server(ChatIO, Channel):
             self.data_router(client_cnxn, data)
 
     def data_router(self, client_cnxn, data):
-        # Server client communication codes.
-
+        """Handles incoming data based on its message type."""
         # Send confirm dialog to recip if user is sending file.
         if data == "/".encode():
             print('controller')
@@ -59,7 +61,7 @@ class Server(ChatIO, Channel):
             control = self.unpack_msg(client_cnxn).decode()
             
             if control == 'status':
-                status = self.get_status(addrs_by_nick)
+                status = self.get_status(nick_addy_dict)
                 print(status)
 
             print('control is',control)
@@ -88,9 +90,11 @@ class Server(ChatIO, Channel):
         # print('>> ', data.decode())
 
     def _serv_u_hndlr(self, sock):
-        """ handles user requests
-        If U-type is received from sender, initiate this method.
-        1 .check if user is here. if not, send new prompt.
+        """ U-type msgs used by SERVER and SENDER for user lookup exchanges.
+
+        A U-type message tells the server to call lookup_user() method to
+        search for a connected user by name. It sends the result back to
+        SENDER.
         
         """
         username = self.unpack_msg(sock)
@@ -99,6 +103,8 @@ class Server(ChatIO, Channel):
 
             # Check for address.
             match, user_addr = self.lookup_user(sock, username)
+            
+            self.RECIP_ADDR = user_addr
 
             # Send U type to sender.
             self.pack_n_send(sock, 'U', str(match))
@@ -125,7 +131,7 @@ class Server(ChatIO, Channel):
         except:
             pass
 
-        for nick, addr in addrs_by_nick.items():
+        for nick, addr in nick_addy_dict.items():
             if addr != sockets[sock]:  # Avoid self match.
 
                 if nick == user_query:
@@ -149,9 +155,9 @@ class Server(ChatIO, Channel):
             # sock.recv(1)  # Shed first byte.
             user_name = self.unpack_msg(sock, shed_byte=True).decode()
 
-            if user_name not in nicks_by_sock.values():
-                nicks_by_sock[sock] = user_name  # Create socket:nick pair.
-                addrs_by_nick[user_name] = sockets[
+            if user_name not in sock_nick_dict.values():
+                sock_nick_dict[sock] = user_name  # Create socket:nick pair.
+                nick_addy_dict[user_name] = sockets[
                     sock]  # Create nick:addr pair.
                 unique = True
             else:
