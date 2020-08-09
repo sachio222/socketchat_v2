@@ -150,32 +150,34 @@ class Client(ChatIO):
         methods designed for each function. Those handlers are each unique
         and are based on the requirements of that message type.
         """
-
-        typ_pfx = typ_pfx.decode().upper()
-
-        if typ_pfx == 'M':
-            # Default. Prints to screen.
-            self._m_hndlr()
-        elif typ_pfx == 'C':
-            # Incoming controller message.
-            self._c_hndlr()
-        elif typ_pfx == 'S':
-            # Server messages.
-            self._s_hndlr()
-        elif typ_pfx == 'U':
-            # SERVER response regarding user.
-            self._u_hndlr()
-        elif typ_pfx == 'F':
-            # Request from SENDER to confirm acceptance of file.
-            self._f_hndlr()
-        elif typ_pfx == 'A':
-            # Response from RECIPIENT for confirmation of file acceptance.
-            self._a_hndlr()
-        elif typ_pfx == 'X':
-            # Routes data from SENDER, passes thru SERVER, and stored by RECIPIENT.
-            self._x_hndlr()
-        else:
-            print('-x- Unknown message type error.')
+        try:
+            typ_pfx = typ_pfx.decode().upper()
+        
+            if typ_pfx == 'M':
+                # Default. Prints to screen.
+                self._m_hndlr()
+            elif typ_pfx == 'C':
+                # Incoming controller message.
+                self._c_hndlr()
+            elif typ_pfx == 'S':
+                # Server messages.
+                self._s_hndlr()
+            elif typ_pfx == 'U':
+                # SERVER response regarding user.
+                self._u_hndlr()
+            elif typ_pfx == 'F':
+                # Request from SENDER to confirm acceptance of file.
+                self._f_hndlr()
+            elif typ_pfx == 'A':
+                # Response from RECIPIENT for confirmation of file acceptance.
+                self._a_hndlr()
+            elif typ_pfx == 'X':
+                # Routes data from SENDER, passes thru SERVER, and stored by RECIPIENT.
+                self._x_hndlr()
+            else:
+                print('-x- Unknown message type error.')
+        except:
+            pass
 
     def _m_hndlr(self):
         """Standard message. Unpacks message, and prints screen."""
@@ -268,7 +270,7 @@ class Client(ChatIO):
         bytes_recd = uneven_buffer  # start count
 
         while bytes_recd < filesize:
-            chunk = serv_sock.recv(uneven_buffer)
+            chunk = serv_sock.recv(XBFFR)
             with open(path, 'ab') as f:
                 f.write(chunk)
             bytes_recd += len(chunk)

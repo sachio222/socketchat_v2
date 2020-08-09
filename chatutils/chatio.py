@@ -82,6 +82,9 @@ class ChatIO(Chime):
                         sock.send(packed_msg)
                 except:
                     print('Provide valid recipient socket object.')
+        elif not target:
+            pass
+        
         else:
             print('Target type error: Must be "other", "self", "all", or "recip"')
         
