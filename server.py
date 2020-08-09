@@ -96,12 +96,9 @@ class Server(ChatIO, Channel):
         username = self.unpack_msg(sock)
         print(username)
         if username != b'cancel':
-            print('Looking up: ', username)
 
             # Check for address.
             match, user_addr = self.lookup_user(sock, username)
-            if match:
-                print('Found at: ', user_addr)
 
             # Send U type to sender.
             self.pack_n_send(sock, 'U', str(match))
@@ -132,16 +129,13 @@ class Server(ChatIO, Channel):
             if addr != sockets[sock]:  # Avoid self match.
 
                 if nick == user_query:
-                    print(f'Found {nick}')
                     match = True
                     user_addr = addr
-                    print(f'recip-addy: {user_addr}')
 
                     break
 
                 else:
                     match = False
-                    print(f'{user_query} not found.')
 
         return match, user_addr
 
