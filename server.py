@@ -2,7 +2,7 @@
 
 import socket
 import sys
-from threading import Thread
+from threading import Thread, Lock
 
 import chatutils.xfer as xfer
 import chatutils.utils as utils
@@ -13,13 +13,15 @@ sockets = {}
 sock_nick_dict = {}
 nick_addy_dict = {}
 
+lock = Lock()
+
 class Server(ChatIO, Channel):
     """Server class"""
     def __init__(self):
         super(Server, self).__init__()
-        self.BFFR = 4096
+        self.BFFR = 1
         self.RECIP_SOCK = None
-        self.target = 'other'
+        self.SENDER_SOCK = None
         self.file_transfer = False
 
     def accepting(self):
@@ -40,7 +42,7 @@ class Server(ChatIO, Channel):
 
         # Start listening.
         while True:
-            data = client_cnxn.recv(1)  # Receive data as chunks.
+            data = client_cnxn.recv(self.BFFR)  # Receive data as chunks.
 
             if not data:
                 #TODO: Run through connected sockets, clean up list.
@@ -52,8 +54,12 @@ class Server(ChatIO, Channel):
                 print('sockets: ', sockets)
 
                 break
-
-            self.data_router(client_cnxn, data)
+            
+            if len(data) > 1:
+                self.RECIP_SOCK.send(data)
+                print(data)
+            else:
+                self.data_router(client_cnxn, data)
 
     def data_router(self, client_cnxn, data):
         # print('data is', data)
@@ -72,33 +78,37 @@ class Server(ChatIO, Channel):
                 self.broadcast(status, sockets, client_cnxn, target="all")
                 
         if data == b'M':
-            buff_text = client_cnxn.recv(self.BFFR)
+            buff_text = client_cnxn.recv(4096)
             data = data + buff_text
-            self.target = 'other'
+            self.broadcast(data, sockets, client_cnxn)
+
+        if data == b'B':
+            buff_text = client_cnxn.recv(4096)
+            data = data + buff_text
+            self.broadcast(data, sockets, client_cnxn, 'recip', self.SENDER_SOCK)
 
         # U-type handler
         elif data == b'U':
             self._serv_u_hndlr(client_cnxn)
-            self.target = None
 
-        elif data == b'F' or data == b'X' or data == b'Z':
-            buff_text = client_cnxn.recv(self.BFFR)
+        elif data == b'F':
+            buff_text = client_cnxn.recv(4096)
             data = data + buff_text
-            self.target = 'recip'
-    
+            self.broadcast(data, sockets, client_cnxn, 'recip', self.RECIP_SOCK)
         elif data == b'A':
-            buff_text = client_cnxn.recv(self.BFFR)
+            buff_text = client_cnxn.recv(4096)
             data = data + buff_text
-            self.target = 'other'
-
+            self.broadcast(data, sockets, client_cnxn, 'recip', self.SENDER_SOCK)
+        elif data == b'X':
+            self._serv_x_hndlr(data, client_cnxn)
+        
         else:
-            buff_text = client_cnxn.recv(self.BFFR)
+            buff_text = client_cnxn.recv(4096)
             data = data + buff_text
-            self.target = 'recip'
             # print('buffer text is', buff_text)
             # print('combined they are', data)
         
-        self.broadcast(data, sockets, client_cnxn, target=self.target, recip_socket=self.RECIP_SOCK)
+            self.broadcast(data, sockets, client_cnxn)
 
             #===
             # for sock in sockets:
@@ -122,7 +132,6 @@ class Server(ChatIO, Channel):
         
         """
         username = self.unpack_msg(sock)
-        print(username)
         if username != b'cancel':
 
             # Check for address.
@@ -133,7 +142,19 @@ class Server(ChatIO, Channel):
         else:
             cancel_msg = 'x-x Send file cancelled. Continue chatting.'
             self.pack_n_send(sock, 'M', cancel_msg)
-
+    
+    def _serv_x_hndlr(self, data, client_cnxn):
+        self.BFFR = 4096
+        with lock:
+            buff_text = client_cnxn.recv(self.BFFR)
+            data = data + buff_text
+            self.broadcast(data, sockets, client_cnxn, 'recip', self.RECIP_SOCK)
+    
+    def _serv_b_hndlr(self, data, client_cnxn):
+        buff_text = client_cnxn.recv(self.BFFR)
+        data = data + buff_text
+        self.broadcast(data, sockets, client_cnxn, 'recip', self.SENDER_SOCK)
+    
     def lookup_user(self, sock, user_query):
         """Checks if user exists. If so, returns user and address.
 
@@ -147,6 +168,7 @@ class Server(ChatIO, Channel):
         """
         match = False
         self.RECIP_SOCK = None
+        self.SENDER_SOCK = sock
 
         try:
             user_query = user_query.decode()

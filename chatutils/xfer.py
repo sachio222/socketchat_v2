@@ -131,7 +131,6 @@ class FileXfer(ChatIO):
                 sock.sendfile(f, 0)
         except:
             print('Unknown exception. I dunno whut u did.')
-
     def new_path(self, path):
         main, ext = utils.split_path_ext(path)
 
