@@ -5,13 +5,30 @@ from .chatio import ChatIO
 
 
 class FileXfer(ChatIO):
-    """FileXfer 2.0 - For file transfer, sending and receiving."""
+    """FileXfer 2.0 - For file transfer, sending and receiving.
+    
+    A utility class that facilitates file transfer between 2 clients. The send
+    file process involves several steps of data being sent back and forth be-
+    tween three end points, the sender, the server and the recipient.
+    """
 
     def __init__(self):
         super(FileXfer, self).__init__()
         self.filesize = None
 
     def sender_prompt(self, path=''):
+        """Sendfile 1 (SF1): Ask SENDER what file they would like to send.
+
+        Prompt SENDER what file they want to send, and confirm that it exists
+        in the location state. The default file location is the relative root.
+
+        Args
+            path - (str) The path of the file to send.
+
+        Returns
+            path - (str) Path of the confirmed file or None if nonexistant.
+            filesize - (int) The size of the file in bytes.
+        """
         while not path:
 
             # Get filepath and filesize.
@@ -21,11 +38,11 @@ class FileXfer(ChatIO):
                 break
 
             print(f'OK! Found: {path} | {filesize}bytes')
+        
         return path, filesize
 
     def user_prompt(self, sock, user=''):
         while not user:
-
             user = self.get_username(sock, user)
 
             if not user:
