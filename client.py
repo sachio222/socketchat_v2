@@ -16,6 +16,9 @@ from chatutils.channel import Chime
 
 
 class Client(ChatIO):
+    """
+    Each message is prefixed with a single char, that helps it be sorted.
+    """
     def __init__(self, muted=False):
         super(Client, self).__init__()
         self.muted = muted
@@ -28,27 +31,51 @@ class Client(ChatIO):
     def sender(self):
         """Accepts user input, checks type, and begins sending to recip.
 
-        Accepts input, and checks if it's a command. If it's prefixed with a
-        '/'. Then it is routed to the inp_ctrl_handler where different
-        controls are mapped. If it doesn't begin with '/', it's treated as a
-        generic message. 
+        The sender function is a continuously running input thread. Any time
+        a user presses enter on the UI, it goes through this function. It can
+        get in the way and be tricky sometimes, so it needs to be handled
+        thoughtfully. The default prefix is 'M' for message.
+
+        One way of managing flow is by modifying self.message_type. Inputs
+        are routed through the app based on their first character, known as the
+        message type, or type prefix (typ_prefix). Based on this prefix, the 
+        input can be routed anywhere in the app.
+
         """
         while True:
+            
+            # Input
             self.msg = input('')
+
+            # Check for controller message.
             if self.msg:
                 if self.msg[0] == '/':
                     typ_pfx = 'C'
                     self.inp_ctrl_handler(self.msg)
+
+                # Give it a prefix of self.message_type. Default is 'M'
                 else:
                     typ_pfx = self.message_type
                     self.pack_n_send(serv_sock, typ_pfx, self.msg)
             else:
                 self.msg = ''
-
-            self.message_type = 'M'  # Always reset to default.
+            
+            # Always revert to default message_type.
+            self.message_type = 'M'
 
     def inp_ctrl_handler(self, msg):
-        """Sorts through input control messages and calls controller funcs."""
+        """Sorts through input control messages and calls controller funcs.
+        
+    
+        All of the controller commands are routed through this function based
+        on the presence of a "/" character at the beginning of the command,
+        which is detected by the sender function. Each command has a different
+        end target and they all behave differently.
+
+        Args
+            msg - (Usually str) - the raw input command before processing.
+        """
+
         if type(msg) == bytes:
             msg.decode()
 
