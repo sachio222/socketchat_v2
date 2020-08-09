@@ -9,7 +9,7 @@ import argparse
 
 import cryptography
 
-from chatutils import utils
+from chatutils import 
 from chatutils.xfer import FileXfer
 from chatutils.chatio import ChatIO
 from chatutils.channel import Chime
@@ -180,7 +180,7 @@ class Client(ChatIO):
 
         elif recip_choice.lower() == 'y':
             # Sender
-            print("Sending file...")
+            print("Sent...")
 
             # Recipient
             xfer.file_xfer(serv_sock, self.path, self.filesize)
