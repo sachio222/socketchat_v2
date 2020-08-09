@@ -77,15 +77,17 @@ class Server(ChatIO, Channel):
             # print('buffer text is', buff_text)
             data = data + buff_text
             # print('combined they are', data)
-            for sock in sockets:
-                if sockets[sock] != sockets[client_cnxn]:
-                    # print(sock)
-                    try:
-                        sock.send(data)
+            self.broadcast(sockets, client_cnxn)
+            #===
+            # for sock in sockets:
+            #     if sockets[sock] != sockets[client_cnxn]:
+            #         # print(sock)
+            #         try:
+            #             sock.send(data)
 
-                    except:
-                        pass
-
+            #         except:
+            #             pass
+            #===
         # General print to server.
         # print('>> ', data.decode())
 
