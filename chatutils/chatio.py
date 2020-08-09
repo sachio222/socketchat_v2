@@ -37,10 +37,24 @@ class ChatIO(Chime):
             msg[5:] - Message
         """
 
+        packed_msg = self.pack_message(typ_pfx, msg)
+        sock.send(packed_msg.encode())
+        
+
+    def pack_message(self, typ_pfx, msg):
+        """
+        Example packet:
+            b'M0005Hello' - Message type, 5 characters, "Hello"
+            msg[0] - Message type
+            msg[1:4] - Message length
+            msg[5:] - Message
+        """
+
         len_pfx = len(msg)
         len_pfx = str(len_pfx).rjust(self.LEN_PFX_LEN, '0')
         packed_msg = f'{typ_pfx}{len_pfx}{msg}'
-        sock.send(packed_msg.encode())
+
+        return packed_msg
 
     def broadcast(self, packed_msg, all_sockets, sender_socket, target='other', recip_socket=None):
         """
@@ -71,11 +85,6 @@ class ChatIO(Chime):
         else:
             print('Target type error: Must be "other", "self", "all", or "recip"')
         
-        print('sender socket:', sender_socket)
-        print(f'all_sockets[sender_socket]', all_sockets[sender_socket])
-
-        for socket in enumerate(all_sockets):
-            print(f'Socket: {socket}')
 
         
     def unpack_msg(self, sock, shed_byte=False):
