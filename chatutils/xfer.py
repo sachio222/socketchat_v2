@@ -42,6 +42,7 @@ class FileXfer(ChatIO):
         return path, filesize
 
     def user_prompt(self, sock, user=''):
+        
         while not user:
             user = self.get_username(sock, user)
 
