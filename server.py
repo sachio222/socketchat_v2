@@ -17,7 +17,8 @@ class Server(ChatIO, Channel):
     """Server class"""
     def __init__(self):
         super(Server, self).__init__()
-        self.BFFR = 1
+        self.BFFR = 4096
+        self.RECIP_SOCK = None
 
     def accepting(self):
         """Continuous Thread that listens for and accepts new socket cnxns.
@@ -37,7 +38,7 @@ class Server(ChatIO, Channel):
 
         # Start listening.
         while True:
-            data = client_cnxn.recv(self.BFFR)  # Receive data as chunks.
+            data = client_cnxn.recv(1)  # Receive data as chunks.
 
             if not data:
                 #TODO: Run through connected sockets, clean up list.
@@ -62,22 +63,30 @@ class Server(ChatIO, Channel):
             
             if control == 'status':
                 status = self.get_status(nick_addy_dict)
+                status = self.pack_message('S', status)
                 print(status)
-
-            print('control is',control)
+                self.broadcast(status, sockets, client_cnxn, target="all")
+                
 
         # U-type handler
-        if data == b'U':  # 85 = U
+        if data == b'U':
             self._serv_u_hndlr(client_cnxn)
+
+        elif data == b'F' or data == b'X':
+            buff_text = client_cnxn.recv(self.BFFR)
+            data = data + buff_text
+            self.broadcast(data, sockets, client_cnxn, target='recip', recip_socket=self.RECIP_SOCK)
+            
 
         else:
             # Reattach prefix before sending to server.
             # print('data is', data)
-            buff_text = client_cnxn.recv(4096)
+            buff_text = client_cnxn.recv(self.BFFR)
             # print('buffer text is', buff_text)
             data = data + buff_text
             # print('combined they are', data)
-            self.broadcast(sockets, client_cnxn)
+            self.broadcast(data, sockets, client_cnxn, target="other")
+
             #===
             # for sock in sockets:
             #     if sockets[sock] != sockets[client_cnxn]:
@@ -104,10 +113,8 @@ class Server(ChatIO, Channel):
         if username != b'cancel':
 
             # Check for address.
-            match, user_addr = self.lookup_user(sock, username)
+            match = self.lookup_user(sock, username)
             
-            self.RECIP_ADDR = user_addr
-
             # Send U type to sender.
             self.pack_n_send(sock, 'U', str(match))
         else:
@@ -126,26 +133,24 @@ class Server(ChatIO, Channel):
             user_addr: (str) ip:port of user.
         """
         match = False
-        user_addr = ''
+        self.RECIP_SOCK = None
 
         try:
             user_query = user_query.decode()
         except:
             pass
-
-        for nick, addr in nick_addy_dict.items():
-            if addr != sockets[sock]:  # Avoid self match.
-
-                if nick == user_query:
+        
+        for s, n in sock_nick_dict.items():
+            if s != sock: # Avoid self match.
+                if n == user_query:
                     match = True
-                    user_addr = addr
+                    self.RECIP_SOCK = s
 
                     break
-
                 else:
                     match = False
 
-        return match, user_addr
+        return match
 
     def init_client_data(self, sock):
         """Sets nick and addr of user."""

@@ -22,7 +22,7 @@ class Channel():
         # @YO: 4 online - @Jake, @toof, @veronica, @pizzanator
         room_status = f'{ppl_qty} online - {ppl_lst}'
 
-        return room_status.encode()  # to bytes
+        return room_status # String
 
 
 class Chime:

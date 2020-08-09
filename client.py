@@ -159,6 +159,9 @@ class Client(ChatIO):
         elif typ_pfx == 'C':
             # Incoming controller message.
             self._c_hndlr()
+        elif typ_pfx == 'S':
+            # Server messages.
+            self._s_hndlr()
         elif typ_pfx == 'U':
             # SERVER response regarding user.
             self._u_hndlr()
@@ -182,6 +185,12 @@ class Client(ChatIO):
     def _c_hndlr(self):
         """Control messages from another user. Not displayed."""
         self.unpack_msg(serv_sock)
+
+    def _s_hndlr(self):
+        """Server announcements."""
+        msg = self.unpack_msg(serv_sock).decode()
+        msg = f"YO!: {msg}"
+        self.print_message(msg)
 
     def _u_hndlr(self):
         """Receives server response from user lookup. If False, rerun.
