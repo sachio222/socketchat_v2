@@ -70,7 +70,8 @@ class Client(ChatIO):
         All of the controller commands are routed through this function based
         on the presence of a "/" character at the beginning of the command,
         which is detected by the sender function. Each command has a different
-        end target and they all behave differently.
+        end point and they all behave differently depending on their defined
+        purposes.
 
         Args
             msg - (Usually str) - the raw input command before processing.
@@ -80,81 +81,101 @@ class Client(ChatIO):
             msg.decode()
 
         if msg == '/about':
+            # Read from file in config folder.
             path = 'config/about.txt'
             utils.print_from_file(path)
 
         elif msg == '/help' or msg == '/h':
-            # Print help menu
+            # Read from file in config folder.
             path = 'config/helptxt.txt'
             utils.print_from_file(path)
 
         elif msg == '/sendfile' or msg == '/sf':
-            # For sending file. Call send dialog.
+            # Initiates Send File (SF) sequence.
+            # /SF1: Confirm file is available.
             self.path, self.filesize = xfer.sender_prompt()
+
+            # /SF2: Check that RECIPIENT exists.
             if self.path:
-                xfer.user_prompt(serv_sock)
+                self.user = xfer.user_prompt(serv_sock)
         
         elif msg == '/status':
-            # Get room status.
+            # Ask SERVER to broadcast who is online.
             self.pack_n_send(serv_sock, '/', 'status')
         
         elif msg == '/mute':
             self.muted = True
             self.print_message("YO: Muted. Type /unmute to restore sound.")
-            
-        
+                    
         elif msg =='/unmute':
             self.muted = False
             self.print_message("YO: B00P! Type /mute to turn off sound.")
-
 
         else:
             print('-!- Command not recognized.')
 
     #===================== RECEIVING METHODS =====================#
     def receiver(self):
-        """A Threaded socket that calls a function to check message type."""
+        """A Threaded socket that calls a function to check message type.
+        
+        A continuously running thread that listens for 1 byte of data. This
+        one byte is responsible for routing all incoming signals from SERVER.
+        Every incoming transmission is prefixed with a message type. If the
+        prefix doesn't exist, it is considered a broken connection.
+
+        The prefix is funneled into the Inbound Type Handler method or
+        _inb_typ_hndlr, and is handled according to its type. 
+        """
+
         while True:
+            # Continually listen to first byte only.
             typ_pfx = serv_sock.recv(1)
+
             if not typ_pfx:
                 serv_sock.close()
                 print("-!- Aw, snap. Server's disconnected.")
                 break
+            
+            # Send this byte downstream to the Inbound Type Handler.
             self._inb_typ_hndlr(typ_pfx)
 
     def _inb_typ_hndlr(self, typ_pfx):
-        """Called by Receiver. Routes messages based on message type.
-        
-        Checks messages for type. M is standard message. F is sending a file.
-                C is for a controller message. A is for file acceptance. Routes
-                every type to a dedicated handler.
-        
+        """Routes incoming messages based on message type. Default is 'M'.
+
+        Incoming messages can be printed to the screen by default, or be
+        involved in a different flow, like receiving information from the
+        SERVER about a the presence of a RECIPIENT in the chat.
+
+        The Inbound Type Handler routes each message to a downstream handler
+        methods designed for each function. Those handlers are each unique
+        and are based on the requirements of that message type.
         """
+
         typ_pfx = typ_pfx.decode().upper()
 
         if typ_pfx == 'M':
-            # Standard message type.
+            # Default. Prints to screen.
             self._m_hndlr()
         elif typ_pfx == 'C':
-            # For controller input.
+            # Incoming controller message.
             self._c_hndlr()
         elif typ_pfx == 'U':
-            # User Found
+            # SERVER response regarding user.
             self._u_hndlr()
         elif typ_pfx == 'F':
-            # For sending files.
+            # Request from SENDER to confirm acceptance of file.
             self._f_hndlr()
         elif typ_pfx == 'A':
-            # Raises dialog for chosen recipient.
-            self._a_hndlr()
+            # Response from RECIPIENT for confirmation of file acceptance.
+            self._a_hndlr(
         elif typ_pfx == 'X':
-            # Transfer file.
+            # Routes data from SENDER, passes thru SERVER, and stored by RECIPIENT.
             self._x_hndlr()
         else:
             print('-x- Unknown message type error.')
 
     def _m_hndlr(self):
-        """Standard message. Unpacks message, and prints to own screen."""
+        """Standard message. Unpacks message, and prints screen."""
         trim_msg = self.unpack_msg(serv_sock)
         self.print_message(trim_msg)
 
