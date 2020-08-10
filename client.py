@@ -31,7 +31,8 @@ class Client(ChatIO):
         self.filesize = ''
         self.path = ''
         self.introduced = False
-        self.encrypt_traffic = True
+        self.encrypt_flag = True
+        self.encrypt_traffic = self.encrypt_flag
 
     #===================== SENDING METHODS =====================#
     def sender(self):
@@ -52,8 +53,8 @@ class Client(ChatIO):
         while True:
 
             # Input
-            self.msg = input('') 
-            
+            self.msg = input('')
+
             # Check for controller message.
             if self.msg:
                 # If controller, skip to controller handler.
@@ -68,18 +69,19 @@ class Client(ChatIO):
                     if self.introduced:
                         if self.encrypt_traffic:
                             self.msg = cipher.encrypt(self.msg)
-               
+
                 # typ_pfx = self.message_type
                 # self.pack_n_send(serv_sock, typ_pfx, self.msg)
-            
+
             else:
                 self.msg = ''
-                
+
             typ_pfx = self.message_type
             self.pack_n_send(serv_sock, typ_pfx, self.msg)
-                
-            # Always revert to default message_type.
+
+            # Always revert to default message_type and encryption.
             self.message_type = 'M'
+            self.encrypt_traffic = self.encrypt_flag
 
     def inp_ctrl_handler(self, msg):
         """Sorts through input control messages and calls controller funcs.
@@ -244,14 +246,18 @@ class Client(ChatIO):
                               filename=self.path,
                               filesize=self.filesize)
             self.message_type = 'M'  # Reset message type.
-            self.encrypt_traffic = True # Reset encryption
+            self.encrypt_traffic = self.encrypt_flag  # Reset encryption
+
     def _f_hndlr(self):
         """File Recipient. Prompts to accept or reject. Sends response."""
 
         # Display prompt sent from xfer.recip_prompt.
         recip_prompt = self.unpack_msg(serv_sock).decode()
         _, recip_prompt = self.split_n_decrypt(recip_prompt)
+
         self.message_type = "A"
+        self.encrypt_traffic = False
+
         print(recip_prompt)
         # Send answer as type A, user sends response back to server.
 
@@ -261,6 +267,7 @@ class Client(ChatIO):
         # Answer to prompt from F handler.
         recip_choice = self.unpack_msg(serv_sock).decode()
         _, recip_choice = self.split_n_decrypt(recip_choice)
+        print('RECIP CHOICE is ', recip_choice)
 
         # Resend if choice is nonsense.
         if recip_choice.lower() != 'y' and recip_choice.lower() != 'n':

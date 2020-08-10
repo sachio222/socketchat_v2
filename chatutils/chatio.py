@@ -6,6 +6,7 @@ from threading import Thread
 from .channel import Chime
 from encryption.fernet import Cipher
 
+
 class ChatIO(Chime):
     """Class for ChatIO"""
 
@@ -135,7 +136,6 @@ class ChatIO(Chime):
             
         """
 
-
         if enc:
             handle, msg = self.split_n_decrypt(msg)
             print(f'\r{handle}: {msg.decode()}')
@@ -150,7 +150,6 @@ class ChatIO(Chime):
             self.play_chime()
             print(f'\r{msg}')
 
-
     def remove_pfx(self, data, n=5):
         # Accepts bytes input, chops off prefix and returns plain message as bytes.
         return data[5:]
@@ -158,7 +157,8 @@ class ChatIO(Chime):
     def split_n_decrypt(self, raw_msg):
         try:
             handle, msg = Cipher().split(raw_msg)
-            msg = Cipher().decrypt(msg)
+            msg = Cipher().decrypt(msg).decode()
+
         except:
             handle = None
             msg = raw_msg
