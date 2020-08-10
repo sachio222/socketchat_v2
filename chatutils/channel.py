@@ -24,7 +24,7 @@ class Channel():
         # @YO: 4 online - @Jake, @toof, @veronica, @pizzanator
         room_status = f'{ppl_qty} online - {ppl_lst}'
 
-        return room_status  # String
+        return room_status, people  # String
 
 
 class Chime:

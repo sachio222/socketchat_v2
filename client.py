@@ -7,7 +7,7 @@ import socket
 from threading import Thread
 import argparse
 
-import cryptography
+from encryption.fernet import Cipher
 
 from chatutils import utils
 from chatutils.xfer import FileXfer
@@ -43,6 +43,7 @@ class Client(ChatIO):
         input can be routed anywhere in the app.
 
         """
+
         while True:
 
             # Input
@@ -56,6 +57,7 @@ class Client(ChatIO):
 
                 # Give it a prefix of self.message_type. Default is 'M'
                 else:
+                    # self.msg = cipher.encrypt(self.msg)
                     typ_pfx = self.message_type
                     self.pack_n_send(serv_sock, typ_pfx, self.msg)
             else:
@@ -193,7 +195,7 @@ class Client(ChatIO):
     def _s_hndlr(self):
         """Server announcements."""
         msg = self.unpack_msg(serv_sock).decode()
-        msg = f"YO!: {msg}"
+        msg = f"YO: {msg}"
         self.print_message(msg)
 
     def _u_hndlr(self):
@@ -349,6 +351,7 @@ if __name__ == "__main__":
 
     xfer = FileXfer()
     channel = Client()
+    cipher = Cipher()
 
     serv_sock = socket.socket()
     serv_sock.connect((host, port))

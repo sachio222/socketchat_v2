@@ -39,10 +39,16 @@ class Server(ChatIO, Channel):
 
     def handle_clients(self, client_cnxn):
         # Get username.
+
         user_name = self.init_client_data(client_cnxn)
+        welcome_msg = "You're in. Welcome to the underground."
+        self.pack_n_send(client_cnxn, 'S', welcome_msg)
         announcement = f"{user_name} is in the house!"
+
+        packed_msg = self.pack_message('S', announcement)
+
+        self.broadcast(packed_msg, sockets, client_cnxn)
         print(announcement)
-        self.pack_n_send(client_cnxn, 'S', announcement)
 
         # Start listening.
         while True:
@@ -64,7 +70,7 @@ class Server(ChatIO, Channel):
             control = self.unpack_msg(client_cnxn).decode()
 
             if control == 'status':
-                status = self.get_status(nick_addy_dict)
+                status, _ = self.get_status(nick_addy_dict)
                 status = self.pack_message('S', status)
                 print(status)
                 self.broadcast(status, sockets, client_cnxn, target="all")
@@ -178,7 +184,7 @@ class Server(ChatIO, Channel):
     def init_client_data(self, sock):
         """Sets nick and addr of user."""
         unique = False
-        PROMPT = '-+- Enter nickname:'
+        PROMPT = '-+- Choose a handle:'
 
         self.pack_n_send(sock, 'M', PROMPT)
         while not unique:
