@@ -35,13 +35,16 @@ class Server(ChatIO, Channel):
         # Get username.
 
         user_name = self.init_client_data(client_cnxn)
-        welcome_msg = "You're in. Welcome to the underground."
-        self.pack_n_send(client_cnxn, 'W', welcome_msg)
+
         announcement = f"{user_name} is in the house!"
+        welcome_msg = "You're in. Welcome to the underground."
 
         packed_msg = self.pack_message('S', announcement)
 
-        self.broadcast(packed_msg, sockets, client_cnxn)
+        # send to user only.
+        self.pack_n_send(client_cnxn, 'W', welcome_msg)
+
+        self.broadcast(packed_msg, sockets, client_cnxn, target='all')
         print(announcement)
 
         # Start listening.
@@ -49,6 +52,10 @@ class Server(ChatIO, Channel):
             data = client_cnxn.recv(1)  # Receive data as chunks.
 
             if not data:
+                discon_msg = f'{sock_nick_dict[client_cnxn]} has been disconnected.'
+                print(discon_msg)
+                packed_msg = self.pack_message('S', discon_msg)
+                self.broadcast(packed_msg, sockets, client_cnxn, 'other')
                 del (nick_addy_dict[sock_nick_dict[client_cnxn]])
                 del (sock_nick_dict[client_cnxn])
                 del (sockets[client_cnxn])  # remove address
@@ -72,7 +79,8 @@ class Server(ChatIO, Channel):
         elif data == b'M':
             sender = sock_nick_dict[client_cnxn]
             buff_text = self.unpack_msg(client_cnxn)
-            print(f'{sender}: {buff_text.decode()}')
+            buff_text = f'{sender}: {buff_text.decode()}'
+            print(buff_text)
             data = self.pack_message(data, buff_text)
             self.broadcast(data, sockets, client_cnxn, sender=sender)
 
@@ -115,6 +123,7 @@ class Server(ChatIO, Channel):
         
         """
         username = self.unpack_msg(sock)
+        print('HEREITIS: ', username)
         if username != b'cancel':
 
             # Check for address.
@@ -178,22 +187,26 @@ class Server(ChatIO, Channel):
     def init_client_data(self, sock):
         """Sets nick and addr of user."""
         unique = False
-        PROMPT = '-+- Choose a handle:'
+        PROMPT = 'Choose a handle:'
 
-        self.pack_n_send(sock, 'M', PROMPT)
+        self.pack_n_send(sock, 'S', PROMPT)
         while not unique:
             # sock.recv(1)  # Shed first byte.
             user_name = self.unpack_msg(sock, shed_byte=True).decode()
 
-            if user_name not in sock_nick_dict.values():
+            if not user_name:
+                ERR = f"=!= Gotta be at least one char, m8... Try again."
+                print(ERR)
+                self.pack_n_send(sock, 'S', ERR)
+            elif user_name not in sock_nick_dict.values():
                 sock_nick_dict[sock] = user_name  # Create socket:nick pair.
                 nick_addy_dict[user_name] = sockets[
                     sock]  # Create nick:addr pair.
                 unique = True
             else:
-                ERR = f"=!= They're already here! Pick something else:"
+                ERR = f"They're already here! Pick something else:"
                 print(ERR)
-                self.pack_n_send(sock, 'M', ERR)
+                self.pack_n_send(sock, 'S', ERR)
 
         # TODO: Fix formatting.
         return user_name
@@ -244,5 +257,5 @@ if __name__ == "__main__":
         utils.countdown(90)
     sock.settimeout(None)
     sock.listen(MAX_CNXN)
-    print(f'-+- Listening...')
+    print(f'-+- Waiting for connections...')
     server.start()
