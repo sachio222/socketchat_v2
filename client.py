@@ -30,6 +30,8 @@ class Client(ChatIO):
         self.msg = ''
         self.filesize = ''
         self.path = ''
+        self.introduced = False
+        self.encrypt_traffic = True
 
     #===================== SENDING METHODS =====================#
     def sender(self):
@@ -50,22 +52,32 @@ class Client(ChatIO):
         while True:
 
             # Input
-
-            self.msg = input('')
+            self.msg = input('') 
+            
             # Check for controller message.
             if self.msg:
+                # If controller, skip to controller handler.
                 if self.msg[0] == '/':
                     typ_pfx = 'C'
                     self.inp_ctrl_handler(self.msg)
+                    continue
 
                 # Give it a prefix of self.message_type. Default is 'M'
                 else:
-                    # self.msg = cipher.encrypt(self.msg)
-                    typ_pfx = self.message_type
-                    self.pack_n_send(serv_sock, typ_pfx, self.msg)
+                    # If name has been given, encrypt everything else.
+                    if self.introduced:
+                        if self.encrypt_traffic:
+                            self.msg = cipher.encrypt(self.msg)
+               
+                # typ_pfx = self.message_type
+                # self.pack_n_send(serv_sock, typ_pfx, self.msg)
+            
             else:
                 self.msg = ''
-
+                
+            typ_pfx = self.message_type
+            self.pack_n_send(serv_sock, typ_pfx, self.msg)
+                
             # Always revert to default message_type.
             self.message_type = 'M'
 
@@ -119,7 +131,7 @@ class Client(ChatIO):
 
         elif msg[:8] == '/weather':
             report = weather.report(msg)
-            print('-=-', report)
+            print('\r-=-', report)
 
         else:
             print('-!- Command not recognized.')
@@ -186,7 +198,7 @@ class Client(ChatIO):
                 self._x_hndlr()
             elif typ_pfx == 'W':
                 self._s_hndlr()
-                self.name = True
+                self.introduced = True
             else:
                 print('Prefix: ', typ_pfx)
                 print('-x- Unknown message type error.')
@@ -196,7 +208,7 @@ class Client(ChatIO):
     def _m_hndlr(self):
         """Standard message. Unpacks message, and prints screen."""
         trim_msg = self.unpack_msg(serv_sock)
-        self.print_message(trim_msg)
+        self.print_message(trim_msg, enc=self.encrypt_traffic)
 
     def _c_hndlr(self):
         """Control messages from another user. Not displayed."""
@@ -219,10 +231,12 @@ class Client(ChatIO):
 
         # Reply from server.
         user_exists = self.unpack_msg(serv_sock).decode()
+        _, user_exists = self.split_n_decrypt(user_exists)
 
         if user_exists == "False":
             print("-!- They're not here. Try again. \n-=- Send to >> @", end='')
             self.message_type = 'U'
+            self.encrypt_traffic = False
 
         elif user_exists == "True":
             # Prompt recipient.
@@ -230,12 +244,13 @@ class Client(ChatIO):
                               filename=self.path,
                               filesize=self.filesize)
             self.message_type = 'M'  # Reset message type.
-
+            self.encrypt_traffic = True # Reset encryption
     def _f_hndlr(self):
         """File Recipient. Prompts to accept or reject. Sends response."""
 
         # Display prompt sent from xfer.recip_prompt.
         recip_prompt = self.unpack_msg(serv_sock).decode()
+        _, recip_prompt = self.split_n_decrypt(recip_prompt)
         self.message_type = "A"
         print(recip_prompt)
         # Send answer as type A, user sends response back to server.
@@ -245,6 +260,7 @@ class Client(ChatIO):
 
         # Answer to prompt from F handler.
         recip_choice = self.unpack_msg(serv_sock).decode()
+        _, recip_choice = self.split_n_decrypt(recip_choice)
 
         # Resend if choice is nonsense.
         if recip_choice.lower() != 'y' and recip_choice.lower() != 'n':

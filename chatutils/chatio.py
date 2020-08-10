@@ -4,7 +4,7 @@ import socket
 from threading import Thread
 
 from .channel import Chime
-
+from encryption.fernet import Cipher
 
 class ChatIO(Chime):
     """Class for ChatIO"""
@@ -128,22 +128,39 @@ class ChatIO(Chime):
         """Converts size prefix data to int."""
         return int(data[:n])
 
-    def print_message(self, msg, style='yellow'):
+    def print_message(self, msg, enc=False, style='yellow'):
         """Print message to screen.
         TODO
             add fun formatting.
             
         """
 
-        ERASE_LINE = '\x1b[2K'
-        sys.stdout.write(ERASE_LINE)
 
-        if type(msg) == bytes:
-            msg = msg.decode()
+        if enc:
+            handle, msg = self.split_n_decrypt(msg)
+            print(f'\r{handle}: {msg.decode()}')
 
-        self.play_chime()
-        print(f'\r{msg}')
+        else:
+            if type(msg) == bytes:
+                msg = msg.decode()
+
+            ERASE_LINE = '\x1b[2K'
+            sys.stdout.write(ERASE_LINE)
+
+            self.play_chime()
+            print(f'\r{msg}')
+
 
     def remove_pfx(self, data, n=5):
         # Accepts bytes input, chops off prefix and returns plain message as bytes.
         return data[5:]
+
+    def split_n_decrypt(self, raw_msg):
+        try:
+            handle, msg = Cipher().split(raw_msg)
+            msg = Cipher().decrypt(msg)
+        except:
+            handle = None
+            msg = raw_msg
+
+        return handle, msg
