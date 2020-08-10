@@ -36,7 +36,7 @@ class Server(ChatIO, Channel):
 
         user_name = self.init_client_data(client_cnxn)
         welcome_msg = "You're in. Welcome to the underground."
-        self.pack_n_send(client_cnxn, 'S', welcome_msg)
+        self.pack_n_send(client_cnxn, 'W', welcome_msg)
         announcement = f"{user_name} is in the house!"
 
         packed_msg = self.pack_message('S', announcement)
@@ -196,7 +196,7 @@ class Server(ChatIO, Channel):
                 self.pack_n_send(sock, 'M', ERR)
 
         # TODO: Fix formatting.
-        return user_name, unique
+        return user_name
 
     def start(self):
         Thread(target=self.accepting).start()
