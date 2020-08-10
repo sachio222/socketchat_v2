@@ -222,9 +222,9 @@ if __name__ == "__main__":
     print(f'-+- Host IP: {ip}')
 
     #-- use last cmd line arg as port #
-    port = input('-+- Choose port: ') or sys.argv[-1]
-    
-    if not port.isdigit():
+
+    port = input('-+- Choose port: ') if not sys.argv[-1].isdigit() else sys.argv[-1]
+    if not port:
         port = 12222
 
     print(f'-+- Host Port: {port}')
