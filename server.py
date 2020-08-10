@@ -201,6 +201,7 @@ class Server(ChatIO, Channel):
     def start(self):
         Thread(target=self.accepting).start()
 
+
 sockets = {}
 sock_nick_dict = {}
 nick_addy_dict = {}
@@ -211,7 +212,7 @@ if __name__ == "__main__":
     server = Server()
 
     sock = socket.socket()
-    
+
     host = socket.gethostname()
     try:
         ip = socket.gethostbyname(host)
@@ -223,7 +224,8 @@ if __name__ == "__main__":
 
     #-- use last cmd line arg as port #
 
-    port = input('-+- Choose port: ') if not sys.argv[-1].isdigit() else sys.argv[-1]
+    port = input(
+        '-+- Choose port: ') if not sys.argv[-1].isdigit() else sys.argv[-1]
     if not port:
         port = 12222
 
@@ -240,7 +242,7 @@ if __name__ == "__main__":
     except Exception as e:
         print(f'-x- {e}')
         utils.countdown(90)
-
+    sock.settimeout(None)
     sock.listen(MAX_CNXN)
     print(f'-+- Listening...')
     server.start()
