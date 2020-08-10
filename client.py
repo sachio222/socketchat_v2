@@ -6,6 +6,7 @@ import sys
 import socket
 from threading import Thread
 import argparse
+import requests
 
 from encryption.fernet import Cipher
 
@@ -47,8 +48,8 @@ class Client(ChatIO):
         while True:
 
             # Input
-            self.msg = input('')
 
+            self.msg = input('')
             # Check for controller message.
             if self.msg:
                 if self.msg[0] == '/':
@@ -114,6 +115,15 @@ class Client(ChatIO):
             self.muted = False
             self.print_message("YO: B00P! Type /mute to turn off sound.")
 
+        elif msg == '/weather':
+            weather = "-!- Can't reach weather service right meow."
+            try:
+                loc = input('-?- Where? (press enter for ip location): ')
+                weather = requests.get(f'http://wttr.in/{loc}?format=4')
+            except:
+                pass
+
+            print('-=-', weather.text)
         else:
             print('-!- Command not recognized.')
 
@@ -177,6 +187,9 @@ class Client(ChatIO):
             elif typ_pfx == 'X':
                 # Routes data from SENDER, passes thru SERVER, and stored by RECIPIENT.
                 self._x_hndlr()
+            elif typ_pfx =='W':
+                self._s_hndlr()
+                self.name = True
             else:
                 print('Prefix: ', typ_pfx)
                 print('-x- Unknown message type error.')
