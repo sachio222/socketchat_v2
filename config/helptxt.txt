@@ -14,5 +14,8 @@ Accepted commands:
 /unmute - Resume channel sounds.
 /sendfile - Send file to chosen recipient by nickname.
 /status - Server status. Shows who is currently online.
+/weather - Get weather from wttr.in. Usage: /weather <location>
+        Location can be a city, coords, or an airport. If no location is
+        provided, it uses your ip location.
 
 -:- End. Start chatting again.
