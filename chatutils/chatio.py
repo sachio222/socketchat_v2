@@ -49,6 +49,10 @@ class ChatIO(Chime):
             msg[1:4] - Message length
             msg[5:] - Message
         """
+        if type(typ_pfx) == bytes:
+            typ_pfx = typ_pfx.decode()
+        if type(msg) == bytes:
+            msg = msg.decode()
 
         len_pfx = len(msg)
         len_pfx = str(len_pfx).rjust(self.LEN_PFX_LEN, '0')
@@ -84,7 +88,7 @@ class ChatIO(Chime):
                     print('Provide valid recipient socket object.')
         elif not target:
             pass
-        
+
         else:
             print('Target type error: Must be "other", "self", "all", or "recip"')
         

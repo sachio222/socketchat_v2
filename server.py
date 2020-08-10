@@ -38,38 +38,30 @@ class Server(ChatIO, Channel):
     def handle_clients(self, client_cnxn):
         # Get username.
         user_name = self.init_client_data(client_cnxn)
-        self.pack_n_send(client_cnxn, 'M', f"{user_name} is in the house!")
+        announcement =  f"{user_name} is in the house!"
+        print(announcement)
+        self.pack_n_send(client_cnxn, 'S', announcement)
 
         # Start listening.
         while True:
-            data = client_cnxn.recv(self.BFFR)  # Receive data as chunks.
+            data = client_cnxn.recv(1)  # Receive data as chunks.
+            print('data is', data)
 
             if not data:
-                #TODO: Run through connected sockets, clean up list.
                 del (nick_addy_dict[sock_nick_dict[client_cnxn]])
-                print('nick_addy_dict: ', nick_addy_dict)
                 del (sock_nick_dict[client_cnxn])
-                print('sock_nick_dict: ', sock_nick_dict)
                 del (sockets[client_cnxn])  # remove address
-                print('sockets: ', sockets)
-
                 break
             
-            if len(data) > 1:
-                self.RECIP_SOCK.send(data)
-                print(data)
-            else:
-                self.data_router(client_cnxn, data)
+            self.data_router(client_cnxn, data)
 
     def data_router(self, client_cnxn, data):
-        # print('data is', data)
-
         """Handles incoming data based on its message type."""
         # Send confirm dialog to recip if user is sending file.
         if data == "/".encode():
-            print('controller')
             # Drain socket of controller message so it doesn't print.
             control = self.unpack_msg(client_cnxn).decode()
+            print(control)
             
             if control == 'status':
                 status = self.get_status(nick_addy_dict)
@@ -77,51 +69,33 @@ class Server(ChatIO, Channel):
                 print(status)
                 self.broadcast(status, sockets, client_cnxn, target="all")
                 
-        if data == b'M':
-            buff_text = client_cnxn.recv(4096)
-            data = data + buff_text
+        elif data == b'M':
+            buff_text = self.unpack_msg(client_cnxn)
+            data = self.pack_message(data, buff_text)
             self.broadcast(data, sockets, client_cnxn)
 
-        if data == b'B':
-            buff_text = client_cnxn.recv(4096)
-            data = data + buff_text
-            self.broadcast(data, sockets, client_cnxn, 'recip', self.SENDER_SOCK)
-
-        # U-type handler
+               # U-type handler
         elif data == b'U':
             self._serv_u_hndlr(client_cnxn)
 
         elif data == b'F':
-            buff_text = client_cnxn.recv(4096)
-            data = data + buff_text
+            buff_text = self.unpack_msg(client_cnxn)
+            data = self.pack_message(data, buff_text)
             self.broadcast(data, sockets, client_cnxn, 'recip', self.RECIP_SOCK)
+      
         elif data == b'A':
-            buff_text = client_cnxn.recv(4096)
-            data = data + buff_text
+            buff_text = self.unpack_msg(client_cnxn)
+            data = self.pack_message(data, buff_text)
             self.broadcast(data, sockets, client_cnxn, 'recip', self.SENDER_SOCK)
+        
         elif data == b'X':
             self._serv_x_hndlr(data, client_cnxn)
         
         else:
-            buff_text = client_cnxn.recv(4096)
-            data = data + buff_text
-            # print('buffer text is', buff_text)
-            # print('combined they are', data)
-        
+            buff_text = self.unpack_msg(client_cnxn)
+            data = self.pack_message(data, buff_text)
             self.broadcast(data, sockets, client_cnxn)
 
-            #===
-            # for sock in sockets:
-            #     if sockets[sock] != sockets[client_cnxn]:
-            #         # print(sock)
-            #         try:
-            #             sock.send(data)
-
-            #         except:
-            #             pass
-            #===
-        # General print to server.
-        # print('>> ', data.decode())
 
     def _serv_u_hndlr(self, sock):
         """ U-type msgs used by SERVER and SENDER for user lookup exchanges.
@@ -140,21 +114,28 @@ class Server(ChatIO, Channel):
             # Send U type to sender.
             self.pack_n_send(sock, 'U', str(match))
         else:
+
             cancel_msg = 'x-x Send file cancelled. Continue chatting.'
             self.pack_n_send(sock, 'M', cancel_msg)
     
-    def _serv_x_hndlr(self, data, client_cnxn):
-        self.BFFR = 4096
-        with lock:
-            buff_text = client_cnxn.recv(self.BFFR)
-            data = data + buff_text
-            self.broadcast(data, sockets, client_cnxn, 'recip', self.RECIP_SOCK)
-    
-    def _serv_b_hndlr(self, data, client_cnxn):
-        buff_text = client_cnxn.recv(self.BFFR)
-        data = data + buff_text
-        self.broadcast(data, sockets, client_cnxn, 'recip', self.SENDER_SOCK)
-    
+    def _serv_x_hndlr(self, data, client_cnxn):        
+        recd_bytes = 0
+        buff_text = self.unpack_msg(client_cnxn)
+        
+        file_info = buff_text.decode().split('::')
+        filesize = int(file_info[0])
+        
+        data = self.pack_message(data, buff_text)
+        self.broadcast(data, sockets, client_cnxn, 'recip', self.RECIP_SOCK)
+
+        while recd_bytes < filesize:
+            chunk = client_cnxn.recv(4096)
+            recd_bytes += len(chunk)
+            self.broadcast(chunk, sockets, client_cnxn, 'recip', self.RECIP_SOCK)
+        
+        print('file sent fuckin heathen')
+
+
     def lookup_user(self, sock, user_query):
         """Checks if user exists. If so, returns user and address.
 

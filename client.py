@@ -175,6 +175,7 @@ class Client(ChatIO):
                 # Routes data from SENDER, passes thru SERVER, and stored by RECIPIENT.
                 self._x_hndlr()
             else:
+                print('Prefix: ',typ_pfx)
                 print('-x- Unknown message type error.')
         except:
             pass
@@ -275,7 +276,9 @@ class Client(ChatIO):
                 f.write(chunk)
             bytes_recd += len(chunk)
 
-        print(f"-=- {filesize}bytes received.")
+        rec_msg = f"-=- {filesize}bytes received."
+        print(rec_msg)
+
 
     def start(self):
         self.t1 = Thread(target=self.receiver)
