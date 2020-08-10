@@ -343,11 +343,11 @@ if __name__ == "__main__":
             print(f'-+- Port: {port}')
 
     BFFR = 4096
-    host = '127.0.0.1'
+    # host = '192.168.68.143'
     # port = int(input('-=- Port, please: '))
 
-    # DEBUG
-    port = 1515
+    # # DEBUG
+    # port = 1515
 
     xfer = FileXfer()
     channel = Client()
