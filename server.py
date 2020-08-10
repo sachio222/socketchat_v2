@@ -2,18 +2,12 @@
 
 import socket
 import sys
-from threading import Thread, Lock
+from threading import Thread
 
 import chatutils.xfer as xfer
 import chatutils.utils as utils
 from chatutils.chatio import ChatIO
 from chatutils.channel import Channel
-
-sockets = {}
-sock_nick_dict = {}
-nick_addy_dict = {}
-
-lock = Lock()
 
 
 class Server(ChatIO, Channel):
@@ -42,7 +36,7 @@ class Server(ChatIO, Channel):
 
         user_name = self.init_client_data(client_cnxn)
         welcome_msg = "You're in. Welcome to the underground."
-        self.pack_n_send(client_cnxn, 'S', welcome_msg)
+        self.pack_n_send(client_cnxn, 'W', welcome_msg)
         announcement = f"{user_name} is in the house!"
 
         packed_msg = self.pack_message('S', announcement)
@@ -202,25 +196,52 @@ class Server(ChatIO, Channel):
                 self.pack_n_send(sock, 'M', ERR)
 
         # TODO: Fix formatting.
-        return user_name
+        return user_name, unique
 
     def start(self):
         Thread(target=self.accepting).start()
 
+sockets = {}
+sock_nick_dict = {}
+nick_addy_dict = {}
+MAX_CNXN = 5
 
 if __name__ == "__main__":
     # TODO: Add inputs.
     server = Server()
 
-    addy = ('127.0.0.1', 1515)
     sock = socket.socket()
+    
+    host = socket.gethostname()
+    try:
+        ip = socket.gethostbyname(host)
+    except:
+        ip = socket.gethostbyname('localhost')
+
+    print(f'-+- Starting server on host: {host}')
+    print(f'-+- Host IP: {ip}')
+
+    #-- use last cmd line arg as port #
+    port = input('-+- Choose port: ') or sys.argv[-1]
+    
+    if not port.isdigit():
+        port = 12222
+
+    print(f'-+- Host Port: {port}')
+
+    addy = (host, int(port))
+
+    # DEBUG
+    # addy = ('127.0.0.1', 1515)
+
     try:
         sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        
         sock.bind(addy)
     except Exception as e:
         print(f'-x- {e}')
         utils.countdown(90)
 
-    sock.listen(5)
+    sock.listen(MAX_CNXN)
     print(f'-+- Listening...')
     server.start()
