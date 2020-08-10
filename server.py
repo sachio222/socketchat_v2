@@ -36,7 +36,7 @@ class Server(ChatIO, Channel):
 
         user_name = self.init_client_data(client_cnxn)
         welcome_msg = "You're in. Welcome to the underground."
-        self.pack_n_send(client_cnxn, 'W', welcome_msg)
+        self.pack_n_send(client_cnxn, 'S', welcome_msg)
         announcement = f"{user_name} is in the house!"
 
         packed_msg = self.pack_message('S', announcement)
@@ -236,7 +236,6 @@ if __name__ == "__main__":
 
     try:
         sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        
         sock.bind(addy)
     except Exception as e:
         print(f'-x- {e}')
