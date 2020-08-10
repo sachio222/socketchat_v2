@@ -38,11 +38,11 @@ class FileXfer(ChatIO):
                 break
 
             print(f'OK! Found: {path} | {filesize}bytes')
-        
+
         return path, filesize
 
     def user_prompt(self, sock, user=''):
-        
+
         while not user:
             user = self.get_username(sock, user)
 
@@ -131,6 +131,7 @@ class FileXfer(ChatIO):
                 sock.sendfile(f, 0)
         except:
             print('Unknown exception. I dunno whut u did.')
+
     def new_path(self, path):
         main, ext = utils.split_path_ext(path)
 
