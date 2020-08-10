@@ -15,6 +15,8 @@ from chatutils.xfer import FileXfer
 from chatutils.chatio import ChatIO
 from chatutils.channel import Chime
 
+from addons import weather
+
 
 class Client(ChatIO):
     """
@@ -115,15 +117,10 @@ class Client(ChatIO):
             self.muted = False
             self.print_message("YO: B00P! Type /mute to turn off sound.")
 
-        elif msg == '/weather':
-            weather = "-!- Can't reach weather service right meow."
-            try:
-                loc = input('-?- Where? (press enter for ip location): ')
-                weather = requests.get(f'http://wttr.in/{loc}?format=4')
-            except:
-                pass
+        elif msg[:8] == '/weather':
+            report = weather.report(msg)
+            print('-=-', report)
 
-            print('-=-', weather.text)
         else:
             print('-!- Command not recognized.')
 
@@ -187,7 +184,7 @@ class Client(ChatIO):
             elif typ_pfx == 'X':
                 # Routes data from SENDER, passes thru SERVER, and stored by RECIPIENT.
                 self._x_hndlr()
-            elif typ_pfx =='W':
+            elif typ_pfx == 'W':
                 self._s_hndlr()
                 self.name = True
             else:
