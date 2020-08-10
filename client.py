@@ -19,6 +19,7 @@ class Client(ChatIO):
     """
     Each message is prefixed with a single char, that helps it be sorted.
     """
+
     def __init__(self, muted=False):
         super(Client, self).__init__()
         self.muted = muted
@@ -43,7 +44,7 @@ class Client(ChatIO):
 
         """
         while True:
-            
+
             # Input
             self.msg = input('')
 
@@ -59,7 +60,7 @@ class Client(ChatIO):
                     self.pack_n_send(serv_sock, typ_pfx, self.msg)
             else:
                 self.msg = ''
-            
+
             # Always revert to default message_type.
             self.message_type = 'M'
 
@@ -98,16 +99,16 @@ class Client(ChatIO):
             # /SF2: Check that RECIPIENT exists.
             if self.path:
                 self.user = xfer.user_prompt(serv_sock)
-        
+
         elif msg == '/status':
             # Ask SERVER to broadcast who is online.
             self.pack_n_send(serv_sock, '/', 'status')
-        
+
         elif msg == '/mute':
             self.muted = True
             self.print_message("YO: Muted. Type /unmute to restore sound.")
-                    
-        elif msg =='/unmute':
+
+        elif msg == '/unmute':
             self.muted = False
             self.print_message("YO: B00P! Type /mute to turn off sound.")
 
@@ -135,7 +136,7 @@ class Client(ChatIO):
                 serv_sock.close()
                 print("-!- Aw, snap. Server's disconnected.")
                 break
-            
+
             # Send this byte downstream to the Inbound Type Handler.
             self._inb_typ_hndlr(typ_pfx)
 
@@ -152,7 +153,7 @@ class Client(ChatIO):
         """
         try:
             typ_pfx = typ_pfx.decode().upper()
-        
+
             if typ_pfx == 'M':
                 # Default. Prints to screen.
                 self._m_hndlr()
@@ -175,7 +176,7 @@ class Client(ChatIO):
                 # Routes data from SENDER, passes thru SERVER, and stored by RECIPIENT.
                 self._x_hndlr()
             else:
-                print('Prefix: ',typ_pfx)
+                print('Prefix: ', typ_pfx)
                 print('-x- Unknown message type error.')
         except:
             pass
@@ -279,7 +280,6 @@ class Client(ChatIO):
         rec_msg = f"-=- {filesize}bytes received."
         print(rec_msg)
 
-
     def start(self):
         self.t1 = Thread(target=self.receiver)
         self.t2 = Thread(target=self.sender)
@@ -339,7 +339,6 @@ if __name__ == "__main__":
         else:
             port = args.port
             print(f'-+- Port: {port}')
-
 
     BFFR = 4096
     host = '127.0.0.1'

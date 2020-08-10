@@ -2,8 +2,10 @@
 
 import sys
 
+
 class Channel():
     """Returns room details"""
+
     def __init__(self):
         pass
 
@@ -11,7 +13,7 @@ class Channel():
         """Returns people in the room when called, and outputs to channel"""
         people = []
 
-        for user in addresses.keys():   
+        for user in addresses.keys():
             person = user
             people.append(f'@{person}')
 
@@ -22,7 +24,7 @@ class Channel():
         # @YO: 4 online - @Jake, @toof, @veronica, @pizzanator
         room_status = f'{ppl_qty} online - {ppl_lst}'
 
-        return room_status # String
+        return room_status  # String
 
 
 class Chime:

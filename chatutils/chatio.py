@@ -5,6 +5,7 @@ from threading import Thread
 
 from .channel import Chime
 
+
 class ChatIO(Chime):
     """Class for ChatIO"""
 
@@ -39,7 +40,6 @@ class ChatIO(Chime):
 
         packed_msg = self.pack_message(typ_pfx, msg)
         sock.send(packed_msg.encode())
-        
 
     def pack_message(self, typ_pfx, msg):
         """
@@ -60,7 +60,13 @@ class ChatIO(Chime):
 
         return packed_msg
 
-    def broadcast(self, packed_msg, all_sockets, sender_socket, target='other', recip_socket=None):
+    def broadcast(self,
+                  packed_msg,
+                  all_sockets,
+                  sender_socket,
+                  target='other',
+                  recip_socket=None,
+                  sender=None):
         """
         uses
             all_sockets[sender_socket] to get SENDER address.
@@ -90,10 +96,9 @@ class ChatIO(Chime):
             pass
 
         else:
-            print('Target type error: Must be "other", "self", "all", or "recip"')
-        
+            print(
+                'Target type error: Must be "other", "self", "all", or "recip"')
 
-        
     def unpack_msg(self, sock, shed_byte=False):
         """Unpacks prefix for file size, and returns trimmed message as bytes.
         
