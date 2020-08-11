@@ -36,7 +36,7 @@ class Server(ChatIO, Channel):
 
         user_name = self.init_client_data(client_cnxn)
 
-        announcement = f"{user_name} is in the house!"
+        announcement = f"@{user_name} is in the house!"
         welcome_msg = "You're in. Welcome to the underground."
 
         packed_msg = self.pack_message('S', announcement)
@@ -245,7 +245,7 @@ if __name__ == "__main__":
     addy = (host, int(port))
 
     # DEBUG
-    addy = ('127.0.0.1', 1515)
+    # addy = ('127.0.0.1', 1515)
 
     try:
         sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
