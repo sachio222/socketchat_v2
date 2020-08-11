@@ -409,9 +409,9 @@ if __name__ == "__main__":
 
     channel.encrypt_flag = args.is_encrypted
     if channel.encrypt_flag:
-        encr_msg = f'\n-!- 🔐 Encryption is {channel.encrypt_flag}.\n-!- However, your handle may still be visible in plaintext.'
+        encr_msg = f'\n-!- 🔐 Encryption is ON.\n-!- However, your handle may still be visible in plaintext.'
     else:
-        encr_msg = f'-!- 🔓 Encryption is {channel.encrypt_flag}.'
+        encr_msg = f'-!- 🔓 Encryption is OFF.'
 
     channel.print_message(encr_msg, style_name='BLUEWHITE')
     channel.start()
