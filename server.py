@@ -246,7 +246,7 @@ if __name__ == "__main__":
 
     print(f'-+- Host Port: {port}')
 
-    addy = (host, int(port))
+    addy = (ip, int(port))
 
     # DEBUG
     # addy = ('127.0.0.1', 1515)
