@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/ python3
 """Encryptochat 2.0"""
 
 import os
