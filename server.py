@@ -66,6 +66,7 @@ class Server(ChatIO, Channel):
     def data_router(self, client_cnxn, data):
         """Handles incoming data based on its message type."""
         # Send confirm dialog to recip if user is sending file.
+        print(data)
         if data == "/".encode():
             # Drain socket of controller message so it doesn't print.
             control = self.unpack_msg(client_cnxn).decode()
