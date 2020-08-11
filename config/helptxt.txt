@@ -19,9 +19,10 @@ Accepted commands:
 Add-ons:
 =======
 
-/weather - Get weather from wttr.in. Usage: /weather <location>
+/weather - Get weather from wttr.in. Usage: /weather <location> <command>
         Location can be a city, coords, or an airport. If no location is
-        provided, it uses your ip location.
+        provided, it uses your ip location. Use 1line command to return
+        weather as a single line.
 
 
 -:- End. Start chatting again.
