@@ -3,17 +3,31 @@ import sys
 import socket
 from threading import Thread
 
-from .channel import Chime
+from .channel import Chime, Colors
 from encryption.fernet import Cipher
 
 
-class ChatIO(Chime):
+class ChatIO(Chime, Colors):
     """Class for ChatIO"""
-
     def __init__(self, muted=False):
         super(ChatIO, self).__init__()
         self.LEN_PFX_LEN = 4
         self.muted = muted
+        # Get color dicts
+        self.style = self.set_style()
+        self.bg = self.set_bg()
+        self.txt = self.set_txt()
+
+        self.GOLD_ULINE = self.format('ULINE', 'NONE', 'GOLD')
+        self.GOLD_BOLD = self.format('BOLD', 'NONE', 'GOLD')
+        self.GOLD = self.format('REG', 'NONE', 'GOLD')
+        self.GREEN_ULINE = self.format('ULINE', 'NONE', 'GREEN')
+        self.GREEN_BOLD = self.format('BOLD', 'NONE', 'GREEN')
+        self.GREEN = self.format('REG', 'NONE', 'GREEN')
+        self.BLUEGREY_ULINE = self.format('ULINE', 'GREY', 'BLUE')
+        self.BLUEGREY_BOLD = self.format('BOLD', 'GREY', 'BLUE')
+        self.BLUEGREY = self.format('REG', 'GREY', 'BLUE')
+        self.BLUEWHITE = self.format('INVERT', 'BLUE', 'WHITE')
 
     def pack_n_send(self, sock, typ_pfx, msg):
         """Adds message type and message length to any message, and then sends.
@@ -129,16 +143,17 @@ class ChatIO(Chime):
         """Converts size prefix data to int."""
         return int(data[:n])
 
-    def print_message(self, msg, enc=False, style='yellow'):
-        """Print message to screen.
-        TODO
-            add fun formatting.
-            
-        """
+    def print_message(self, msg, enc=False, style_name='GREEN_ULINE'):
+        """Print message to screen."""
 
         if enc:
             handle, msg = self.split_n_decrypt(msg)
+
+            handle = self.make_fancy(self.GREEN_BOLD, handle)
+            msg = self.make_fancy(self.GREEN, msg)
+
             print(f'\r{handle}: {msg}')
+            self.play_chime()
 
         else:
             if type(msg) == bytes:
@@ -148,7 +163,10 @@ class ChatIO(Chime):
             sys.stdout.write(ERASE_LINE)
 
             self.play_chime()
-            print(f'\r{msg}')
+            
+            msg = self.make_fancy(self.BLUEWHITE, msg)
+            print(msg)
+            # print(f'\r{msg}')
 
     def remove_pfx(self, data, n=5):
         # Accepts bytes input, chops off prefix and returns plain message as bytes.
@@ -164,3 +182,4 @@ class ChatIO(Chime):
             msg = raw_msg
 
         return handle, msg
+    

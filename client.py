@@ -130,6 +130,12 @@ class Client(ChatIO):
         elif msg == '/unmute':
             self.muted = False
             self.print_message("YO: B00P! Type /mute to turn off sound.")
+        
+        elif msg == '/exit':
+            print('Disconnected.')
+            serv_sock.shutdown(socket.SHUT_RDWR)
+            serv_sock.close()
+            pass
 
         elif msg[:8] == '/weather':
             report = weather.report(msg)
@@ -162,6 +168,8 @@ class Client(ChatIO):
 
             # Send this byte downstream to the Inbound Type Handler.
             self._inb_typ_hndlr(typ_pfx)
+        
+        exit()
 
     def _inb_typ_hndlr(self, typ_pfx):
         """Routes incoming messages based on message type. Default is 'M'.
@@ -220,7 +228,7 @@ class Client(ChatIO):
         """Server announcements."""
         msg = self.unpack_msg(serv_sock).decode()
         msg = f"YO: {msg}"
-        self.print_message(msg)
+        self.print_message(msg, style_name='BLUEGREY')
 
     def _u_hndlr(self):
         """Receives server response from user lookup. If False, rerun.
@@ -391,5 +399,7 @@ if __name__ == "__main__":
 
     print(f'-+- Connected to {host}')
 
-    channel.start()
     channel.encrypt_flag = args.is_encrypted
+    encr_msg = f'-!- Encryption is {channel.encrypt_flag}. However your handle will be visible in plaintext.'
+    channel.print_message(encr_msg)
+    channel.start()
