@@ -197,7 +197,7 @@ class Server(ChatIO, Channel):
             user_name = self.unpack_msg(sock, shed_byte=True).decode()
 
             if not user_name:
-                ERR = f"Handle has got to be at least one char, m8... Try again."
+                ERR = f"Handle needs at least one character, Maestro. Try again."
                 print(ERR)
                 self.pack_n_send(sock, 'S', ERR)
             elif user_name not in sock_nick_dict.values():
