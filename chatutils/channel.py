@@ -39,7 +39,9 @@ class Chime:
         else:
             return
 
+
 class Colors:
+
     def __init__(self):
         self.style = self.set_style()
         self.bg = self.set_bg()
@@ -48,42 +50,44 @@ class Colors:
     def set_style(self):
         # Text styles, positon 1
         style = {
-            'REG' : 0,
-            'BOLD' : 1,
-            'DIM' : 2,
-            'ITALIC' : 3,
-            'ULINE' : 4,
-            'BLINK' : 5,
-            'INVERT' : 7
-        }        
+            'REG': 0,
+            'BOLD': 1,
+            'DIM': 2,
+            'ITALIC': 3,
+            'ULINE': 4,
+            'BLINK': 5,
+            'INVERT': 7
+        }
         return style
-    
+
     def set_bg(self):
         # Background colors, position 2.
         bg = {
-            'BLACK' :40,
-            'RED':41,
-            'GREEN':42,
-            'GOLD':43,
-            'BLUE':44,
-            'PINK':45,
-            'CYAN':46,
-            'GREY':47,
-            'NONE':48
+            'BLACK': 40,
+            'RED': 41,
+            'GREEN': 42,
+            'GOLD': 43,
+            'BLUE': 44,
+            'PINK': 45,
+            'CYAN': 46,
+            'GREY': 47,
+            'NONE': 48
         }
         return bg
 
     def set_txt(self):
         # Text color, pos3
-        t = { 'BLACK':30,
-            'RED':31,
-            'GREEN':32,
-            "GOLD":33,
-            'BLUE':34,
-            'PINK':35,
-            'CYAN':36,
-            'GREY':37,
-            'WHITE':38}
+        t = {
+            'BLACK': 30,
+            'RED': 31,
+            'GREEN': 32,
+            "GOLD": 33,
+            'BLUE': 34,
+            'PINK': 35,
+            'CYAN': 36,
+            'GREY': 37,
+            'WHITE': 38
+        }
         return t
 
     def format(self, styl, bg, txt):
@@ -91,7 +95,7 @@ class Colors:
         bg = self.bg.get(bg)
         t = self.txt.get(txt)
         return f'\x1b[{s};{bg};{t}m'
-    
+
     def make_fancy(self, fmt, msg):
         # Returns formatted string.
         END = '\x1b[0m'

@@ -9,6 +9,7 @@ from encryption.fernet import Cipher
 
 class ChatIO(Chime, Colors):
     """Class for ChatIO"""
+
     def __init__(self, muted=False):
         super(ChatIO, self).__init__()
         self.LEN_PFX_LEN = 4
@@ -152,8 +153,9 @@ class ChatIO(Chime, Colors):
             handle = self.make_fancy(self.GREEN_BOLD, handle)
             msg = self.make_fancy(self.GREEN, msg)
 
-            print(f'\r{handle}: {msg}')
             self.play_chime()
+
+            print(f'\r{handle}: {msg}')
 
         else:
             if type(msg) == bytes:
@@ -163,10 +165,10 @@ class ChatIO(Chime, Colors):
             sys.stdout.write(ERASE_LINE)
 
             self.play_chime()
-            
+
             msg = self.make_fancy(self.BLUEWHITE, msg)
-            print(msg)
-            # print(f'\r{msg}')
+
+            print(f'\r{msg}')
 
     def remove_pfx(self, data, n=5):
         # Accepts bytes input, chops off prefix and returns plain message as bytes.
@@ -182,4 +184,3 @@ class ChatIO(Chime, Colors):
             msg = raw_msg
 
         return handle, msg
-    
