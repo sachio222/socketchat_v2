@@ -26,7 +26,10 @@ class Cipher():
         return enc_msg
 
     def decrypt(self, msg):
-        dec_msg = self.f.decrypt(msg)
+        try:
+            dec_msg = self.f.decrypt(msg)
+        except Exception:
+            dec_msg = msg
         return dec_msg
 
     def split(self, raw_msg):

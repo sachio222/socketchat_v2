@@ -22,13 +22,16 @@ class ChatIO(Chime, Colors):
         self.GOLD_ULINE = self.format('ULINE', 'NONE', 'GOLD')
         self.GOLD_BOLD = self.format('BOLD', 'NONE', 'GOLD')
         self.GOLD = self.format('REG', 'NONE', 'GOLD')
-        self.GREEN_ULINE = self.format('ULINE', 'NONE', 'GREEN')
-        self.GREEN_BOLD = self.format('BOLD', 'NONE', 'GREEN')
-        self.GREEN = self.format('REG', 'NONE', 'GREEN')
+        self.GREEN_ULINE = self.format('ULINE', 'BLACK', 'GREEN')
+        self.GREEN_BOLD = self.format('BOLD', 'BLACK', 'GREEN')
+        self.GREEN = self.format('REG', 'BLACK', 'GREEN')
         self.BLUEGREY_ULINE = self.format('ULINE', 'GREY', 'BLUE')
         self.BLUEGREY_BOLD = self.format('BOLD', 'GREY', 'BLUE')
         self.BLUEGREY = self.format('REG', 'GREY', 'BLUE')
         self.BLUEWHITE = self.format('INVERT', 'BLUE', 'WHITE')
+        self.GOLDBLACK_ULINE = self.format('ULINE', 'BLACK', 'GOLD')
+        self.GOLDBLACK_BOLD = self.format('BOLD', 'BLACK', 'GOLD')
+        self.GOLDBLACK = self.format('REG', 'BLACK', 'GOLD')
 
     def pack_n_send(self, sock, typ_pfx, msg):
         """Adds message type and message length to any message, and then sends.
@@ -150,12 +153,11 @@ class ChatIO(Chime, Colors):
         if enc:
             handle, msg = self.split_n_decrypt(msg)
 
-            handle = self.make_fancy(self.GREEN_BOLD, handle)
-            msg = self.make_fancy(self.GREEN, msg)
+            handle = self.make_fancy(self.GREEN_BOLD, f'@{handle}:')
+            msg = self.make_fancy(self.GREEN, f'{msg}')
+            print(f'\r{handle}{msg}')
 
             self.play_chime()
-
-            print(f'\r{handle}: {msg}')
 
         else:
             if type(msg) == bytes:
@@ -175,12 +177,13 @@ class ChatIO(Chime, Colors):
         return data[5:]
 
     def split_n_decrypt(self, raw_msg):
-        try:
-            handle, msg = Cipher().split(raw_msg)
-            msg = Cipher().decrypt(msg).decode()
+        # try:
+        handle, msg = Cipher().split(raw_msg)
+        # try:
+        msg = Cipher().decrypt(msg).decode()
 
-        except:
-            handle = None
-            msg = raw_msg
+        # except:
+        #     handle = ''
+        #     msg = raw_msg.decode()
 
         return handle, msg
