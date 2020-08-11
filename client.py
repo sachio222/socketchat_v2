@@ -140,7 +140,7 @@ class Client(ChatIO):
 
         elif msg[:8] == '/weather':
             report = weather.report(msg)
-            print('\r-=-', report)
+            # print('\r-=-', report)
 
         else:
             print('-!- Command not recognized.')
