@@ -23,12 +23,15 @@ class ChatIO(Chime, Colors):
         self.GOLD_BOLD = self.format('BOLD', 'NONE', 'GOLD')
         self.GOLD = self.format('REG', 'NONE', 'GOLD')
         self.GREEN_ULINE = self.format('ULINE', 'BLACK', 'GREEN')
+        self.GREEN_INVERT = self.format('INVERT', 'BLACK', 'GREEN')
         self.GREEN_BOLD = self.format('BOLD', 'BLACK', 'GREEN')
         self.GREEN = self.format('REG', 'BLACK', 'GREEN')
         self.BLUEGREY_ULINE = self.format('ULINE', 'GREY', 'BLUE')
         self.BLUEGREY_BOLD = self.format('BOLD', 'GREY', 'BLUE')
+        self.BLACKGREY_BOLD = self.format('INVERT', 'GREY', 'BLACK')
+        self.BLACKWHITE = self.format('INVERT', 'BLACK', 'WHITE')
         self.BLUEGREY = self.format('REG', 'GREY', 'BLUE')
-        self.BLUEWHITE = self.format('INVERT', 'BLUE', 'WHITE')
+        self.BLUEWHITE = self.format('INVERT', 'BLUE', 'GREY')
         self.GOLDBLACK_ULINE = self.format('ULINE', 'BLACK', 'GOLD')
         self.GOLDBLACK_BOLD = self.format('BOLD', 'BLACK', 'GOLD')
         self.GOLDBLACK = self.format('REG', 'BLACK', 'GOLD')
@@ -95,15 +98,24 @@ class ChatIO(Chime, Colors):
 
         if target == 'all':
             for sock in all_sockets:
-                sock.send(packed_msg)
+                try:
+                    sock.send(packed_msg)
+                except:
+                    pass
         elif target == 'self':
             for sock in all_sockets:
                 if sock == sender_socket:
-                    sock.send(packed_msg)
+                    try:
+                        sock.send(packed_msg)
+                    except:
+                        pass
         elif target == 'other':
             for sock in all_sockets:
                 if sock != sender_socket:
-                    sock.send(packed_msg)
+                    try:
+                        sock.send(packed_msg)
+                    except:
+                        pass
         elif target == 'recip':
             for sock in all_sockets:
                 try:
@@ -147,13 +159,13 @@ class ChatIO(Chime, Colors):
         """Converts size prefix data to int."""
         return int(data[:n])
 
-    def print_message(self, msg, enc=False, style_name='GREEN_ULINE'):
+    def print_message(self, msg, enc=False, style_name=None):
         """Print message to screen."""
 
         if enc:
             handle, msg = self.split_n_decrypt(msg)
 
-            handle = self.make_fancy(self.GREEN_BOLD, f'@{handle}:')
+            handle = self.make_fancy(self.GREEN, f'@{handle}:')
             msg = self.make_fancy(self.GREEN, f' {msg}')
             print(f'\r{handle}{msg}')
 
@@ -167,8 +179,14 @@ class ChatIO(Chime, Colors):
             sys.stdout.write(ERASE_LINE)
 
             self.play_chime()
+            if style_name == "GREEN_INVERT":
+                msg = self.make_fancy(self.GREEN_INVERT, msg)
 
-            msg = self.make_fancy(self.BLUEWHITE, msg)
+            elif style_name == "BLUEWHITE":
+                msg = self.make_fancy(self.BLACKWHITE, msg)
+
+            else:
+                msg = self.make_fancy(self.BLACKGREY_BOLD, msg)
 
             print(f'\r{msg}')
 

@@ -139,7 +139,7 @@ class Client(ChatIO):
             pass
 
         elif msg[:8] == '/weather':
-            report = weather.report(msg)
+            weather.report(msg)
             # print('\r-=-', report)
 
         else:
@@ -208,8 +208,7 @@ class Client(ChatIO):
                 # Routes data from SENDER, passes thru SERVER, and stored by RECIPIENT.
                 self._x_hndlr()
             elif typ_pfx == 'W':
-                self._s_hndlr()
-                self.introduced = True
+                self._w_hndlr()
             else:
                 print('Prefix: ', typ_pfx)
                 print('-x- Unknown message type error.')
@@ -324,6 +323,14 @@ class Client(ChatIO):
         rec_msg = f"-=- {filesize}bytes received."
         print(rec_msg)
 
+    def _w_hndlr(self):
+        """Welcome method."""
+        msg = self.unpack_msg(serv_sock).decode()
+        msg = f"-=- {msg}"
+        self.print_message(msg, style_name='GREEN_INVERT')
+        self.introduced = True
+        self.pack_n_send(serv_sock, '/', 'status self')
+
     def start(self):
         self.t1 = Thread(target=self.receiver)
         self.t2 = Thread(target=self.sender)
@@ -402,9 +409,9 @@ if __name__ == "__main__":
 
     channel.encrypt_flag = args.is_encrypted
     if channel.encrypt_flag:
-        encr_msg = f'-!- Encryption is {channel.encrypt_flag}. However your handle will be visible in plaintext.'
+        encr_msg = f'\n-!- 🔐 Encryption is {channel.encrypt_flag}.\n-!- However, your handle may still be visible in plaintext.'
     else:
-        encr_msg = f'-!- Encryption is {channel.encrypt_flag}.'
+        encr_msg = f'-!- 🔓 Encryption is {channel.encrypt_flag}.'
 
-    channel.print_message(encr_msg)
+    channel.print_message(encr_msg, style_name='BLUEWHITE')
     channel.start()

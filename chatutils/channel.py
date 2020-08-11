@@ -94,7 +94,7 @@ class Colors:
         s = self.style.get(styl)
         bg = self.bg.get(bg)
         t = self.txt.get(txt)
-        return f'\x1b[{s};{bg};{t}m'
+        return f'\x1b[{s};{t};{bg}m'
 
     def make_fancy(self, fmt, msg):
         # Returns formatted string.

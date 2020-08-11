@@ -44,7 +44,7 @@ class Server(ChatIO, Channel):
         # send to user only.
         self.pack_n_send(client_cnxn, 'W', welcome_msg)
 
-        self.broadcast(packed_msg, sockets, client_cnxn, target='all')
+        self.broadcast(packed_msg, sockets, client_cnxn, target='other')
         print(announcement)
 
         # Start listening.
@@ -68,13 +68,17 @@ class Server(ChatIO, Channel):
         if data == "/".encode():
             # Drain socket of controller message so it doesn't print.
             control = self.unpack_msg(client_cnxn).decode()
-
-            if control == 'status':
+            control = control.split(' ')
+            print(control[0])
+            if control[0] == 'status':
                 status, _ = self.get_status(nick_addy_dict)
                 status = self.pack_message('S', status)
-                print(status)
-                self.broadcast(status, sockets, client_cnxn, target="all")
-
+                print(control[-1])
+                if control[-1] == 'self':
+                    target = 'self'
+                else:
+                    target = 'all'
+                self.broadcast(status, sockets, client_cnxn, target=target)
         elif data == b'M':
             sender = sock_nick_dict[client_cnxn]
             buff_text = self.unpack_msg(client_cnxn)
