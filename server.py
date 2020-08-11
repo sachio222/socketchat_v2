@@ -122,7 +122,6 @@ class Server(ChatIO, Channel):
         
         """
         username = self.unpack_msg(sock)
-        print('HEREITIS: ', username)
         if username != b'cancel':
 
             # Check for address.
@@ -246,7 +245,7 @@ if __name__ == "__main__":
     addy = (host, int(port))
 
     # DEBUG
-    # addy = ('127.0.0.1', 1515)
+    addy = ('127.0.0.1', 1515)
 
     try:
         sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
