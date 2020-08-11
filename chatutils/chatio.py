@@ -138,7 +138,7 @@ class ChatIO(Chime):
 
         if enc:
             handle, msg = self.split_n_decrypt(msg)
-            print(f'\r{handle}: {msg.decode()}')
+            print(f'\r{handle}: {msg}')
 
         else:
             if type(msg) == bytes:
