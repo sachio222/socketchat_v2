@@ -69,11 +69,9 @@ class Server(ChatIO, Channel):
             # Drain socket of controller message so it doesn't print.
             control = self.unpack_msg(client_cnxn).decode()
             control = control.split(' ')
-            print(control[0])
             if control[0] == 'status':
                 status, _ = self.get_status(nick_addy_dict)
                 status = self.pack_message('S', status)
-                print(control[-1])
                 if control[-1] == 'self':
                     target = 'self'
                 else:
