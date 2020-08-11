@@ -154,7 +154,7 @@ class ChatIO(Chime, Colors):
             handle, msg = self.split_n_decrypt(msg)
 
             handle = self.make_fancy(self.GREEN_BOLD, f'@{handle}:')
-            msg = self.make_fancy(self.GREEN, f'{msg}')
+            msg = self.make_fancy(self.GREEN, f' {msg}')
             print(f'\r{handle}{msg}')
 
             self.play_chime()
