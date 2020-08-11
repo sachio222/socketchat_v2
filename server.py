@@ -53,7 +53,6 @@ class Server(ChatIO, Channel):
 
             if not data:
                 discon_msg = f'{sock_nick_dict[client_cnxn]} has been disconnected.'
-                print(discon_msg)
                 packed_msg = self.pack_message('S', discon_msg)
                 self.broadcast(packed_msg, sockets, client_cnxn, 'other')
                 del (nick_addy_dict[sock_nick_dict[client_cnxn]])
@@ -66,7 +65,6 @@ class Server(ChatIO, Channel):
     def data_router(self, client_cnxn, data):
         """Handles incoming data based on its message type."""
         # Send confirm dialog to recip if user is sending file.
-        print(data)
         if data == "/".encode():
             # Drain socket of controller message so it doesn't print.
             control = self.unpack_msg(client_cnxn).decode()

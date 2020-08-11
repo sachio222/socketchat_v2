@@ -390,7 +390,6 @@ if __name__ == "__main__":
     serv_sock.connect((host, port))
 
     print(f'-+- Connected to {host}')
-    # name = serv_sock.recv(BFFR)
-    # print(name.decode())
 
     channel.start()
+    channel.encrypt_flag = args.is_encrypted
