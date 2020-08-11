@@ -241,8 +241,7 @@ class Client(ChatIO):
 
         # Reply from server.
         user_exists = self.unpack_msg(serv_sock).decode()
-        _, user_exists = self.split_n_decrypt(user_exists)
-
+        # _, user_exists = self.split_n_decrypt(user_exists)
         if user_exists == "False":
             print("-!- They're not here. Try again. \n-=- Send to >> @", end='')
             self.message_type = 'U'
@@ -261,7 +260,7 @@ class Client(ChatIO):
 
         # Display prompt sent from xfer.recip_prompt.
         recip_prompt = self.unpack_msg(serv_sock).decode()
-        _, recip_prompt = self.split_n_decrypt(recip_prompt)
+        # _, recip_prompt = self.split_n_decrypt(recip_prompt)
 
         self.message_type = "A"
         self.encrypt_traffic = False
@@ -274,7 +273,7 @@ class Client(ChatIO):
 
         # Answer to prompt from F handler.
         recip_choice = self.unpack_msg(serv_sock).decode()
-        _, recip_choice = self.split_n_decrypt(recip_choice)
+        # _, recip_choice = self.split_n_decrypt(recip_choice)
         print('RECIP CHOICE is ', recip_choice)
 
         # Resend if choice is nonsense.
