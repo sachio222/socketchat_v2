@@ -75,6 +75,7 @@ class Client(ChatIO):
 
             else:
                 self.msg = ''
+                # pass
 
             typ_pfx = self.message_type
             self.pack_n_send(serv_sock, typ_pfx, self.msg)
