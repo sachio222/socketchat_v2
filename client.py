@@ -3,7 +3,7 @@
 
 import os
 import sys
-import socket
+import socket, ssl
 from threading import Thread
 import argparse
 import requests
@@ -405,7 +405,14 @@ if __name__ == "__main__":
     channel = Client()
     cipher = Cipher()
 
+    context = ssl.SSLContext(ssl.PROTOCOL_TLSv1)
+    context.verify_mode = ssl.CERT_NONE
+    context.check_hostname = True
+    context.load_default_certs()
+
     serv_sock = socket.socket()
+    serv_sock = context.wrap_socket(serv_sock, server_hostname=host)
+
     serv_sock.connect((host, port))
 
     print(f'-+- Connected to {host}')
