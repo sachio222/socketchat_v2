@@ -162,6 +162,9 @@ class ChatIO(Chime, Colors):
     def print_message(self, msg, enc=False, style_name=None):
         """Print message to screen."""
 
+        ERASE_LINE = '\x1b[2K'
+        sys.stdout.write(ERASE_LINE)
+
         if enc:
             handle, msg = self.split_n_decrypt(msg)
 
@@ -174,9 +177,7 @@ class ChatIO(Chime, Colors):
         else:
             if type(msg) == bytes:
                 msg = msg.decode()
-
-            ERASE_LINE = '\x1b[2K'
-            sys.stdout.write(ERASE_LINE)
+                
 
             self.play_chime()
             if style_name == "GREEN_INVERT":
