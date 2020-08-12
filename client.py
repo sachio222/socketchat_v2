@@ -15,7 +15,7 @@ from chatutils.xfer import FileXfer
 from chatutils.chatio import ChatIO
 from chatutils.channel import Chime
 
-from addons import weather, urbandict
+from addons import weather, urbandict, moon
 
 
 class Client(ChatIO):
@@ -144,6 +144,9 @@ class Client(ChatIO):
         
         elif msg[:7] == '/urband':
             urbandict.urbandict(msg)
+
+        elif msg == '/moon':
+            moon.phase()
 
         else:
             print('-!- Command not recognized.')
@@ -274,7 +277,7 @@ class Client(ChatIO):
 
         # Answer to prompt from F handler.
         recip_choice = self.unpack_msg(serv_sock).decode()
-        print('RECIP CHOICE is ', recip_choice)
+        print('Sending...\r')
 
         # Resend if choice is nonsense.
         if recip_choice.lower() != 'y' and recip_choice.lower() != 'n':
