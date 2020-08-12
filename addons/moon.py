@@ -6,7 +6,7 @@ def phase():
     try:
         url = f'http://wttr.in/moon'
         moon = requests.get(url)
-        for line in moon.text.splitlines():
+        for line in moon.text.splitlines()[:-1]:
             print(line)
 
     except:
