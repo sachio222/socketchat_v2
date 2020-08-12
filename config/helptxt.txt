@@ -24,5 +24,7 @@ Add-ons:
         provided, it uses your ip location. Use 1line command to return
         weather as a single line.
 
+/urband <word> - Returns top defition from urbandictionary.com.
+
 
 -:- End. Start chatting again.
