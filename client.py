@@ -405,10 +405,22 @@ if __name__ == "__main__":
     channel = Client()
     cipher = Cipher()
 
-    context = ssl.SSLContext(ssl.PROTOCOL_TLSv1)
-    context.verify_mode = ssl.CERT_NONE
-    context.check_hostname = True
-    context.load_default_certs()
+    # SSL
+
+    # Forward secrecy from
+    # https://jderose.blogspot.com/2014/01/how-to-enable-perfect-forward-secrecy.html
+    certpath = ''
+    keypath = ''
+
+    client_cntx = ssl.SSLContext(ssl.PROTOCOL_TLSv1)
+    client_cntx.verify_mode = ssl.CERT_REQUIRED
+    client_cntx.set_ciphers('ECDHE-RSA-AES256-SHA')
+    client_cntx.options |= ssl.OP_NO_COMPRESSION
+    client_cntx.options |= ssl.OP_SINGLE_ECDH_USE
+    client_cntx.options |= ssl.OP_CIPHER_SERVER_PREFERENCE
+    client_cntx.load_cert_chain(certpath, keypath)
+    client_cntx.load_verify_locations(capath) # Certain authority
+
 
     serv_sock = socket.socket()
     serv_sock = context.wrap_socket(serv_sock, server_hostname=host)
