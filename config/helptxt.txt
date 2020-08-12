@@ -24,7 +24,12 @@ Add-ons:
         provided, it uses your ip location. Use 1line command to return
         weather as a single line.
 
-/urband <word> - Returns top defition from urbandictionary.com.
+/urband - Returns top defition from urbandictionary.com. Usage /urband <term>
+
+/moon - Shows the current phase of the moon. Rad stuff. Check here for more:
+        https://github.com/chubin/pyphoon
+
+
 
 
 -:- End. Start chatting again.
