@@ -120,10 +120,11 @@ class Client(ChatIO):
             if self.path:
                 self.user = xfer.user_prompt(serv_sock)
 
-        elif msg == '/status':
+        elif msg[:7] == '/status':
             # Ask SERVER to broadcast who is online.
-            self.pack_n_send(serv_sock, '/', 'status')
-
+            msg = msg[1:]
+            self.pack_n_send(serv_sock, '/', msg)
+        
         elif msg == '/mute':
             self.muted = True
             self.print_message("@YO: Muted. Type /unmute to restore sound.")
