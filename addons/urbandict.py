@@ -22,10 +22,13 @@ def _run_urbandict(search):
 
 def urbandict(word):
     term = word[8:]
-    entry = _run_urbandict(term)
-    entry = entry['list'][0].get('definition').replace('[', '').replace(']', '')
-    print(f'-=- 📖 UrbanDictionary.com\n')
-    print(f'Top definition for "{term}":\n')
-    print(entry)
-
+    try:
+        entry = _run_urbandict(term)
+        entry = entry['list'][0].get('definition').replace('[', '').replace(']', '')
+        print(f'-=- 📖 UrbanDictionary.com\n')
+        print(f'Top definition for "{term}":\n')
+        print(entry)
+    except:
+        print(f'-=- 📖 UrbanDictionary.com\n')
+        print(f'Nothing found for "{term}". Try something else.')
 

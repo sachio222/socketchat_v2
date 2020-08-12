@@ -132,7 +132,7 @@ class Client(ChatIO):
             self.muted = False
             self.print_message("@YO: B00P! Type /mute to turn off sound.")
 
-        elif msg == '/exit':
+        elif msg == '/exit' or msg == '/close':
             print('Disconnected.')
             serv_sock.shutdown(socket.SHUT_RDWR)
             serv_sock.close()
