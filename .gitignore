@@ -1,13 +1,29 @@
-*.key
-*.pyc
-encryption/__pycache__/
-__pycache__/
-<<<<<<< HEAD
-tmp/
+
+#-- py caching
+/**/__pycache__
+/**/*.pyc
+
+#-- key file
+/**/*.key
+
+#-- temp stuff
+/tmp
 venv
-=======
+*_copy.*
+
+#-- osx meta files
 .DS_Store
 ._DS_Store
+<<<<<<< HEAD
 *_copy.*
 .vscode
 transfers/
+=======
+
+#-- nano files
+/**/*.swp
+/**/*.save
+/**/*~
+
+#-- vs code meta
+/.vscode
