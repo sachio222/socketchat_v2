@@ -15,7 +15,7 @@ from chatutils.xfer import FileXfer
 from chatutils.chatio import ChatIO
 from chatutils.channel import Chime
 
-from addons import weather
+from addons import weather, urbandict
 
 
 class Client(ChatIO):
@@ -141,6 +141,9 @@ class Client(ChatIO):
         elif msg[:8] == '/weather':
             weather.report(msg)
             # print('\r-=-', report)
+        
+        elif msg[:7] == '/urband':
+            urbandict.urbandict(msg)
 
         else:
             print('-!- Command not recognized.')
