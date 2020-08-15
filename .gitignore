@@ -5,6 +5,7 @@
 
 #-- key file
 /**/*.key
+*.pem
 
 #-- temp stuff
 /tmp
