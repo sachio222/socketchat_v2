@@ -108,7 +108,7 @@ class Client(ChatIO):
 
         elif msg == '/help' or msg == '/h':
             # Read from file in config folder.
-            path = 'config/helptxt.txt'
+            path = 'config/help.txt'
             utils.print_from_file(path)
 
         elif msg == '/sendfile' or msg == '/sf':
