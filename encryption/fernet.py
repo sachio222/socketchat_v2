@@ -14,11 +14,11 @@ class Cipher():
 
     def generate_key(self):
         _key = Fernet.generate_key()
-        with open('secret.key', 'wb') as key_file:
+        with open('keys/fernet/secret.key', 'wb') as key_file:
             key_file.write(_key)
 
     def load_key(self):
-        return open('secret.key', 'rb').read()
+        return open('keys/fernet/secret.key', 'rb').read()
 
     def encrypt(self, msg):
         msg = msg.encode()  # byte encode

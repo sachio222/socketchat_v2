@@ -28,7 +28,7 @@ def generate_private_rsa_key(name='key.pem'):
     )
 
     # Write key
-    with open('key.pem', 'wb') as f:
+    with open('keys/TLS/rsa_key.pem', 'wb') as f:
         f.write(key.private_bytes(
             encoding=serialization.Encoding.PEM,
             format=serialization.PrivateFormat.TraditionalOpenSSL,
@@ -36,7 +36,7 @@ def generate_private_rsa_key(name='key.pem'):
         ))
     return key
 
-def load_private_rsa_key(name='key.pem'):
+def load_private_rsa_key(name='keys/TLS/rsa_key.pem'):
     #probably won't work.
     # serialization.load_pem_private_key()
     pass
@@ -77,5 +77,5 @@ cert = x509.CertificateBuilder().subject_name(
 # Sign certificate with private key
 ).sign(key, hashes.SHA256(), default_backend())
 # Write certificate to disk
-with open('certificate.pem', 'wb') as f:
+with open('keys/TLS/certificate.pem', 'wb') as f:
     f.write(cert.public_bytes(serialization.Encoding.PEM))
