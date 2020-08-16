@@ -1,3 +1,4 @@
+
 """
 https://cryptography.io/en/latest/x509/tutorial/
 Certificate Signing Requests (CSR) 6 steps. 
@@ -11,6 +12,7 @@ Certificate Signing Requests (CSR) 6 steps.
     server traffic.
 """
 
+import os
 import datetime
 
 from cryptography import x509
@@ -30,6 +32,10 @@ def generate_private_rsa_key(path=rsa_key_path):
     )
 
     # Write key
+    folders = os.path.dirname(rsa_key_path)
+    if not os.path.exists(folders):
+        os.makedirs(folders)
+
     with open(path, 'wb') as f:
         f.write(key.private_bytes(
             encoding=serialization.Encoding.PEM,
