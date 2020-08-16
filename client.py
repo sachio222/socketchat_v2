@@ -3,7 +3,7 @@
 
 import os
 import sys
-import socket
+import socket, ssl
 from threading import Thread
 import argparse
 import requests
@@ -405,8 +405,23 @@ if __name__ == "__main__":
     channel = Client()
     cipher = Cipher()
 
+    rsa_key_path = 'encryption/keys/TLS/rsa_key.pem'
+    cert_path = 'encryption/keys/TLS/certificate.pem'
+    
+
+    client_ctxt = ssl.create_default_context()
+    client_ctxt.check_hostname = False
+    client_ctxt.verify_mode = ssl.CERT_NONE
+    client_ctxt.set_ciphers('ECDHE-RSA-AES256-GCM-SHA384')
+    client_ctxt.options |= ssl.OP_NO_COMPRESSION
+    client_ctxt.load_cert_chain(cert_path, rsa_key_path)
+
     serv_sock = socket.socket()
+    # Create SSL sock.
+
     serv_sock.connect((host, port))
+    serv_sock = client_ctxt.wrap_socket(serv_sock, server_hostname=host)
+
 
     print(f'-+- Connected to {host}')
 

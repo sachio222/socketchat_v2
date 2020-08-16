@@ -1,6 +1,6 @@
 #!/usr/bin/ python3
 
-import socket
+import socket, ssl
 import sys
 from threading import Thread
 
@@ -8,7 +8,6 @@ import chatutils.xfer as xfer
 import chatutils.utils as utils
 from chatutils.chatio import ChatIO
 from chatutils.channel import Channel
-
 
 class Server(ChatIO, Channel):
     """Server class"""
@@ -25,8 +24,11 @@ class Server(ChatIO, Channel):
         
         """
         # Accept connections.
+        if True:
+            ssock = server_ctxt.wrap_socket(sock, server_side=True)
+
         while True:
-            client_cnxn, client_addr = sock.accept()
+            client_cnxn, client_addr = ssock.accept()
             print(f'-+- Connected... to {client_addr}')
             sockets[client_cnxn] = client_addr  # Create cnxn:addr pairings.
             Thread(target=self.handle_clients, args=(client_cnxn,)).start()
@@ -249,6 +251,17 @@ if __name__ == "__main__":
     # DEBUG
     # addy = ('127.0.0.1', 1515)
 
+    rsa_key_path = 'encryption/keys/TLS/rsa_key.pem'
+    cert_path = 'encryption/keys/TLS/certificate.pem'
+
+    server_ctxt = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
+    server_ctxt.set_ecdh_curve('prime256v1')
+    server_ctxt.load_cert_chain(cert_path, rsa_key_path)
+    server_ctxt.set_ciphers('ECDHE-RSA-AES256-GCM-SHA384')
+    server_ctxt.options |= ssl.OP_NO_COMPRESSION
+    server_ctxt.options |= ssl.OP_SINGLE_ECDH_USE
+    server_ctxt.options |= ssl.OP_CIPHER_SERVER_PREFERENCE
+
     try:
         sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         sock.bind(addy)
@@ -257,5 +270,6 @@ if __name__ == "__main__":
         utils.countdown(90)
     sock.settimeout(None)
     sock.listen(MAX_CNXN)
+
     print(f'-+- Waiting for connections...')
     server.start()
