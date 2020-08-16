@@ -18,8 +18,10 @@ from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric import rsa
 
+rsa_key_path = 'keys/TLS/rsa_key.pem'
+cert_path = 'keys/TLS/certificate.pem'
 
-def generate_private_rsa_key(name='key.pem'):
+def generate_private_rsa_key(path=rsa_key_path):
     # Generate a private RSA key.
     key = rsa.generate_private_key(
         public_exponent=65537,
@@ -28,15 +30,15 @@ def generate_private_rsa_key(name='key.pem'):
     )
 
     # Write key
-    with open('keys/TLS/rsa_key.pem', 'wb') as f:
+    with open(path, 'wb') as f:
         f.write(key.private_bytes(
             encoding=serialization.Encoding.PEM,
             format=serialization.PrivateFormat.TraditionalOpenSSL,
-            encryption_algorithm=serialization.BestAvailableEncryption(b'passphrase')
+            encryption_algorithm=serialization.BestAvailableEncryption(b'pw')
         ))
     return key
 
-def load_private_rsa_key(name='keys/TLS/rsa_key.pem'):
+def load_private_rsa_key(path=rsa_key_path):
     #probably won't work.
     # serialization.load_pem_private_key()
     pass
@@ -77,5 +79,5 @@ cert = x509.CertificateBuilder().subject_name(
 # Sign certificate with private key
 ).sign(key, hashes.SHA256(), default_backend())
 # Write certificate to disk
-with open('keys/TLS/certificate.pem', 'wb') as f:
+with open(cert_path, 'wb') as f:
     f.write(cert.public_bytes(serialization.Encoding.PEM))
