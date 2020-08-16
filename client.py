@@ -51,34 +51,38 @@ class Client(ChatIO):
         """
 
         while True:
+            try:
+                # Input
+                self.msg = input('')
 
-            # Input
-            self.msg = input('')
+                # Check for controller message.
+                if self.msg:
+                    # If controller, skip to controller handler.
+                    if self.msg[0] == '/':
+                        typ_pfx = 'C'
+                        self.inp_ctrl_handler(self.msg)
+                        continue
 
-            # Check for controller message.
-            if self.msg:
-                # If controller, skip to controller handler.
-                if self.msg[0] == '/':
-                    typ_pfx = 'C'
-                    self.inp_ctrl_handler(self.msg)
-                    continue
+                    # Give it a prefix of self.message_type. Default is 'M'
+                    else:
+                        # If name has been given, encrypt everything else.
+                        if self.introduced:
+                            if self.encrypt_traffic:
+                                self.msg = cipher.encrypt(self.msg)
 
-                # Give it a prefix of self.message_type. Default is 'M'
+                    # typ_pfx = self.message_type
+                    # self.pack_n_send(serv_sock, typ_pfx, self.msg)
+
                 else:
-                    # If name has been given, encrypt everything else.
-                    if self.introduced:
-                        if self.encrypt_traffic:
-                            self.msg = cipher.encrypt(self.msg)
+                    self.msg = ''
+                    # pass
 
-                # typ_pfx = self.message_type
-                # self.pack_n_send(serv_sock, typ_pfx, self.msg)
+                typ_pfx = self.message_type
+                self.pack_n_send(serv_sock, typ_pfx, self.msg)
 
-            else:
-                self.msg = ''
-                # pass
-
-            typ_pfx = self.message_type
-            self.pack_n_send(serv_sock, typ_pfx, self.msg)
+            except:
+                serv_sock.close()
+                exit()
 
             # Always revert to default message_type and encryption.
             self.message_type = 'M'
