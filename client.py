@@ -9,6 +9,7 @@ import argparse
 import requests
 
 from encryption.fernet import Cipher
+from encryption.salt import SaltCipher
 
 from chatutils import utils
 from chatutils.xfer import FileXfer
@@ -408,6 +409,7 @@ if __name__ == "__main__":
     xfer = FileXfer()
     channel = Client()
     cipher = Cipher()
+    salt_cipher = SaltCipher()
 
     rsa_key_path = 'encryption/keys/TLS/rsa_key.pem'
     cert_path = 'encryption/keys/TLS/certificate.pem'
