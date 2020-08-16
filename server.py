@@ -9,6 +9,8 @@ import chatutils.utils as utils
 from chatutils.chatio import ChatIO
 from chatutils.channel import Channel
 
+import encryption.x509 as x509
+
 class Server(ChatIO, Channel):
     """Server class"""
 
@@ -224,6 +226,7 @@ MAX_CNXN = 5
 
 if __name__ == "__main__":
     # TODO: Add inputs.
+    x509 = x509.X509()
     server = Server()
 
     sock = socket.socket()
