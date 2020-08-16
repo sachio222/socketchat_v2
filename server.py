@@ -48,7 +48,6 @@ class Server(ChatIO, Channel):
 
         # send to user only.
         self.pack_n_send(client_cnxn, 'W', welcome_msg)
-
         self.broadcast(packed_msg, sockets, client_cnxn, target='other')
         print(announcement)
 
@@ -75,7 +74,10 @@ class Server(ChatIO, Channel):
             # Drain socket of controller message so it doesn't print.
             control = self.unpack_msg(client_cnxn).decode()
             control = control.split(' ')
+
             if control[0] == 'status':
+                # Send room status.
+                # TODO: break into method.      
                 status, _ = self.get_status(nick_addy_dict)
                 status = self.pack_message('S', status)
                 if control[-1] == 'self':
@@ -83,6 +85,7 @@ class Server(ChatIO, Channel):
                 else:
                     target = 'all'
                 self.broadcast(status, sockets, client_cnxn, target=target)
+        
         elif data == b'M':
             sender = sock_nick_dict[client_cnxn]
             buff_text = self.unpack_msg(client_cnxn)
@@ -115,6 +118,17 @@ class Server(ChatIO, Channel):
 
         elif data == b'X':
             self._serv_x_hndlr(data, client_cnxn)
+        
+        elif data == b'P':
+            # Stores public keys
+            pub_key = client_cnxn.recv(4096)
+            user_key_dict[client_cnxn] = pub_key
+            print(user_key_dict)
+        
+        elif data == b'T':
+            # Lookup user for trust.
+            self._serv_t_hndlr(client_cnxn)
+
 
         else:
             buff_text = self.unpack_msg(client_cnxn)
@@ -141,6 +155,16 @@ class Server(ChatIO, Channel):
 
             cancel_msg = 'x-x Send file cancelled. Continue chatting.'
             self.pack_n_send(sock, 'M', cancel_msg)
+
+    def _serv_t_hndlr(self, client_cnxn):
+        user_name = self.unpack_msg(client_cnxn)
+        asker = sock_nick_dict[client_cnxn]
+        user_found = self.lookup_user(client_cnxn, user_name)
+        print('user found: ', user_found)
+        if user_found:
+            msg = f'Wanna trust {asker} (Y/N)?'
+            msg = self.pack_message('T', msg)
+            self.broadcast(msg, sockets, client_cnxn, 'recip', self.RECIP_SOCK)
 
     def _serv_x_hndlr(self, data, client_cnxn):
         recd_bytes = 0
@@ -224,6 +248,7 @@ class Server(ChatIO, Channel):
 sockets = {}
 sock_nick_dict = {}
 nick_addy_dict = {}
+user_key_dict = {}
 MAX_CNXN = 5
 
 if __name__ == "__main__":

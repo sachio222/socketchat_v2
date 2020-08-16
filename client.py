@@ -10,6 +10,7 @@ import requests
 
 from encryption.fernet import Cipher
 from encryption.salt import SaltCipher
+from nacl.encoding import Base64Encoder
 
 from chatutils import utils
 from chatutils.xfer import FileXfer
@@ -72,12 +73,8 @@ class Client(ChatIO):
                                 self.msg = fernet.encrypt(self.msg)
                                 # self.msg = nacl.encrypt(self.msg.decode())
 
-                    # typ_pfx = self.message_type
-                    # self.pack_n_send(serv_sock, typ_pfx, self.msg)
-
                 else:
                     self.msg = ''
-                    # pass
 
                 typ_pfx = self.message_type
                 self.pack_n_send(serv_sock, typ_pfx, self.msg)
@@ -138,6 +135,9 @@ class Client(ChatIO):
         elif msg == '/unmute':
             self.muted = False
             self.print_message("@YO: B00P! Type /mute to turn off sound.")
+
+        elif msg[:6] == '/trust':
+            self.trust_exchange(msg)
 
         elif msg == '/exit' or msg == '/close':
             print('Disconnected.')
@@ -221,7 +221,11 @@ class Client(ChatIO):
                 # Routes data from SENDER, passes thru SERVER, and stored by RECIPIENT.
                 self._x_hndlr()
             elif typ_pfx == 'W':
+                # Recv welcome msg, send pub_key
                 self._w_hndlr()
+            elif typ_pfx == 'T':
+                # Recv trust decision from askee.
+                self._t_hndler()
             else:
                 print('Prefix: ', typ_pfx)
                 print('-x- Unknown message type error.')
@@ -337,15 +341,46 @@ class Client(ChatIO):
         msg = self.unpack_msg(serv_sock).decode()
         msg = f"-=- {msg}"
         self.print_message(msg, style_name='GREEN_INVERT')
+        
+        # Generate and upload public nacl key.
+        pub_key = nacl.get_pub_key()
+        pub_key = pub_key.encode(Base64Encoder).decode()
+        self.pack_n_send(serv_sock, 'P', pub_key)
+        
+        # self.introduced begins encryption after name has been sent. 
+        # this is because currently, the name is being sent/stored in plaintext.
         self.introduced = True
         self.pack_n_send(serv_sock, '/', 'status self')
+    
+    def _t_hndler(self):
+        # Answer to prompt from T handler.
+        # Do you want to trust?
+        msg = self.unpack_msg(serv_sock).decode()
+        print(msg)
+        self.message_type = 'V'
+
+    def trust_exchange(self, msg):
+        """TODO: Move to module."""
+        #* Alices sends client lookup to server for 'Bob' with T(rust) type.
+        #* Server listens for 'Trust' message. if receive:
+        #* Server looks for bob in banks.
+        #* IF server finds Bob, it broadcasts trust question and listens on V pipe.
+        # if input to V pipe is Y, Server gets key by Alice and sends to bob as Key type
+        # Server sends key to Bob with key type.
+        # Keys are both shared and encryption is startd.
+        user = msg[7:]
+        if not user:
+            user = input('Who do you want to trust?')
+
+        print(user)
+        self.pack_n_send(serv_sock, 'T', user)
+
 
     def start(self):
         self.t1 = Thread(target=self.receiver)
         self.t2 = Thread(target=self.sender)
         self.t1.start()
         self.t2.start()
-
 
 if __name__ == "__main__":
 
@@ -409,6 +444,8 @@ if __name__ == "__main__":
 
     xfer = FileXfer()
     channel = Client()
+
+    # Establish keys
     fernet = Cipher()
     nacl = SaltCipher()
 

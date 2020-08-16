@@ -74,6 +74,7 @@ class ChatIO(Chime, Colors):
         """
         if type(typ_pfx) == bytes:
             typ_pfx = typ_pfx.decode()
+            
         if type(msg) == bytes:
             msg = msg.decode()
 
