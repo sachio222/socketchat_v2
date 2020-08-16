@@ -26,11 +26,12 @@ class Server(ChatIO, Channel):
         
         """
         # Accept connections.
-        if True:
-            ssock = server_ctxt.wrap_socket(sock, server_side=True)
 
         while True:
-            client_cnxn, client_addr = ssock.accept()
+            client_cnxn, client_addr = sock.accept()
+            if True:
+                client_cnxn = server_ctxt.wrap_socket(client_cnxn, server_side=True)
+            
             print(f'-+- Connected... to {client_addr}')
             sockets[client_cnxn] = client_addr  # Create cnxn:addr pairings.
             Thread(target=self.handle_clients, args=(client_cnxn,)).start()
@@ -57,6 +58,7 @@ class Server(ChatIO, Channel):
 
             if not data:
                 discon_msg = f'{sock_nick_dict[client_cnxn]} has been disconnected.'
+                print(discon_msg)
                 packed_msg = self.pack_message('S', discon_msg)
                 self.broadcast(packed_msg, sockets, client_cnxn, 'other')
                 del (nick_addy_dict[sock_nick_dict[client_cnxn]])
