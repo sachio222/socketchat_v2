@@ -128,8 +128,8 @@ class Server(ChatIO, Channel):
         elif data == b'T':
             # Lookup user for trust.
             self._serv_t_hndlr(client_cnxn)
-
-
+        elif data == b'V':
+            self._serv_v_hndlr(client_cnxn)
         else:
             buff_text = self.unpack_msg(client_cnxn)
             data = self.pack_message(data, buff_text)
@@ -162,9 +162,23 @@ class Server(ChatIO, Channel):
         user_found = self.lookup_user(client_cnxn, user_name)
         print('user found: ', user_found)
         if user_found:
-            msg = f'Wanna trust {asker} (Y/N)?'
+            msg = f'@YO: Wanna trust {asker} (Y/N)?'
             msg = self.pack_message('T', msg)
             self.broadcast(msg, sockets, client_cnxn, 'recip', self.RECIP_SOCK)
+    
+    def _serv_v_hndlr(self, client_cnxn):
+        choice = self.unpack_msg(client_cnxn).decode()
+        if choice.lower() == 'y':
+            msg = "Trust acquired. You are now chatting with some hardcore encryption."
+            msg = self.pack_message('S', msg)
+            self.broadcast(msg, sockets, client_cnxn, 'recip', self.RECIP_SOCK)
+            self.broadcast(msg, sockets, client_cnxn, 'recip', self.SENDER_SOCK)
+        elif choice.lower() == 'n':
+            msg = 'Trust not acquired.'
+            msg = self.pack_message('S', msg)
+            self.broadcast(msg, sockets, client_cnxn, 'recip', self.RECIP_SOCK)
+            self.broadcast(msg, sockets, client_cnxn, 'recip', self.SENDER_SOCK)
+
 
     def _serv_x_hndlr(self, data, client_cnxn):
         recd_bytes = 0
