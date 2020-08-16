@@ -227,8 +227,8 @@ if __name__ == "__main__":
     server = Server()
 
     sock = socket.socket()
-
     host = socket.gethostname()
+    
     try:
         ip = socket.gethostbyname(host)
     except:
@@ -249,12 +249,13 @@ if __name__ == "__main__":
     addy = (ip, int(port))
 
     # DEBUG
-    # addy = ('127.0.0.1', 1515)
+    addy = ('127.0.0.1', port)
 
     rsa_key_path = 'encryption/keys/TLS/rsa_key.pem'
     cert_path = 'encryption/keys/TLS/certificate.pem'
 
-    server_ctxt = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
+    server_ctxt = ssl.SSLContext(ssl.PROTOCOL_TLS)
+    server_ctxt.verify_mode = ssl.CERT_NONE
     server_ctxt.set_ecdh_curve('prime256v1')
     server_ctxt.load_cert_chain(cert_path, rsa_key_path)
     server_ctxt.set_ciphers('ECDHE-RSA-AES256-GCM-SHA384')
