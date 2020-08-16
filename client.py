@@ -69,7 +69,8 @@ class Client(ChatIO):
                         # If name has been given, encrypt everything else.
                         if self.introduced:
                             if self.encrypt_traffic:
-                                self.msg = cipher.encrypt(self.msg)
+                                self.msg = fernet.encrypt(self.msg)
+                                # self.msg = nacl.encrypt(self.msg.decode())
 
                     # typ_pfx = self.message_type
                     # self.pack_n_send(serv_sock, typ_pfx, self.msg)
@@ -408,8 +409,8 @@ if __name__ == "__main__":
 
     xfer = FileXfer()
     channel = Client()
-    cipher = Cipher()
-    salt_cipher = SaltCipher()
+    fernet = Cipher()
+    nacl = SaltCipher()
 
     rsa_key_path = 'encryption/keys/TLS/rsa_key.pem'
     cert_path = 'encryption/keys/TLS/certificate.pem'
