@@ -409,21 +409,22 @@ if __name__ == "__main__":
     cert_path = 'encryption/keys/TLS/certificate.pem'
     
 
-    client_ctxt = ssl.create_default_context()
+    client_ctxt = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
     client_ctxt.check_hostname = False
-    client_ctxt.verify_mode = ssl.CERT_NONE
+    # client_ctxt.verify_mode = ssl.CERT_REQUIRED
     client_ctxt.set_ciphers('ECDHE-RSA-AES256-GCM-SHA384')
     client_ctxt.options |= ssl.OP_NO_COMPRESSION
     client_ctxt.load_cert_chain(cert_path, rsa_key_path)
 
     serv_sock = socket.socket()
+    
     # Create SSL sock.
-
     serv_sock.connect((host, port))
     serv_sock = client_ctxt.wrap_socket(serv_sock, server_hostname=host)
 
-
+    print(f'-+- SSL Established. {serv_sock.version()}')
     print(f'-+- Connected to {host}')
+    # print(f'Peer certificate: {serv_sock.getpeercert()}')
 
     channel.encrypt_flag = args.is_encrypted
     if channel.encrypt_flag:
