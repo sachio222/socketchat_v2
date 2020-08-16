@@ -20,8 +20,8 @@ from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric import rsa
 
-rsa_key_path = 'keys/TLS/rsa_key.pem'
-cert_path = 'keys/TLS/certificate.pem'
+rsa_key_path = 'encryption/keys/TLS/rsa_key.pem'
+cert_path = 'encryption/keys/TLS/certificate.pem'
 
 def generate_private_rsa_key(path=rsa_key_path):
     # Generate a private RSA key.
