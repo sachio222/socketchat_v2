@@ -1,9 +1,13 @@
+import os
 from cryptography.fernet import Fernet
 
+key_path = 'keys/fernet/secret.key'
 
 class Cipher():
 
-    def __init__(self):
+    def __init__(self, path=key_path):
+        self.key_path = path
+        self._check_path(self.key_path)
         try:
             self.key = self.load_key()
         except:
@@ -14,11 +18,11 @@ class Cipher():
 
     def generate_key(self):
         _key = Fernet.generate_key()
-        with open('keys/fernet/secret.key', 'wb') as key_file:
+        with open(self.key_path, 'wb') as key_file:
             key_file.write(_key)
 
     def load_key(self):
-        return open('keys/fernet/secret.key', 'rb').read()
+        return open(self.key_path, 'rb').read()
 
     def encrypt(self, msg):
         msg = msg.encode()  # byte encode
@@ -46,3 +50,9 @@ class Cipher():
         handle = _split[0]
         cipher_msg = _split[1].encode()  # to bytes
         return handle, cipher_msg
+
+    def _check_path(self, path):
+        folders = os.path.dirname(path)
+        if not os.path.exists(folders):
+            os.makedirs(folders)
+
