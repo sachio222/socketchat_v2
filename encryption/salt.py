@@ -11,8 +11,11 @@ class SaltCipher():
 
     def generate_keys(self):
         prv_key = PrivateKey.generate()
-        pub_key = prv_key.public_key
-        return prv_key, pub_key
+        self.pub_key = prv_key.public_key
+        return prv_key, self.pub_key
+    
+    def get_pub_key(self):
+        return self.pub_key
 
     def make_public_box(self, my_prv, ur_pub):
         box = Box(my_prv, ur_pub)
