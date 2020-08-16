@@ -254,6 +254,8 @@ if __name__ == "__main__":
     # DEBUG
     addy = ('127.0.0.1', port)
 
+    # TLS security is TLSv1.3, but is self signing for now.
+    # All that is required for this, but will add CA later.
     rsa_key_path = 'encryption/keys/TLS/rsa_key.pem'
     cert_path = 'encryption/keys/TLS/certificate.pem'
 
