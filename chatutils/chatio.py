@@ -5,6 +5,7 @@ from threading import Thread
 
 from .channel import Chime, Colors
 from encryption.fernet import Cipher
+from encryption.salt import SaltCipher
 
 
 class ChatIO(Chime, Colors):
@@ -196,6 +197,7 @@ class ChatIO(Chime, Colors):
         return data[5:]
 
     def split_n_decrypt(self, raw_msg):
+        # raw_msg = SaltCipher().decrypt(raw_msg)
         # try:
         handle, msg = Cipher().split(raw_msg)
         # try:
