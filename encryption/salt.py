@@ -5,12 +5,8 @@ from nacl.public import PrivateKey, PublicKey, Box
 from nacl.encoding import Base64Encoder, HexEncoder
 from nacl.signing import SigningKey, SignedMessage, VerifyKey
 
-
 class SaltCipher():
-    """A beautiful framework for Assymetric, Symmetric encryption,
-    signing and verifying. 
-    
-    Based on the python fork of nacl's libsodium framework.
+    """Based on the python fork of nacl's libsodium framework.
     
     The salt cipher involves state of the art encryption for assymetric
     encryption between users with the exchange of public keys and the
