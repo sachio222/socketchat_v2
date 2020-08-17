@@ -120,12 +120,7 @@ class Client(ChatIO):
 
         elif msg == '/sendfile' or msg == '/sf':
             # Initiates Send File (SF) sequence.
-            # /SF1: Confirm file is available.
-            self.path, self.filesize = xfer.sender_prompt()
-
-            # /SF2: Check that RECIPIENT exists.
-            if self.path:
-                self.user = xfer.user_prompt(serv_sock)
+            self.start_sendfile_process(serv_sock)
 
         elif msg[:7] == '/status':
             # Ask SERVER to broadcast who is online.
@@ -305,11 +300,11 @@ class Client(ChatIO):
                              'Choice must be Y or N. Try again...')
 
         elif recip_choice.lower() == 'y':
+            # Recipient
+            xfer.file_xfer(serv_sock, self.path, self.filesize)
             # Sender
             print("Sent...")
 
-            # Recipient
-            xfer.file_xfer(serv_sock, self.path, self.filesize)
         elif recip_choice.lower() == 'n':
             self.pack_n_send(serv_sock, 'M', '-=- Transfer Cancelled.')
 
@@ -396,6 +391,43 @@ class Client(ChatIO):
 
         print(user)
         self.pack_n_send(serv_sock, 'T', user)
+
+    def start_sendfile_process(self, sock: socket):
+        """A complex process that communicates between SERVER and 2 CLIENTS
+        
+        Process
+
+        CLIENT1: Wishes to send file.
+        /sendfile -> sendfile_process...
+        LOCAL CHANNEL: Asks for file to send.
+        xfer.sender_prompt() -> bool
+        LOCAL CHANNEL: Asks for recipient.
+        xfer.user_prompt() -> xfer.get_username() -> sends U-type (user) message->
+        SERVER: Receives U-type message.
+        _serv_u_handler() -> lookup_user() -> sends bool as U-type reply to CLIENT1 ->
+        CLIENT1: Receives U-type message.
+        _u_handler() false ? -> U-type loop to SERVER | true ? xfer.recip_prompt(path, fn) -> CHANNEL
+        LOCAL CHANNEL: Prints User Found, Sends fileinfo and accept prompt to CLIENT 2
+        xfer.recip_prompt(path, fn) -> F-type (file) prompt - SERVER
+        SERVER: Receives F-type message.
+        _serv_f_handler() -> Prompt with file info as F-type msg -> CLIENT2
+        CLIENT2: Prompt if wish to accept?
+        _f_handler() -> Shows prompt, waits for answer as A-type (answer) -> 
+        SERVER: Receives A-type message.
+        _serv_a_handler() -> invalid? Loopback as F-type : valid? Routes A-type -> CLIENT1 as A-type msg ->
+        CLIENT1: receives A-type message. Tells if accepted or rejected.
+        _a_handler() -> 'n' ? break : 'y' ? xfer.file_xfer() -> Send as X-type (Xfer) -> SERVER
+        SERVER: Receives X-type message.
+        _serv_x_handler() -> transfers open buffer from CLIENT1 to CLIENT2
+        CLIENT2: receives X-type message. File downloads
+        x_handler() -> write file. -> print msg receipt as M-type (message). 
+        Done.
+
+        """
+
+        self.path, self.filesize = xfer.sender_prompt()
+        if self.path:
+            self.user = xfer.user_prompt(serv_sock)
 
     def start(self):
         self.t1 = Thread(target=self.receiver)

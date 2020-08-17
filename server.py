@@ -78,10 +78,10 @@ class Server(ChatIO, Channel):
                     if sock_nick_dict[sock]: del (sock_nick_dict[sock])
                     if sock_nick_dict[sock]: del (sockets[sock])  # remove address
                 
-                    client_cnxn.close()
+                    sock.close()
                     break
 
-                self.data_router(client_cnxn, data)
+                self.data_router(sock, data)
 
     def data_router(self, client_cnxn, data):
         """Handles incoming data based on its message type."""
@@ -172,14 +172,11 @@ class Server(ChatIO, Channel):
         """
         username = self.unpack_msg(sock)
         if username != b'cancel':
-
             # Check for address.
             match = self.lookup_user(sock, username)
-
             # Send U type to sender.
             self.pack_n_send(sock, 'U', str(match))
         else:
-
             cancel_msg = 'x-x Send file cancelled. Continue chatting.'
             self.pack_n_send(sock, 'M', cancel_msg)
 
@@ -200,6 +197,22 @@ class Server(ChatIO, Channel):
                         sock,
                         target='recip',
                         recip_socket=self.SENDER_SOCK)
+
+    def _serv_x_handler(self, client_cnxn, data):
+        recd_bytes = 0
+        buff_text = self.unpack_msg(client_cnxn)
+
+        file_info = buff_text.decode().split('::')
+        filesize = int(file_info[0])
+
+        data = self.pack_message(data, buff_text)
+        self.broadcast(data, sockets, client_cnxn, 'recip', self.RECIP_SOCK)
+
+        while recd_bytes < filesize:
+            chunk = client_cnxn.recv(4096)
+            recd_bytes += len(chunk)
+            self.broadcast(chunk, sockets, client_cnxn, 'recip',
+                           self.RECIP_SOCK)
 
     def _serv_t_handler(self, client_cnxn):
         user_name = self.unpack_msg(client_cnxn)
@@ -236,27 +249,12 @@ class Server(ChatIO, Channel):
             self.broadcast(msg, sockets, client_cnxn, 'recip', self.SENDER_SOCK)
             print('a_key', a_key)
             print('b_key', b_key)
+
         elif choice.lower() == 'n':
             msg = 'Trust not acquired.'
             msg = self.pack_message('S', msg)
             self.broadcast(msg, sockets, client_cnxn, 'recip', self.RECIP_SOCK)
             self.broadcast(msg, sockets, client_cnxn, 'recip', self.SENDER_SOCK)
-
-    def _serv_x_handler(self, data, client_cnxn):
-        recd_bytes = 0
-        buff_text = self.unpack_msg(client_cnxn)
-
-        file_info = buff_text.decode().split('::')
-        filesize = int(file_info[0])
-
-        data = self.pack_message(data, buff_text)
-        self.broadcast(data, sockets, client_cnxn, 'recip', self.RECIP_SOCK)
-
-        while recd_bytes < filesize:
-            chunk = client_cnxn.recv(4096)
-            recd_bytes += len(chunk)
-            self.broadcast(chunk, sockets, client_cnxn, 'recip',
-                           self.RECIP_SOCK)
     
     def _serv_p_handler(self, sock : socket):
             """Store public key on server when join."""
