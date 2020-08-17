@@ -4,7 +4,6 @@ from nacl.public import PrivateKey, PublicKey, Box
 from nacl.encoding import Base64Encoder, RawEncoder, HexEncoder
 
 
-
 class SaltCipher():
 
     def __init__(self):
@@ -24,9 +23,9 @@ class SaltCipher():
     def get_shared_key(self, ur_pub, filename='shared.key'):
         try:
             ur_pub = PublicKey(ur_pub, Base64Encoder)
-        except: 
-            print('Public key is invalid.')
-            
+        except:
+            pass
+
         path = self.path + 'symm/'
         self.check_dir(path)
 
@@ -34,19 +33,25 @@ class SaltCipher():
 
         self.sh_key = box.shared_key()
 
-        print('running')
         with open(path + filename, 'wb') as f:
             f.write(self.sh_key)
 
         return self.sh_key
 
     def make_public_box(self, ur_pub):
+        try:
+            ur_pub = PublicKey(ur_pub, Base64Encoder)
+        except:
+            pass
+
         box = Box(self.my_prv, ur_pub)
         return box
 
     def encrypt(self, ur_pub, msg):
-        self.box = self.make_public_box(ur_pub)
-        cipher_msg = self.box.encrypt(msg.encode())
+
+        box = self.make_public_box(ur_pub)
+        cipher_msg = box.encrypt(msg.encode())
+
         return cipher_msg
 
     def decrypt(self, msg):
@@ -85,12 +90,15 @@ if __name__ == "__main__":
     b_base = b.encode(Base64Encoder).decode()
     print('base64:', b_base)
     # b_raw = Base64Encoder.decode(b_base)
-    b_raw = PublicKey(b_base, Base64Encoder)
-    print('raw:', b_raw)
-    print(b == b_raw)
+    # b_raw = PublicKey(b_base, Base64Encoder)
+    # print('raw:', b_raw)
+    # print(b == b_raw)
 
-    c = salt.get_shared_key(b)
+    c = salt.get_shared_key(b_base)
     print(c)
+    e = salt.encrypt(b_base, "hello")
+    e = e.ciphertext
+    print(e)
 
     # d = '4gldSb3d54xRzz1XriLxbWMSxHEFqibqcxlvhKSsnmY='
     # print(Base64Encoder.decode(d))
