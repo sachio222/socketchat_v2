@@ -3,6 +3,7 @@ from cryptography.fernet import Fernet
 
 key_path = 'encryption/keys/fernet/secret.key'
 
+
 class Cipher():
 
     def __init__(self, path=key_path):
@@ -55,4 +56,3 @@ class Cipher():
         folders = os.path.dirname(path)
         if not os.path.exists(folders):
             os.makedirs(folders)
-

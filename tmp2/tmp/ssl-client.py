@@ -2,7 +2,6 @@
 
 import socket, ssl
 
-
 host = '127.0.0.1'
 client_ctxt = ssl.create_default_context()
 

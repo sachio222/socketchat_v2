@@ -1,4 +1,3 @@
-
 """
 https://cryptography.io/en/latest/x509/tutorial/
 Certificate Signing Requests (CSR) 6 steps. 
@@ -23,7 +22,9 @@ from cryptography.hazmat.primitives.asymmetric import rsa
 from cryptography.x509.oid import NameOID
 from cryptography.hazmat.primitives import hashes
 
+
 class X509():
+
     def __init__(self):
         self.rsa_key_path = 'encryption/keys/TLS/rsa_key.pem'
         self.cert_path = 'encryption/keys/TLS/certificate.pem'
@@ -34,11 +35,9 @@ class X509():
 
     def generate_private_rsa_key(self, path):
         # Generate a private RSA key.
-        key = rsa.generate_private_key(
-            public_exponent=65537,
-            key_size=2048,
-            backend=default_backend()
-        )
+        key = rsa.generate_private_key(public_exponent=65537,
+                                       key_size=2048,
+                                       backend=default_backend())
 
         # Write key
         folders = os.path.dirname(path)
@@ -46,11 +45,12 @@ class X509():
             os.makedirs(folders)
 
         with open(path, 'wb') as f:
-            f.write(key.private_bytes(
-                encoding=serialization.Encoding.PEM,
-                format=serialization.PrivateFormat.TraditionalOpenSSL,
-                encryption_algorithm=serialization.BestAvailableEncryption(b'pw')
-            ))
+            f.write(
+                key.private_bytes(
+                    encoding=serialization.Encoding.PEM,
+                    format=serialization.PrivateFormat.TraditionalOpenSSL,
+                    encryption_algorithm=serialization.BestAvailableEncryption(
+                        b'pw')))
         return key
 
     def load_private_rsa_key(self, path):
@@ -70,27 +70,23 @@ class X509():
             x509.NameAttribute(NameOID.COMMON_NAME, u'ubuntu')
         ])
 
-        cert = x509.CertificateBuilder().subject_name(
-            subject
-        ).issuer_name(
-            issuer
-        ).public_key(
-            # Send request with public key.
-            key.public_key()
-        ).serial_number(
-            x509.random_serial_number()
-        ).not_valid_before(
-            datetime.datetime.utcnow()   
-        ).not_valid_after(
-            datetime.datetime.utcnow() + datetime.timedelta(days=10)
-        ).add_extension(
-            x509.SubjectAlternativeName([x509.DNSName(u'ubuntu')]),
-            critical=False
-        # Sign certificate with private key
-        ).sign(key, hashes.SHA256(), default_backend())
+        cert = x509.CertificateBuilder().subject_name(subject).issuer_name(
+            issuer).public_key(
+                # Send request with public key.
+                key.public_key()).serial_number(
+                    x509.random_serial_number()).not_valid_before(
+                        datetime.datetime.utcnow()).not_valid_after(
+                            datetime.datetime.utcnow() +
+                            datetime.timedelta(days=10)).add_extension(
+                                x509.SubjectAlternativeName(
+                                    [x509.DNSName(u'ubuntu')]),
+                                critical=False
+                                # Sign certificate with private key
+                            ).sign(key, hashes.SHA256(), default_backend())
         # Write certificate to disk
         with open(self.cert_path, 'wb') as f:
             f.write(cert.public_bytes(serialization.Encoding.PEM))
+
 
 if __name__ == "__main__":
     x509 = X509()

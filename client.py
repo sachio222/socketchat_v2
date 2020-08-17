@@ -10,7 +10,7 @@ import requests
 
 from encryption.fernet import Cipher
 from encryption.salt import SaltCipher
-from nacl.encoding import Base64Encoder
+from nacl.encoding import Base64Encoder, RawEncoder
 
 from chatutils import utils
 from chatutils.xfer import FileXfer
@@ -35,6 +35,7 @@ class Client(ChatIO):
         self.introduced = False
         self.encrypt_flag = True
         self.encrypt_traffic = self.encrypt_flag
+        self.recip_pub_key = ''
 
     #===================== SENDING METHODS =====================#
     def sender(self):
@@ -62,7 +63,7 @@ class Client(ChatIO):
                     # If controller, skip to controller handler.
                     if self.msg[0] == '/':
                         typ_pfx = 'C'
-                        self.inp_ctrl_handler(self.msg)
+                        self.input_control_handler(self.msg)
                         continue
 
                     # Give it a prefix of self.message_type. Default is 'M'
@@ -71,7 +72,7 @@ class Client(ChatIO):
                         if self.introduced:
                             if self.encrypt_traffic:
                                 self.msg = fernet.encrypt(self.msg)
-                                # self.msg = nacl.encrypt(self.msg.decode())
+                                # self.msg = nacl.encrypt(self.recip_pub_key, self.msg.decode())
 
                 else:
                     self.msg = ''
@@ -87,10 +88,9 @@ class Client(ChatIO):
             self.message_type = 'M'
             self.encrypt_traffic = self.encrypt_flag
 
-    def inp_ctrl_handler(self, msg):
+    def input_control_handler(self, msg):
         """Sorts through input control messages and calls controller funcs.
-        
-    
+
         All of the controller commands are routed through this function based
         on the presence of a "/" character at the beginning of the command,
         which is detected by the sender function. Each command has a different
@@ -127,7 +127,7 @@ class Client(ChatIO):
             # Ask SERVER to broadcast who is online.
             msg = msg[1:]
             self.pack_n_send(serv_sock, '/', msg)
-        
+
         elif msg == '/mute':
             self.muted = True
             self.print_message("@YO: Muted. Type /unmute to restore sound.")
@@ -137,7 +137,7 @@ class Client(ChatIO):
             self.print_message("@YO: B00P! Type /mute to turn off sound.")
 
         elif msg[:6] == '/trust':
-            self.trust_exchange(msg)
+            self.trust_cmd_hdlr(msg)
 
         elif msg == '/exit' or msg == '/close':
             print('Disconnected.')
@@ -148,7 +148,7 @@ class Client(ChatIO):
         elif msg[:8] == '/weather':
             weather.report(msg)
             # print('\r-=-', report)
-        
+
         elif msg[:7] == '/urband':
             urbandict.urbandict(msg)
 
@@ -168,7 +168,7 @@ class Client(ChatIO):
         prefix doesn't exist, it is considered a broken connection.
 
         The prefix is funneled into the Inbound Type Handler method or
-        _inb_typ_hndlr, and is handled according to its type. 
+        _inb_typ_handler, and is handled according to its type. 
         """
 
         while True:
@@ -181,11 +181,11 @@ class Client(ChatIO):
                 break
 
             # Send this byte downstream to the Inbound Type Handler.
-            self._inb_typ_hndlr(typ_pfx)
+            self._inb_typ_handler(typ_pfx)
 
         exit()
 
-    def _inb_typ_hndlr(self, typ_pfx):
+    def _inb_typ_handler(self, typ_pfx):
         """Routes incoming messages based on message type. Default is 'M'.
 
         Incoming messages can be printed to the screen by default, or be
@@ -201,53 +201,59 @@ class Client(ChatIO):
 
             if typ_pfx == 'M':
                 # Default. Prints to screen.
-                self._m_hndlr()
+                self._m_handler()
             elif typ_pfx == 'C':
                 # Incoming controller message.
-                self._c_hndlr()
+                self._c_handler()
             elif typ_pfx == 'S':
                 # Server messages.
-                self._s_hndlr()
+                self._s_handler()
             elif typ_pfx == 'U':
                 # SERVER response regarding user.
-                self._u_hndlr()
+                self._u_handler()
             elif typ_pfx == 'F':
                 # Request from SENDER to confirm acceptance of file.
-                self._f_hndlr()
+                self._f_handler()
             elif typ_pfx == 'A':
                 # Response from RECIPIENT for confirmation of file acceptance.
-                self._a_hndlr()
+                self._a_handler()
             elif typ_pfx == 'X':
                 # Routes data from SENDER, passes thru SERVER, and stored by RECIPIENT.
-                self._x_hndlr()
+                self._x_handler()
             elif typ_pfx == 'W':
                 # Recv welcome msg, send pub_key
-                self._w_hndlr()
+                self._w_handler()
             elif typ_pfx == 'T':
                 # Recv trust decision from askee.
-                self._t_hndler()
+                self._t_handler()
+            elif typ_pfx == 'K':
+                # Recv keys.
+                print("This is a type K")
+                self._k_handler()
             else:
                 print('Prefix: ', typ_pfx)
                 print('-x- Unknown message type error.')
         except:
             pass
 
-    def _m_hndlr(self):
+    #=================HANDLERS===================#
+
+    def _m_handler(self):
         """Standard message. Unpacks message, and prints screen."""
         trim_msg = self.unpack_msg(serv_sock)
         self.print_message(trim_msg, enc=self.encrypt_traffic)
 
-    def _c_hndlr(self):
+    def _c_handler(self):
         """Control messages from another user. Not displayed."""
         self.unpack_msg(serv_sock)
 
-    def _s_hndlr(self):
+    def _s_handler(self):
         """Server announcements."""
         msg = self.unpack_msg(serv_sock).decode()
         msg = f"@YO: {msg}"
         self.print_message(msg, style_name='BLUEGREY')
 
-    def _u_hndlr(self):
+    def _u_handler(self):
         """Receives server response from user lookup. If False, rerun.
         
         After the server looks up a user, it sends its response as a U-type.
@@ -271,7 +277,7 @@ class Client(ChatIO):
             self.message_type = 'M'  # Reset message type.
             self.encrypt_traffic = self.encrypt_flag  # Reset encryption
 
-    def _f_hndlr(self):
+    def _f_handler(self):
         """File Recipient. Prompts to accept or reject. Sends response."""
 
         # Display prompt sent from xfer.recip_prompt.
@@ -283,7 +289,7 @@ class Client(ChatIO):
         print(recip_prompt)
         # Send answer as type A, user sends response back to server.
 
-    def _a_hndlr(self):
+    def _a_handler(self):
         """Sender side. Answer from recipient. Y or N for filesend."""
 
         # Answer to prompt from F handler.
@@ -306,7 +312,7 @@ class Client(ChatIO):
 
         self.message_type = 'M'
 
-    def _x_hndlr(self):
+    def _x_handler(self):
         """File sender. Transfer handler."""
         XBFFR = 4086
 
@@ -336,30 +342,37 @@ class Client(ChatIO):
         rec_msg = f"-=- {filesize}bytes received."
         print(rec_msg)
 
-    def _w_hndlr(self):
+    def _w_handler(self):
         """Welcome method."""
         msg = self.unpack_msg(serv_sock).decode()
         msg = f"-=- {msg}"
         self.print_message(msg, style_name='GREEN_INVERT')
-        
+
         # Generate and upload public nacl key.
         pub_key = nacl.get_pub_key()
         pub_key = pub_key.encode(Base64Encoder).decode()
+        print(pub_key)
         self.pack_n_send(serv_sock, 'P', pub_key)
-        
-        # self.introduced begins encryption after name has been sent. 
+
+        # self.introduced begins encryption after name has been sent.
         # this is because currently, the name is being sent/stored in plaintext.
         self.introduced = True
         self.pack_n_send(serv_sock, '/', 'status self')
-    
-    def _t_hndler(self):
+
+    def _t_handler(self):
         # Answer to prompt from T handler.
         # Do you want to trust?
-        msg = self.unpack_msg(serv_sock).decode()
-        print(msg)
+        wanna_trust_msg = self.unpack_msg(serv_sock).decode()
+        print(wanna_trust_msg)
         self.message_type = 'V'
 
-    def trust_exchange(self, msg):
+    def _k_handler(self):
+        print("And I am a type K")
+        pub_key = self.unpack_msg(serv_sock).decode()
+        shared_key = nacl.get_shared_key(pub_key)
+        # print('shared key:', shared_key)
+
+    def trust_cmd_hdlr(self, msg):
         """TODO: Move to module."""
         #* Alices sends client lookup to server for 'Bob' with T(rust) type.
         #* Server listens for 'Trust' message. if receive:
@@ -375,12 +388,12 @@ class Client(ChatIO):
         print(user)
         self.pack_n_send(serv_sock, 'T', user)
 
-
     def start(self):
         self.t1 = Thread(target=self.receiver)
         self.t2 = Thread(target=self.sender)
         self.t1.start()
         self.t2.start()
+
 
 if __name__ == "__main__":
 
@@ -451,7 +464,6 @@ if __name__ == "__main__":
 
     rsa_key_path = 'encryption/keys/TLS/rsa_key.pem'
     cert_path = 'encryption/keys/TLS/certificate.pem'
-    
 
     client_ctxt = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
     client_ctxt.check_hostname = False
@@ -461,7 +473,7 @@ if __name__ == "__main__":
     client_ctxt.load_cert_chain(cert_path, rsa_key_path)
 
     serv_sock = socket.socket()
-    
+
     # Create SSL sock.
     serv_sock.connect((host, port))
     serv_sock = client_ctxt.wrap_socket(serv_sock, server_hostname=host)
