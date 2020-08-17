@@ -65,16 +65,14 @@ class Client(ChatIO):
                     # If controller, skip to controller handler.
                     if self.msg[0] == '/':
                         typ_pfx = 'C'
-                        self.input_control_handler(self.msg)
+                        self.input_control_handler(serv_sock, self.msg)
                         continue
-
                     # Give it a prefix of self.message_type. Default is 'M'
                     else:
                         # If name has been given, encrypt everything else.
                         if self.introduced:
                             if self.encrypt_traffic:
                                 self.msg = fernet.encrypt(self.msg)
-
                 else:
                     self.msg = ''
 
@@ -89,9 +87,9 @@ class Client(ChatIO):
             self.message_type = 'M'
             self.encrypt_traffic = self.encrypt_flag
 
-    def input_control_handler(self, msg):
+    def input_control_handler(self, sock: socket, msg: str):
         
-        # TODO: Needs socket object passed in.
+        # TODO: Move to module.
 
         """Sorts through input control messages and calls controller funcs.
 
@@ -112,48 +110,37 @@ class Client(ChatIO):
             # Read from file in config folder.
             path = 'config/about.txt'
             utils.print_from_file(path)
-
         elif msg == '/help' or msg == '/h':
             # Read from file in config folder.
             path = 'config/help.txt'
             utils.print_from_file(path)
-
         elif msg == '/sendfile' or msg == '/sf':
             # Initiates Send File (SF) sequence.
-            self.start_sendfile_process(serv_sock)
-
+            self.start_sendfile_process(sock)
         elif msg[:7] == '/status':
             # Ask SERVER to broadcast who is online.
             msg = msg[1:]
-            self.pack_n_send(serv_sock, '/', msg)
-
+            self.pack_n_send(sock, '/', msg)
         elif msg == '/mute':
             self.muted = True
             self.print_message("@YO: Muted. Type /unmute to restore sound.")
-
         elif msg == '/unmute':
             self.muted = False
             self.print_message("@YO: B00P! Type /mute to turn off sound.")
-
         elif msg[:6] == '/trust':
             self.trust_cmd_hdlr(msg)
-
         elif msg == '/exit' or msg == '/close':
             print('Disconnected.')
-            serv_sock.shutdown(socket.SHUT_RDWR)
-            serv_sock.close()
+            sock.shutdown(socket.SHUT_RDWR)
+            sock.close()
             pass
-
         elif msg[:8] == '/weather':
             weather.report(msg)
             # print('\r-=-', report)
-
         elif msg[:7] == '/urband':
             urbandict.urbandict(msg)
-
         elif msg == '/moon':
             moon.phase()
-
         else:
             print('-!- Command not recognized.')
 

@@ -104,50 +104,21 @@ class Server(ChatIO, Channel):
 
         elif data == b'M':
             self._serv_m_handler(client_cnxn, data)
-            # sender = sock_nick_dict[client_cnxn]
-            # buff_text = self.unpack_msg(client_cnxn)
-            # buff_text = f'{sender}: {buff_text.decode()}'
-            # print(buff_text)
-            # data = self.pack_message(data, buff_text)
-            # self.broadcast(data, sockets, client_cnxn, sender=sender)
-
-            # U-type handler
         elif data == b'U':
             self._serv_u_handler(client_cnxn)
-
         elif data == b'F':
             self._serv_f_handler(client_cnxn, data)
-            # buff_text = self.unpack_msg(client_cnxn)
-            # data = self.pack_message(data, buff_text)
-            # self.broadcast(data,
-            #                sockets,
-            #                client_cnxn,
-            #                target='recip',
-            #                recip_socket=self.RECIP_SOCK)
-
         elif data == b'A':
             self._serv_a_handler(client_cnxn, data)
-            # buff_text = self.unpack_msg(client_cnxn)
-            # data = self.pack_message(data, buff_text)
-            # self.broadcast(data,
-            #                sockets,
-            #                client_cnxn,
-            #                target='recip',
-            #                recip_socket=self.SENDER_SOCK)
-
         elif data == b'X':
             self._serv_x_handler(client_cnxn, data)
-
         elif data == b'P':
             self._serv_p_handler(client_cnxn)
-
         elif data == b'T':
             # Lookup user for trust.
             self._serv_t_handler(client_cnxn)
-
         elif data == b'V':
             self._serv_v_handler(client_cnxn)
-
         else:
             buff_text = self.unpack_msg(client_cnxn)
             data = self.pack_message(data, buff_text)
