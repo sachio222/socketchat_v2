@@ -127,7 +127,6 @@ class Server(ChatIO, Channel):
             # Stores public keys
             pub_key = self.unpack_msg(client_cnxn)
             user_key_dict[client_cnxn] = pub_key
-            print(user_key_dict)
 
         elif data == b'T':
             # Lookup user for trust.
@@ -163,7 +162,7 @@ class Server(ChatIO, Channel):
 
     def _serv_t_handler(self, client_cnxn):
         user_name = self.unpack_msg(client_cnxn)
-        
+
         asker = sock_nick_dict[client_cnxn]
 
         user_found = self.lookup_user(client_cnxn, user_name)
@@ -194,8 +193,8 @@ class Server(ChatIO, Channel):
 
             self.broadcast(msg, sockets, client_cnxn, 'recip', self.RECIP_SOCK)
             self.broadcast(msg, sockets, client_cnxn, 'recip', self.SENDER_SOCK)
-            print('a_key',a_key)
-            print('b_key',b_key)
+            print('a_key', a_key)
+            print('b_key', b_key)
         elif choice.lower() == 'n':
             msg = 'Trust not acquired.'
             msg = self.pack_message('S', msg)

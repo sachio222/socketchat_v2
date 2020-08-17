@@ -11,6 +11,8 @@ import requests
 from encryption.fernet import Cipher
 from encryption.salt import SaltCipher
 from nacl.encoding import Base64Encoder, RawEncoder
+from nacl.public import PublicKey
+import nacl.utils
 
 from chatutils import utils
 from chatutils.xfer import FileXfer
@@ -72,7 +74,6 @@ class Client(ChatIO):
                         if self.introduced:
                             if self.encrypt_traffic:
                                 self.msg = fernet.encrypt(self.msg)
-                                # self.msg = nacl.encrypt(self.recip_pub_key, self.msg.decode())
 
                 else:
                     self.msg = ''
@@ -228,7 +229,6 @@ class Client(ChatIO):
                 self._t_handler()
             elif typ_pfx == 'K':
                 # Recv keys.
-                print("This is a type K")
                 self._k_handler()
             else:
                 print('Prefix: ', typ_pfx)
@@ -367,10 +367,16 @@ class Client(ChatIO):
         self.message_type = 'V'
 
     def _k_handler(self):
-        print("And I am a type K")
+        # print("And I am a type K")
         pub_key = self.unpack_msg(serv_sock).decode()
         shared_key = nacl.get_shared_key(pub_key)
-        # print('shared key:', shared_key)
+        self.recip_pub_key = PublicKey(pub_key, Base64Encoder)
+        # print(pub_key)
+        # msg = "test this message dawg"
+        # enc_msg = nacl.encrypt(pub_key, msg)
+        # print(enc_msg)
+        self.encrypt_traffic = True
+        self.encrypt_flag = True
 
     def trust_cmd_hdlr(self, msg):
         """TODO: Move to module."""
