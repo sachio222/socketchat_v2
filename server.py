@@ -14,11 +14,10 @@ import encryption.x509 as x509
 # Global vars
 
 # TODO: Are all these really necessary? Is there a better way?
-sockets = {} # socket : ip
-sock_nick_dict = {} # socket : nick
-nick_addy_dict = {} # nick : ip
-user_key_dict = {} # socket: key
-
+sockets = {}  # socket : ip
+sock_nick_dict = {}  # socket : nick
+nick_addy_dict = {}  # nick : ip
+user_key_dict = {}  # socket: key
 
 
 class Server(ChatIO, Channel):
@@ -33,20 +32,19 @@ class Server(ChatIO, Channel):
 
     def accepting(self):
         """Continuous Thread that listens for and accepts new socket cnxns."""
-        
+
         # Accept connections.
         while True:
             client_cnxn, client_addr = sock.accept()
 
             # Wrap client connection in secure TLS wrapper.
-            client_cnxn = server_ctxt.wrap_socket(client_cnxn,
-                                                      server_side=True)
+            client_cnxn = server_ctxt.wrap_socket(client_cnxn, server_side=True)
 
             print(f'-+- Connected... to {client_addr}')
             sockets[client_cnxn] = client_addr  # Create cnxn:addr pairings.
             Thread(target=self.handle_clients, args=(client_cnxn,)).start()
 
-    def handle_clients(self, sock : socket):
+    def handle_clients(self, sock: socket):
         """Continuous thread, runs for each client that joins.
         
         Calls client_init, begins listening for message prefixes, and
@@ -66,18 +64,21 @@ class Server(ChatIO, Channel):
                 # Testing if with lock should work so msgs don't get
                 #       separated from type prefix
                 data = sock.recv(1)
-                
+
                 if not data:
                     discon_msg = f'{sock_nick_dict[sock]} has been disconnected.'
                     print(discon_msg)
                     packed_msg = self.pack_message('S', discon_msg)
                     self.broadcast(packed_msg, sockets, sock, 'other')
-                    
+
                     # if user_key_dict[sock]: del user_key_dict[sock]
-                    if (nick_addy_dict[sock_nick_dict[sock]]): del (nick_addy_dict[sock_nick_dict[client_cnxn]])
-                    if sock_nick_dict[sock]: del (sock_nick_dict[sock])
-                    if sock_nick_dict[sock]: del (sockets[sock])  # remove address
-                
+                    if (nick_addy_dict[sock_nick_dict[sock]]):
+                        del (nick_addy_dict[sock_nick_dict[sock]])
+                    if sock_nick_dict[sock]:
+                        del (sock_nick_dict[sock])
+                    if sock_nick_dict[sock]:
+                        del (sockets[sock])  # remove address
+
                     sock.close()
                     break
 
@@ -125,15 +126,17 @@ class Server(ChatIO, Channel):
             self.broadcast(data, sockets, client_cnxn)
 
     #=== HANDLERS ===#
-    def _serv_m_handler(self, sock : socket, data):
-            sender = sock_nick_dict[sock]
-            buff_text = self.unpack_msg(sock)
-            buff_text = f'{sender}: {buff_text.decode()}'
-            print(buff_text)
-            data = self.pack_message(data, buff_text)
-            self.broadcast(data, sockets, sock, sender=sender)
+    def _serv_m_handler(self, sock: socket, data):
+        """Standard message handler. Broadcast defaulted to 'other'."""
 
-    def _serv_u_handler(self, sock : socket):
+        sender = sock_nick_dict[sock]
+        buff_text = self.unpack_msg(sock)
+        buff_text = f'{sender}: {buff_text.decode()}'
+        print(buff_text)
+        data = self.pack_message(data, buff_text)
+        self.broadcast(data, sockets, sock, sender=sender)
+
+    def _serv_u_handler(self, sock: socket):
         """ U-type msgs used by SERVER and SENDER for user lookup exchanges.
 
         A U-type message tells the server to call lookup_user() method to
@@ -155,19 +158,19 @@ class Server(ChatIO, Channel):
         buff_text = self.unpack_msg(sock)
         data = self.pack_message(data, buff_text)
         self.broadcast(data,
-                        sockets,
-                        sock,
-                        target='recip',
-                        recip_socket=self.RECIP_SOCK)
+                       sockets,
+                       sock,
+                       target='recip',
+                       recip_socket=self.RECIP_SOCK)
 
     def _serv_a_handler(self, sock, data):
         buff_text = self.unpack_msg(sock)
         data = self.pack_message(data, buff_text)
         self.broadcast(data,
-                        sockets,
-                        sock,
-                        target='recip',
-                        recip_socket=self.SENDER_SOCK)
+                       sockets,
+                       sock,
+                       target='recip',
+                       recip_socket=self.SENDER_SOCK)
 
     def _serv_x_handler(self, client_cnxn, data):
         recd_bytes = 0
@@ -226,14 +229,14 @@ class Server(ChatIO, Channel):
             msg = self.pack_message('S', msg)
             self.broadcast(msg, sockets, client_cnxn, 'recip', self.RECIP_SOCK)
             self.broadcast(msg, sockets, client_cnxn, 'recip', self.SENDER_SOCK)
-    
-    def _serv_p_handler(self, sock : socket):
-            """Store public key on server when join."""
-            # Stores public keys
-            pub_key = self.unpack_msg(sock)
-            user_key_dict[sock] = pub_key
 
-    def lookup_user(self, sock : socket, user_query : str) -> bool:
+    def _serv_p_handler(self, sock: socket):
+        """Store public key on server when join."""
+        # Stores public keys
+        pub_key = self.unpack_msg(sock)
+        user_key_dict[sock] = pub_key
+
+    def lookup_user(self, sock: socket, user_query: str) -> bool:
         """Checks if user exists. If so, returns user and address.
 
         Loops through the sock_nick_dict to check if the user is not the 
@@ -254,8 +257,9 @@ class Server(ChatIO, Channel):
         # If user_query happens to be bytes for some reason, decode it.
         try:
             user_query = user_query.decode()
-        except: pass
-        
+        except:
+            pass
+
         # Go through all the existing sockets/nicks
         for s, n in sock_nick_dict.items():
             if s != sock:  # Avoid self match.
@@ -268,14 +272,14 @@ class Server(ChatIO, Channel):
 
         return match
 
-    def set_client_data(self, sock : socket) -> str:
+    def set_client_data(self, sock: socket) -> str:
         """Sets nick and addr of user."""
 
         unique = False
         PROMPT = 'Choose a handle:'
         # Asks user for handle as soon as they join the room.
         self.pack_n_send(sock, 'S', PROMPT)
-        
+
         while not unique:
             # Receive input from user.
             user_name = self.unpack_msg(sock, shed_byte=True).decode()
@@ -283,23 +287,23 @@ class Server(ChatIO, Channel):
             if not user_name:
                 ERR = f"Handle needs at least one character. Try again."
                 self.pack_n_send(sock, 'S', ERR)
-                print(f'-x- {ERR}') # Print to server.
+                print(f'-x- {ERR}')  # Print to server.
 
             elif user_name not in sock_nick_dict.values():
                 # If name does not exist, bag it, tag it.
                 sock_nick_dict[sock] = user_name  # Create socket:nick pair.
                 nick_addy_dict[user_name] = sockets[
                     sock]  # Create nick:addr pair.
-                unique = True # exit loop
+                unique = True  # exit loop
 
             else:
                 ERR = f"They're already here! Pick something else:"
                 self.pack_n_send(sock, 'S', ERR)
-                print(f'-x- {ERR}') # Print to server.
+                print(f'-x- {ERR}')  # Print to server.
 
         return user_name
 
-    def client_welcome(self, sock: socket, user_name : str) -> bool:
+    def client_welcome(self, sock: socket, user_name: str) -> bool:
         """Welcomes user and announces joining to rest. Returns bool.
         
         The Welcome message is sent as a 'W' type message which runs
@@ -315,8 +319,8 @@ class Server(ChatIO, Channel):
         try:
             # TODO: put messages in dict.
             welcome_msg = "You're in. Welcome to the underground."
-            announcement = f"@{user_name} is in the house!" 
-            
+            announcement = f"@{user_name} is in the house!"
+
             # Sends 'W' Type message. Part of connection handshake.
             self.pack_n_send(sock, 'W', welcome_msg)
             # Broadcast to everyone that they're here.
@@ -332,7 +336,7 @@ class Server(ChatIO, Channel):
 
     def client_init(self, sock: socket) -> bool:
         """Get unique username, welcome client to channel."""
-        
+
         try:
             user_name = self.set_client_data(sock)
             self.client_welcome(sock, user_name)
@@ -349,13 +353,14 @@ class Server(ChatIO, Channel):
 
 
 if __name__ == "__main__":
-    
+
     MAX_CNXN = 5
 
     if sys.argv[-1] == 'debug':
         # Runs if last arg to server.py is 'debug'
         debug = True
-    else: debug = False
+    else:
+        debug = False
 
     # TODO: Add inputs.
     x509 = x509.X509()
@@ -363,7 +368,7 @@ if __name__ == "__main__":
 
     sock = socket.socket()
     host = socket.gethostname()
-    
+
     if not debug:
         try:
             ip = socket.gethostbyname(host)

@@ -88,9 +88,8 @@ class Client(ChatIO):
             self.encrypt_traffic = self.encrypt_flag
 
     def input_control_handler(self, sock: socket, msg: str):
-        
-        # TODO: Move to module.
 
+        # TODO: Move to module.
         """Sorts through input control messages and calls controller funcs.
 
         All of the controller commands are routed through this function based
@@ -354,7 +353,7 @@ class Client(ChatIO):
     def _k_handler(self):
         # print("And I am a type K")
         pub_key = self.unpack_msg(serv_sock).decode()
-        shared_key = nacl.get_shared_key(pub_key)
+        # shared_key = nacl.get_shared_key(pub_key)
         self.recip_pub_key = PublicKey(pub_key, Base64Encoder)
         # print(pub_key)
         # msg = "test this message dawg"
