@@ -90,6 +90,9 @@ class Client(ChatIO):
             self.encrypt_traffic = self.encrypt_flag
 
     def input_control_handler(self, msg):
+        
+        # TODO: Needs socket object passed in.
+
         """Sorts through input control messages and calls controller funcs.
 
         All of the controller commands are routed through this function based
