@@ -7,17 +7,15 @@ from nacl.signing import SigningKey, SignedMessage, VerifyKey
 
 
 class SaltCipher():
-<<<<<<< HEAD
     """A beautiful framework for Assymetric, Symmetric encryption,
-    signing and verifying."""
-=======
-    """Based on the python fork of nacl's libsodium framework.
+    signing and verifying. 
+    
+    Based on the python fork of nacl's libsodium framework.
     
     The salt cipher involves state of the art encryption for assymetric
     encryption between users with the exchange of public keys and the
     creation of a shared secret. Also allows for signing/verification.
     """
->>>>>>> d56074d954f6424132e957dbce69a9153a47acce
 
     def __init__(self, path: str = 'encryption/keys/nacl/'):
         self.path = path
