@@ -65,16 +65,14 @@ class Client(ChatIO):
                     # If controller, skip to controller handler.
                     if self.msg[0] == '/':
                         typ_pfx = 'C'
-                        self.input_control_handler(self.msg)
+                        self.input_control_handler(serv_sock, self.msg)
                         continue
-
                     # Give it a prefix of self.message_type. Default is 'M'
                     else:
                         # If name has been given, encrypt everything else.
                         if self.introduced:
                             if self.encrypt_traffic:
                                 self.msg = fernet.encrypt(self.msg)
-
                 else:
                     self.msg = ''
 
@@ -89,7 +87,9 @@ class Client(ChatIO):
             self.message_type = 'M'
             self.encrypt_traffic = self.encrypt_flag
 
-    def input_control_handler(self, msg):
+    def input_control_handler(self, sock: socket, msg: str):
+
+        # TODO: Move to module.
         """Sorts through input control messages and calls controller funcs.
 
         All of the controller commands are routed through this function based
@@ -109,53 +109,37 @@ class Client(ChatIO):
             # Read from file in config folder.
             path = 'config/about.txt'
             utils.print_from_file(path)
-
         elif msg == '/help' or msg == '/h':
             # Read from file in config folder.
             path = 'config/help.txt'
             utils.print_from_file(path)
-
         elif msg == '/sendfile' or msg == '/sf':
             # Initiates Send File (SF) sequence.
-            # /SF1: Confirm file is available.
-            self.path, self.filesize = xfer.sender_prompt()
-
-            # /SF2: Check that RECIPIENT exists.
-            if self.path:
-                self.user = xfer.user_prompt(serv_sock)
-
+            self.start_sendfile_process(sock)
         elif msg[:7] == '/status':
             # Ask SERVER to broadcast who is online.
             msg = msg[1:]
-            self.pack_n_send(serv_sock, '/', msg)
-
+            self.pack_n_send(sock, '/', msg)
         elif msg == '/mute':
             self.muted = True
             self.print_message("@YO: Muted. Type /unmute to restore sound.")
-
         elif msg == '/unmute':
             self.muted = False
             self.print_message("@YO: B00P! Type /mute to turn off sound.")
-
         elif msg[:6] == '/trust':
             self.trust_cmd_hdlr(msg)
-
         elif msg == '/exit' or msg == '/close':
             print('Disconnected.')
-            serv_sock.shutdown(socket.SHUT_RDWR)
-            serv_sock.close()
+            sock.shutdown(socket.SHUT_RDWR)
+            sock.close()
             pass
-
         elif msg[:8] == '/weather':
             weather.report(msg)
             # print('\r-=-', report)
-
         elif msg[:7] == '/urband':
             urbandict.urbandict(msg)
-
         elif msg == '/moon':
             moon.phase()
-
         else:
             print('-!- Command not recognized.')
 
@@ -302,11 +286,11 @@ class Client(ChatIO):
                              'Choice must be Y or N. Try again...')
 
         elif recip_choice.lower() == 'y':
+            # Recipient
+            xfer.file_xfer(serv_sock, self.path, self.filesize)
             # Sender
             print("Sent...")
 
-            # Recipient
-            xfer.file_xfer(serv_sock, self.path, self.filesize)
         elif recip_choice.lower() == 'n':
             self.pack_n_send(serv_sock, 'M', '-=- Transfer Cancelled.')
 
@@ -349,10 +333,10 @@ class Client(ChatIO):
         self.print_message(msg, style_name='GREEN_INVERT')
 
         # Generate and upload public nacl key.
-        pub_key = nacl.get_pub_key()
-        pub_key = pub_key.encode(Base64Encoder).decode()
-        print(pub_key)
-        self.pack_n_send(serv_sock, 'P', pub_key)
+        # pub_key = nacl.get_pub_key()
+        # pub_key = pub_key.encode(Base64Encoder).decode()
+        # print(pub_key)
+        # self.pack_n_send(serv_sock, 'P', pub_key)
 
         # self.introduced begins encryption after name has been sent.
         # this is because currently, the name is being sent/stored in plaintext.
@@ -369,7 +353,7 @@ class Client(ChatIO):
     def _k_handler(self):
         # print("And I am a type K")
         pub_key = self.unpack_msg(serv_sock).decode()
-        shared_key = nacl.get_shared_key(pub_key)
+        # shared_key = nacl.get_shared_key(pub_key)
         self.recip_pub_key = PublicKey(pub_key, Base64Encoder)
         # print(pub_key)
         # msg = "test this message dawg"
@@ -393,6 +377,43 @@ class Client(ChatIO):
 
         print(user)
         self.pack_n_send(serv_sock, 'T', user)
+
+    def start_sendfile_process(self, sock: socket):
+        """A complex process that communicates between SERVER and 2 CLIENTS
+        
+        Process
+
+        CLIENT1: Wishes to send file.
+        /sendfile -> sendfile_process...
+        LOCAL CHANNEL: Asks for file to send.
+        xfer.sender_prompt() -> bool
+        LOCAL CHANNEL: Asks for recipient.
+        xfer.user_prompt() -> xfer.get_username() -> sends U-type (user) message->
+        SERVER: Receives U-type message.
+        _serv_u_handler() -> lookup_user() -> sends bool as U-type reply to CLIENT1 ->
+        CLIENT1: Receives U-type message.
+        _u_handler() false ? -> U-type loop to SERVER | true ? xfer.recip_prompt(path, fn) -> CHANNEL
+        LOCAL CHANNEL: Prints User Found, Sends fileinfo and accept prompt to CLIENT 2
+        xfer.recip_prompt(path, fn) -> F-type (file) prompt - SERVER
+        SERVER: Receives F-type message.
+        _serv_f_handler() -> Prompt with file info as F-type msg -> CLIENT2
+        CLIENT2: Prompt if wish to accept?
+        _f_handler() -> Shows prompt, waits for answer as A-type (answer) -> 
+        SERVER: Receives A-type message.
+        _serv_a_handler() -> invalid? Loopback as F-type : valid? Routes A-type -> CLIENT1 as A-type msg ->
+        CLIENT1: receives A-type message. Tells if accepted or rejected.
+        _a_handler() -> 'n' ? break : 'y' ? xfer.file_xfer() -> Send as X-type (Xfer) -> SERVER
+        SERVER: Receives X-type message.
+        _serv_x_handler() -> transfers open buffer from CLIENT1 to CLIENT2
+        CLIENT2: receives X-type message. File downloads
+        x_handler() -> write file. -> print msg receipt as M-type (message). 
+        Done.
+
+        """
+
+        self.path, self.filesize = xfer.sender_prompt()
+        if self.path:
+            self.user = xfer.user_prompt(serv_sock)
 
     def start(self):
         self.t1 = Thread(target=self.receiver)
