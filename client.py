@@ -166,79 +166,29 @@ class Client(ChatIO):
                 break
 
             # Send this byte downstream to the Inbound Type Handler.
-            self._inb_typ_handler(typ_pfx)
+            self._inb_typ_handler(serv_sock, typ_pfx)
 
         exit()
 
-    def _inb_typ_handler(self, typ_pfx):
-        """Routes incoming messages based on message type. Default is 'M'.
-
-        Incoming messages can be printed to the screen by default, or be
-        involved in a different flow, like receiving information from the
-        SERVER about a the presence of a RECIPIENT in the chat.
-
-        The Inbound Type Handler routes each message to a downstream handler
-        methods designed for each function. Those handlers are each unique
-        and are based on the requirements of that message type.
-        """
-        try:
-            typ_pfx = typ_pfx.decode().upper()
-
-            if typ_pfx == 'M':
-                # Default. Prints to screen.
-                self._m_handler()
-            elif typ_pfx == 'C':
-                # Incoming controller message.
-                self._c_handler()
-            elif typ_pfx == 'S':
-                # Server messages.
-                self._s_handler()
-            elif typ_pfx == 'U':
-                # SERVER response regarding user.
-                self._u_handler()
-            elif typ_pfx == 'F':
-                # Request from SENDER to confirm acceptance of file.
-                self._f_handler()
-            elif typ_pfx == 'A':
-                # Response from RECIPIENT for confirmation of file acceptance.
-                self._a_handler()
-            elif typ_pfx == 'X':
-                # Routes data from SENDER, passes thru SERVER, and stored by RECIPIENT.
-                self._x_handler()
-            elif typ_pfx == 'W':
-                # Recv welcome msg, send pub_key
-                self._w_handler()
-            elif typ_pfx == 'T':
-                # Recv trust decision from askee.
-                self._t_handler()
-            elif typ_pfx == 'K':
-                # Recv keys.
-                self._k_handler()
-            else:
-                print('Prefix: ', typ_pfx)
-                print('-x- Unknown message type error.')
-        except:
-            pass
-
     #=================HANDLERS===================#
 
-    def _m_handler(self):
-        """Standard message. Unpacks message, and prints screen."""
+    def _m_handler(self, sock: socket):
+        """Default. Prints to screen."""
         trim_msg = self.unpack_msg(serv_sock)
         self.print_message(trim_msg, enc=self.encrypt_traffic)
 
-    def _c_handler(self):
-        """Control messages from another user. Not displayed."""
+    def _c_handler(self, sock: socket):
+        """Incoming controller message."""
         self.unpack_msg(serv_sock)
 
-    def _s_handler(self):
-        """Server announcements."""
+    def _s_handler(self, sock: socket):
+        """Server messages."""
         msg = self.unpack_msg(serv_sock).decode()
         msg = f"@YO: {msg}"
         self.print_message(msg, style_name='BLUEGREY')
 
-    def _u_handler(self):
-        """Receives server response from user lookup. If False, rerun.
+    def _u_handler(self, sock: socket):
+        """SERVER response regarding user.
         
         After the server looks up a user, it sends its response as a U-type.
         The U type message either prompts the recipient if the exist, or asks
@@ -261,8 +211,8 @@ class Client(ChatIO):
             self.message_type = 'M'  # Reset message type.
             self.encrypt_traffic = self.encrypt_flag  # Reset encryption
 
-    def _f_handler(self):
-        """File Recipient. Prompts to accept or reject. Sends response."""
+    def _f_handler(self, sock: socket):
+        """Request from SENDER to confirm acceptance of file."""
 
         # Display prompt sent from xfer.recip_prompt.
         recip_prompt = self.unpack_msg(serv_sock).decode()
@@ -273,8 +223,8 @@ class Client(ChatIO):
         print(recip_prompt)
         # Send answer as type A, user sends response back to server.
 
-    def _a_handler(self):
-        """Sender side. Answer from recipient. Y or N for filesend."""
+    def _a_handler(self, sock: socket):
+        """Response from RECIPIENT for confirmation of file acceptance."""
 
         # Answer to prompt from F handler.
         recip_choice = self.unpack_msg(serv_sock).decode()
@@ -296,8 +246,8 @@ class Client(ChatIO):
 
         self.message_type = 'M'
 
-    def _x_handler(self):
-        """File sender. Transfer handler."""
+    def _x_handler(self, sock: socket):
+        """Routes data from SENDER, passes thru SERVER, and stored by RECIPIENT."""
         XBFFR = 4086
 
         file_info = xfer.unpack_msg(serv_sock).decode()
@@ -326,8 +276,8 @@ class Client(ChatIO):
         rec_msg = f"-=- {filesize}bytes received."
         print(rec_msg)
 
-    def _w_handler(self):
-        """Welcome method."""
+    def _w_handler(self, sock: socket):
+        """Recv welcome msg. Send pub key."""
         msg = self.unpack_msg(serv_sock).decode()
         msg = f"-=- {msg}"
         self.print_message(msg, style_name='GREEN_INVERT')
@@ -343,14 +293,16 @@ class Client(ChatIO):
         self.introduced = True
         self.pack_n_send(serv_sock, '/', 'status self')
 
-    def _t_handler(self):
+    def _t_handler(self, sock: socket):
+        """Recv trust decision from askee."""
         # Answer to prompt from T handler.
         # Do you want to trust?
         wanna_trust_msg = self.unpack_msg(serv_sock).decode()
         print(wanna_trust_msg)
         self.message_type = 'V'
 
-    def _k_handler(self):
+    def _k_handler(self, sock: socket):
+        """Recv. Keys"""
         # print("And I am a type K")
         pub_key = self.unpack_msg(serv_sock).decode()
         # shared_key = nacl.get_shared_key(pub_key)
@@ -361,6 +313,39 @@ class Client(ChatIO):
         # print(enc_msg)
         self.encrypt_traffic = True
         self.encrypt_flag = True
+
+    def _err_handler(self, *args):
+        # print('Prefix: ', typ_pfx)
+        print('-x- Unknown message type error.')
+
+    def _inb_typ_handler(self, sock: socket, typ_pfx: bytes):
+        """Routes based on type.
+
+        Incoming messages can be printed to the screen by default 'M', or be
+        involved in a different flow, like receiving information from the
+        SERVER about a the presence of a RECIPIENT in the chat.
+        """
+
+        try:
+            typ_pfx = typ_pfx.decode().upper()
+            handler = self.dispatch_table.get(typ_pfx, self._err_handler)
+            handler(self, sock)
+
+        except:
+            raise RuntimeError()
+
+    dispatch_table = {
+            'M': _m_handler,
+            'C': _c_handler,
+            'S': _s_handler,
+            'U': _u_handler,
+            'F': _f_handler,
+            'A': _a_handler,
+            'X': _x_handler,
+            'W': _w_handler,
+            'T': _t_handler,
+            'K': _k_handler
+        }
 
     def trust_cmd_hdlr(self, msg):
         """TODO: Move to module."""

@@ -5,6 +5,7 @@ from nacl.public import PrivateKey, PublicKey, Box
 from nacl.encoding import Base64Encoder, HexEncoder
 from nacl.signing import SigningKey, SignedMessage, VerifyKey
 
+
 class SaltCipher():
     """Based on the python fork of nacl's libsodium framework.
     
