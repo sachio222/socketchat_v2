@@ -90,43 +90,43 @@ class Server(ChatIO, Channel):
                 self.broadcast(status, sockets, client_cnxn, target=target)
 
         elif data == b'M':
-            sender = sock_nick_dict[client_cnxn]
-            buff_text = self.unpack_msg(client_cnxn)
-            buff_text = f'{sender}: {buff_text.decode()}'
-            print(buff_text)
-            data = self.pack_message(data, buff_text)
-            self.broadcast(data, sockets, client_cnxn, sender=sender)
+            self._serv_m_handler(client_cnxn, data)
+            # sender = sock_nick_dict[client_cnxn]
+            # buff_text = self.unpack_msg(client_cnxn)
+            # buff_text = f'{sender}: {buff_text.decode()}'
+            # print(buff_text)
+            # data = self.pack_message(data, buff_text)
+            # self.broadcast(data, sockets, client_cnxn, sender=sender)
 
             # U-type handler
         elif data == b'U':
             self._serv_u_handler(client_cnxn)
 
         elif data == b'F':
-            buff_text = self.unpack_msg(client_cnxn)
-            data = self.pack_message(data, buff_text)
-            self.broadcast(data,
-                           sockets,
-                           client_cnxn,
-                           target='recip',
-                           recip_socket=self.RECIP_SOCK)
+            self._serv_f_handler(client_cnxn, data)
+            # buff_text = self.unpack_msg(client_cnxn)
+            # data = self.pack_message(data, buff_text)
+            # self.broadcast(data,
+            #                sockets,
+            #                client_cnxn,
+            #                target='recip',
+            #                recip_socket=self.RECIP_SOCK)
 
         elif data == b'A':
-            buff_text = self.unpack_msg(client_cnxn)
-            data = self.pack_message(data, buff_text)
-            self.broadcast(data,
-                           sockets,
-                           client_cnxn,
-                           target='recip',
-                           recip_socket=self.SENDER_SOCK)
+            self._serv_a_handler(client_cnxn, data)
+            # buff_text = self.unpack_msg(client_cnxn)
+            # data = self.pack_message(data, buff_text)
+            # self.broadcast(data,
+            #                sockets,
+            #                client_cnxn,
+            #                target='recip',
+            #                recip_socket=self.SENDER_SOCK)
 
         elif data == b'X':
-            self._serv_x_handler(data, client_cnxn)
+            self._serv_x_handler(client_cnxn, data)
 
         elif data == b'P':
-            """Store public key on server when join."""
-            # Stores public keys
-            pub_key = self.unpack_msg(client_cnxn)
-            user_key_dict[client_cnxn] = pub_key
+            self._serv_p_handler(client_cnxn)
 
         elif data == b'T':
             # Lookup user for trust.
@@ -134,12 +134,22 @@ class Server(ChatIO, Channel):
 
         elif data == b'V':
             self._serv_v_handler(client_cnxn)
+
         else:
             buff_text = self.unpack_msg(client_cnxn)
             data = self.pack_message(data, buff_text)
             self.broadcast(data, sockets, client_cnxn)
 
-    def _serv_u_handler(self, sock):
+    #=== HANDLERS ===#
+    def _serv_m_handler(self, sock : socket, data):
+            sender = sock_nick_dict[sock]
+            buff_text = self.unpack_msg(sock)
+            buff_text = f'{sender}: {buff_text.decode()}'
+            print(buff_text)
+            data = self.pack_message(data, buff_text)
+            self.broadcast(data, sockets, sock, sender=sender)
+
+    def _serv_u_handler(self, sock : socket):
         """ U-type msgs used by SERVER and SENDER for user lookup exchanges.
 
         A U-type message tells the server to call lookup_user() method to
@@ -159,6 +169,24 @@ class Server(ChatIO, Channel):
 
             cancel_msg = 'x-x Send file cancelled. Continue chatting.'
             self.pack_n_send(sock, 'M', cancel_msg)
+
+    def _serv_f_handler(self, sock, data):
+        buff_text = self.unpack_msg(sock)
+        data = self.pack_message(data, buff_text)
+        self.broadcast(data,
+                        sockets,
+                        sock,
+                        target='recip',
+                        recip_socket=self.RECIP_SOCK)
+
+    def _serv_a_handler(self, sock, data):
+        buff_text = self.unpack_msg(sock)
+        data = self.pack_message(data, buff_text)
+        self.broadcast(data,
+                        sockets,
+                        sock,
+                        target='recip',
+                        recip_socket=self.SENDER_SOCK)
 
     def _serv_t_handler(self, client_cnxn):
         user_name = self.unpack_msg(client_cnxn)
@@ -216,8 +244,14 @@ class Server(ChatIO, Channel):
             recd_bytes += len(chunk)
             self.broadcast(chunk, sockets, client_cnxn, 'recip',
                            self.RECIP_SOCK)
+    
+    def _serv_p_handler(self, sock : socket):
+            """Store public key on server when join."""
+            # Stores public keys
+            pub_key = self.unpack_msg(sock)
+            user_key_dict[sock] = pub_key
 
-    def lookup_user(self, sock, user_query):
+    def lookup_user(self, sock : socket, user_query : bytes) -> bool:
         """Checks if user exists. If so, returns user and address.
 
         Args: 
@@ -226,7 +260,6 @@ class Server(ChatIO, Channel):
         
         Returns
             match: (bool) True if user found
-            user_addr: (str) ip:port of user.
         """
         match = False
         self.RECIP_SOCK = None
@@ -279,11 +312,11 @@ class Server(ChatIO, Channel):
     def start(self):
         Thread(target=self.accepting).start()
 
-
-sockets = {}
-sock_nick_dict = {}
-nick_addy_dict = {}
-user_key_dict = {}
+# TODO: Are all these really necessary? Is there a better way?
+sockets = {} # socket : ip
+sock_nick_dict = {} # socket : nick
+nick_addy_dict = {} # nick : ip
+user_key_dict = {} # socket: key
 MAX_CNXN = 5
 
 if __name__ == "__main__":
