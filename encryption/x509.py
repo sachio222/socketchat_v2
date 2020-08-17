@@ -24,6 +24,10 @@ from cryptography.hazmat.primitives import hashes
 
 
 class X509():
+    """x.509 is the standard for TLS security layers.
+    
+    This allows for the generation of certificates, as well as self-signing.
+    """
 
     def __init__(self):
         self.rsa_key_path = 'encryption/keys/TLS/rsa_key.pem'

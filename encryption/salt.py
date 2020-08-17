@@ -7,7 +7,12 @@ from nacl.signing import SigningKey, SignedMessage, VerifyKey
 
 
 class SaltCipher():
-    """"""
+    """Based on the python fork of nacl's libsodium framework.
+    
+    The salt cipher involves state of the art encryption for assymetric
+    encryption between users with the exchange of public keys and the
+    creation of a shared secret. Also allows for signing/verification.
+    """
 
     def __init__(self, path: str = 'encryption/keys/nacl/'):
         self.path = path
@@ -66,7 +71,7 @@ class SaltCipher():
             print(f"File not found at {self.path + fn}. Try again.")
         return shr_key
 
-    # Public Boxes
+    #=== Public Boxes ===#
     def make_public_box(self, prv_key: PrivateKey,
                         ur_pub_key: PublicKey) -> Box:
         """Make public box from one private, one public. Usually different."""
@@ -86,7 +91,7 @@ class SaltCipher():
         plaintext = box.decrypt(cipher_msg)
         return plaintext.decode()
 
-    #==== Secret Box ===#
+    #=== Secret Box ===#
     def make_secret_box(self, key: hex) -> SecretBox:
         """Create box with shared key opening."""
         sec_box = SecretBox(key)
@@ -104,7 +109,7 @@ class SaltCipher():
         cleartext = secret_box.decrypt(ciphertext)
         return cleartext.decode()
 
-    # Generate Shared Keys
+    #=== Generate Shared Keys ===#
     def gen_shared_key(self, box: Box, fn: str = 'shared.key') -> bytes:
         """Generates a shared secret from a public box. Returns Hexbytes."""
 
@@ -117,7 +122,7 @@ class SaltCipher():
 
         return shr_key
 
-    # Signing
+    #=== Signing ===#
     def generate_signing_keys(self,
                               fn: str = 'signing.key'
                              ) -> (SigningKey, VerifyKey):
@@ -174,7 +179,7 @@ class SaltCipher():
         verify_key = VerifyKey(verify_key_b64, encoder=Base64Encoder)
         return verify_key
 
-    # Gen Utilities
+    #=== General Utilities ===#
     def check_dir(self, path: str):
         if not os.path.exists(path):
             os.makedirs(path)
