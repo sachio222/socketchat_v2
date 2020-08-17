@@ -352,10 +352,10 @@ class Client(ChatIO):
         self.print_message(msg, style_name='GREEN_INVERT')
 
         # Generate and upload public nacl key.
-        pub_key = nacl.get_pub_key()
-        pub_key = pub_key.encode(Base64Encoder).decode()
-        print(pub_key)
-        self.pack_n_send(serv_sock, 'P', pub_key)
+        # pub_key = nacl.get_pub_key()
+        # pub_key = pub_key.encode(Base64Encoder).decode()
+        # print(pub_key)
+        # self.pack_n_send(serv_sock, 'P', pub_key)
 
         # self.introduced begins encryption after name has been sent.
         # this is because currently, the name is being sent/stored in plaintext.
