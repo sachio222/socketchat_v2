@@ -74,7 +74,7 @@ class ChatIO(Chime, Colors):
         """
         if type(typ_pfx) == bytes:
             typ_pfx = typ_pfx.decode()
-            
+
         if type(msg) == bytes:
             msg = msg.decode()
 
@@ -179,7 +179,6 @@ class ChatIO(Chime, Colors):
         else:
             if type(msg) == bytes:
                 msg = msg.decode()
-                
 
             self.play_chime()
             if style_name == "GREEN_INVERT":

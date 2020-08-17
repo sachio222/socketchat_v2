@@ -4,13 +4,13 @@ from nacl.public import PrivateKey, Box
 # Generate Bob's private key.
 seck_bob = PrivateKey.generate()
 
-# Generate Bob's public key. 
+# Generate Bob's public key.
 # Give to anyone who wants to send a msg to Bob.
 pubk_bob = seck_bob.public_key
 
-# Alice's private and public keys. 
+# Alice's private and public keys.
 seck_alice = PrivateKey.generate()
- # Give to anyone wanting to send a msg to her
+# Give to anyone wanting to send a msg to her
 pubk_alice = seck_alice.public_key
 
 # Bob creates Box with his secret key and alice's pub k.

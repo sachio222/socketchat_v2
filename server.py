@@ -11,6 +11,7 @@ from chatutils.channel import Channel
 
 import encryption.x509 as x509
 
+
 class Server(ChatIO, Channel):
     """Server class"""
 
@@ -30,8 +31,9 @@ class Server(ChatIO, Channel):
         while True:
             client_cnxn, client_addr = sock.accept()
             if True:
-                client_cnxn = server_ctxt.wrap_socket(client_cnxn, server_side=True)
-            
+                client_cnxn = server_ctxt.wrap_socket(client_cnxn,
+                                                      server_side=True)
+
             print(f'-+- Connected... to {client_addr}')
             sockets[client_cnxn] = client_addr  # Create cnxn:addr pairings.
             Thread(target=self.handle_clients, args=(client_cnxn,)).start()
@@ -60,6 +62,7 @@ class Server(ChatIO, Channel):
                 print(discon_msg)
                 packed_msg = self.pack_message('S', discon_msg)
                 self.broadcast(packed_msg, sockets, client_cnxn, 'other')
+                del user_key_dict[client_cnxn]
                 del (nick_addy_dict[sock_nick_dict[client_cnxn]])
                 del (sock_nick_dict[client_cnxn])
                 del (sockets[client_cnxn])  # remove address
@@ -77,7 +80,7 @@ class Server(ChatIO, Channel):
 
             if control[0] == 'status':
                 # Send room status.
-                # TODO: break into method.      
+                # TODO: break into method.
                 status, _ = self.get_status(nick_addy_dict)
                 status = self.pack_message('S', status)
                 if control[-1] == 'self':
@@ -85,7 +88,7 @@ class Server(ChatIO, Channel):
                 else:
                     target = 'all'
                 self.broadcast(status, sockets, client_cnxn, target=target)
-        
+
         elif data == b'M':
             sender = sock_nick_dict[client_cnxn]
             buff_text = self.unpack_msg(client_cnxn)
@@ -96,7 +99,7 @@ class Server(ChatIO, Channel):
 
             # U-type handler
         elif data == b'U':
-            self._serv_u_hndlr(client_cnxn)
+            self._serv_u_handler(client_cnxn)
 
         elif data == b'F':
             buff_text = self.unpack_msg(client_cnxn)
@@ -117,25 +120,27 @@ class Server(ChatIO, Channel):
                            recip_socket=self.SENDER_SOCK)
 
         elif data == b'X':
-            self._serv_x_hndlr(data, client_cnxn)
-        
+            self._serv_x_handler(data, client_cnxn)
+
         elif data == b'P':
+            """Store public key on server when join."""
             # Stores public keys
-            pub_key = client_cnxn.recv(4096)
+            pub_key = self.unpack_msg(client_cnxn)
             user_key_dict[client_cnxn] = pub_key
             print(user_key_dict)
-        
+
         elif data == b'T':
             # Lookup user for trust.
-            self._serv_t_hndlr(client_cnxn)
+            self._serv_t_handler(client_cnxn)
+
         elif data == b'V':
-            self._serv_v_hndlr(client_cnxn)
+            self._serv_v_handler(client_cnxn)
         else:
             buff_text = self.unpack_msg(client_cnxn)
             data = self.pack_message(data, buff_text)
             self.broadcast(data, sockets, client_cnxn)
 
-    def _serv_u_hndlr(self, sock):
+    def _serv_u_handler(self, sock):
         """ U-type msgs used by SERVER and SENDER for user lookup exchanges.
 
         A U-type message tells the server to call lookup_user() method to
@@ -156,31 +161,48 @@ class Server(ChatIO, Channel):
             cancel_msg = 'x-x Send file cancelled. Continue chatting.'
             self.pack_n_send(sock, 'M', cancel_msg)
 
-    def _serv_t_hndlr(self, client_cnxn):
+    def _serv_t_handler(self, client_cnxn):
         user_name = self.unpack_msg(client_cnxn)
+        
         asker = sock_nick_dict[client_cnxn]
+
         user_found = self.lookup_user(client_cnxn, user_name)
         print('user found: ', user_found)
         if user_found:
-            msg = f'@YO: Wanna trust {asker} (Y/N)?'
+            msg = f'@YO: Wanna trust @{asker} (Y/N)?'
             msg = self.pack_message('T', msg)
             self.broadcast(msg, sockets, client_cnxn, 'recip', self.RECIP_SOCK)
-    
-    def _serv_v_hndlr(self, client_cnxn):
+
+    def _serv_v_handler(self, client_cnxn):
+        """Trust acquisition exchange."""
         choice = self.unpack_msg(client_cnxn).decode()
+
         if choice.lower() == 'y':
+            a_key = user_key_dict[self.SENDER_SOCK]
+            a_key = self.pack_message('K', a_key)
+            b_key = user_key_dict[self.RECIP_SOCK]
+            b_key = self.pack_message('K', b_key)
+
             msg = "Trust acquired. You are now chatting with some hardcore encryption."
             msg = self.pack_message('S', msg)
+
+            self.broadcast(a_key, sockets, client_cnxn, 'recip',
+                           self.RECIP_SOCK)
+
+            self.broadcast(b_key, sockets, client_cnxn, 'recip',
+                           self.SENDER_SOCK)
+
             self.broadcast(msg, sockets, client_cnxn, 'recip', self.RECIP_SOCK)
             self.broadcast(msg, sockets, client_cnxn, 'recip', self.SENDER_SOCK)
+            print('a_key',a_key)
+            print('b_key',b_key)
         elif choice.lower() == 'n':
             msg = 'Trust not acquired.'
             msg = self.pack_message('S', msg)
             self.broadcast(msg, sockets, client_cnxn, 'recip', self.RECIP_SOCK)
             self.broadcast(msg, sockets, client_cnxn, 'recip', self.SENDER_SOCK)
 
-
-    def _serv_x_hndlr(self, data, client_cnxn):
+    def _serv_x_handler(self, data, client_cnxn):
         recd_bytes = 0
         buff_text = self.unpack_msg(client_cnxn)
 
@@ -272,7 +294,7 @@ if __name__ == "__main__":
 
     sock = socket.socket()
     host = socket.gethostname()
-    
+
     try:
         ip = socket.gethostbyname(host)
     except:
@@ -293,7 +315,7 @@ if __name__ == "__main__":
     addy = (ip, int(port))
 
     # DEBUG
-    addy = ('127.0.0.1', port)
+    # addy = ('127.0.0.1', port)
 
     # TLS security is TLSv1.3, but is self signing for now.
     # All that is required for this, but will add CA later.

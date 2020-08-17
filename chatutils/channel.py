@@ -4,7 +4,7 @@ import sys
 
 
 class Channel():
-    """Returns room details"""
+    """Returns channel details"""
 
     def __init__(self):
         pass
@@ -28,6 +28,8 @@ class Channel():
 
 
 class Chime:
+    """Plays default sound in the channel."""
+
     # Ring my bell, ring my bell
     def __init__(self, muted=False):
         self.muted = muted
@@ -41,6 +43,7 @@ class Chime:
 
 
 class Colors:
+    """A conveninence class to handle those weird Terminal color controls"""
 
     def __init__(self):
         self.style = self.set_style()
