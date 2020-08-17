@@ -7,7 +7,8 @@ from nacl.signing import SigningKey, SignedMessage, VerifyKey
 
 
 class SaltCipher():
-    """"""
+    """A beautiful framework for Assymetric, Symmetric encryption,
+    signing and verifying."""
 
     def __init__(self, path: str = 'encryption/keys/nacl/'):
         self.path = path
