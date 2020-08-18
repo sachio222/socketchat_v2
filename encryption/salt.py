@@ -8,6 +8,7 @@ from nacl.signing import SigningKey, SignedMessage, VerifyKey
 
 class NaclCipher():
     """Based on the python fork of nacl's libsodium framework.
+    https://pynacl.readthedocs.io/
     
     The salt cipher involves state of the art encryption for assymetric
     encryption between users with the exchange of public keys and the
