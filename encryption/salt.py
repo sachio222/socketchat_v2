@@ -44,7 +44,11 @@ class NaclCipher():
         return b64_key
 
     def decode_b64(self, b64_key: bytes, key_type: str = "public"):
-        """Decode from base64 to key objects."""
+        """Decode from base64 to key objects.
+        
+        Example
+            decoded_prv_key = PrivateKey(b64_key, encoder=Base64Encoder)
+        """
         if key_type != 'shared':
             keys = {'public': PublicKey, 'private': PrivateKey}
             key = keys.get(key_type, "valid options: public, private, shared.")(
@@ -201,65 +205,67 @@ class NaclCipher():
 
 
 if __name__ == "__main__":
+    # Usage Examples
+    # Init and gen keys.
     salt = NaclCipher()
-    print('=======NewKeys======')
+    # Access created key vars as key objects.
     print(salt.prv_key)
     print(salt.pub_key)
+    # Access keys from file, stored as b64.
     prv_key = salt.load_prv_key()
     pub_key = salt.load_pub_key()
     print(prv_key)
     print(pub_key)
-    # Convert back
+    # Convert back to key objects.
     prv_key = PrivateKey(prv_key, encoder=Base64Encoder)
-    # pub_key = PublicKey(pub_key, encoder=Base64Encoder)
+    pub_key = PublicKey(pub_key, encoder=Base64Encoder)
+    # Or use helper function
     pub_key = salt.decode_b64(pub_key, 'public')
+    # Make a pub box with key objects.
     box = salt.make_public_box(prv_key, pub_key)
     msg = "hello how are you?"
-    print(msg)
-
+    # Generate shared key from box object.
     shared_key_orig = salt.gen_shared_key(box)
     print('shared key:', shared_key_orig)
-    # print(type(shared_key))
+    # Convert shared key to b64.
     shared_key = Base64Encoder.encode(shared_key_orig)
-
     print('shared key to b64:', shared_key)
-
-    # shared_key2 = Base64Encoder.decode(shared_key)
+    # Convert key back to key object using helper func.
     shared_key2 = salt.decode_b64(shared_key, 'shared')
     print('shared key back:', shared_key2)
     print(shared_key_orig == shared_key2)
     print('========END==========')
-    # cipher_txt = salt.encrypt(box, msg.encode())
+    # Get encoded message from box.
+    cipher_txt = salt.encrypt(box, msg.encode())
+    print(cipher_txt)
+    # Decrypt message from box that created it.
+    decrypted = salt.decrypt(box, cipher_txt)
+    print(decrypted)
+    # Encode shared key to b64.
+    enc_shared_key = Base64Encoder.encode(shared_key)
+    print('encoded shared key:', enc_shared_key)
 
-    # print(cipher_txt)
-    # decoded = salt.decrypt(box, cipher_txt)
-    # print(decoded)
-
-    # enc_shared_key = Base64Encoder.encode(shared_key)
-    # print('encoded shared key:', enc_shared_key)
-
-    # enc_prv_key = Base64Encoder.encode(salt.load_prv_key())
-    # print('original key:', salt.prv_key)
-    # print('encoded private key:', )
-    # print('decoded private key:', PrivateKey(enc_prv_key).encode(encoder=Base64Encoder))
-    # print('=========here=======')
-
-    # enc_pub_key = Base64Encoder.encode(salt.load_pub_key())
-    # print('encoded private key:', enc_pub_key)
-
-    # secret_box = salt.make_secret_box(shared_key)
-    # encrypted = salt.put_in_secret_box(secret_box, msg.encode())
-    # print(encrypted)
-    # decrypted = salt.open_secret_box(secret_box, encrypted)
-    # print(decrypted)
-    # signing_key, verify_key = salt.generate_signing_keys()
-    # signed = salt.sign(signing_key, decrypted.encode())
-    # print(signed)
-
-    # # message_bytes = salt.verify(verify_key.encode(), signed)
-    # message_bytes = salt.verify(verify_key, signed)
-    # print(message_bytes)
-
-    # forged = signed[:-1] + bytes([int(signed[-1]) ^ 1])
-    # # verify_key.verify(forged)
-    # # salt.verify(verify_key.encode(), signed)
+    print('original key:', salt.prv_key)
+    print('encoded private key:', )
+    print('=========here=======')
+    # Make a secret box from a shared key.
+    secret_box = salt.make_secret_box(shared_key)
+    # Encrypt something with the secret box.
+    encrypted = salt.put_in_secret_box(secret_box, msg.encode())
+    print(encrypted)
+    # Decrypt that thing with the same box. 
+    decrypted = salt.open_secret_box(secret_box, encrypted)
+    print(decrypted)
+    # Create sign/verify keys.
+    signing_key, verify_key = salt.generate_signing_keys()
+    # Created signed document.
+    signed = salt.sign(signing_key, decrypted.encode())
+    print(signed)
+    # message_bytes = salt.verify(verify_key.encode(), signed)
+    # Verify signed document.
+    message_bytes = salt.verify(verify_key, signed)
+    print(message_bytes)
+    # Show that its forged.
+    forged = signed[:-1] + bytes([int(signed[-1]) ^ 1])
+    # verify_key.verify(forged)
+    # salt.verify(verify_key.encode(), signed)
