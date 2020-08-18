@@ -38,10 +38,24 @@ class NaclCipher():
             f.write(pub_key.encode(encoder=Base64Encoder))
 
         return prv_key, pub_key
+    
+    def make_shared_key_from_new_box(self, pubk: PublicKey, prvk: PrivateKey=None, box: Box=None) -> bytes:
+        prvk = prvk or self.load_prv_key()
+        prvk = self.decode_b64(prvk, 'private')
 
-    def encode_b64(self, key: bytes):
+        if not box:
+            box = self.make_public_box(prvk, pubk)
+            shrk = self.gen_shared_key(box)
+
+            return shrk
+
+
+    def encode_b64(self, key: bytes, key_type: str = None) -> bytes:
         """Change key to base64"""
-        b64_key = key.encode(encoder=Base64Encoder)
+        if key_type != 'shared':
+            b64_key = key.encode(encoder=Base64Encoder)
+        else:
+            b64_key = Base64Encoder.encode(key)
         return b64_key
 
     def decode_b64(self, b64_key: bytes, key_type: str = "public"):
