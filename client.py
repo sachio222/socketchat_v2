@@ -289,7 +289,11 @@ class Client(ChatIO):
 
         # Generate and upload public nacl key.
         _, my_pubk = nacl.generate_keys()
-        
+        print(my_pubk)
+        my_pubk64 = nacl.encode_b64(my_pubk)
+        print(my_pubk64)
+        my_pubk = nacl.decode_b64(my_pubk64, 'public')
+        print(my_pubk)
 
         # self.introduced begins encryption after name has been sent.
         # this is because currently, the name is being sent/stored in plaintext.
@@ -338,17 +342,17 @@ class Client(ChatIO):
             raise RuntimeError()
 
     dispatch_table = {
-            'M': _m_handler,
-            'C': _c_handler,
-            'S': _s_handler,
-            'U': _u_handler,
-            'F': _f_handler,
-            'A': _a_handler,
-            'X': _x_handler,
-            'W': _w_handler,
-            'T': _t_handler,
-            'K': _k_handler
-        }
+        'M': _m_handler,
+        'C': _c_handler,
+        'S': _s_handler,
+        'U': _u_handler,
+        'F': _f_handler,
+        'A': _a_handler,
+        'X': _x_handler,
+        'W': _w_handler,
+        'T': _t_handler,
+        'K': _k_handler
+    }
 
     def trust_cmd_hdlr(self, msg):
         """TODO: Move to module."""
