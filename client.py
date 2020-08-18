@@ -84,7 +84,7 @@ class Client(ChatIO):
                 serv_sock.close()
                 exit()
 
-            # Always revert to default message_type and encryption.
+            # !!!!! Always revert to default message_type and encryption.
             self.message_type = 'M'
             self.encrypt_traffic = self.encrypt_flag
 
@@ -291,7 +291,6 @@ class Client(ChatIO):
         _, my_pubk = nacl.generate_keys()
         my_pubk64 = nacl.encode_b64(my_pubk)
         self.pack_n_send(sock, 'P', my_pubk64)
-
         # print('public key: ',my_pubk)
         # print('b64 public key:', my_pubk64)
         # my_pubk_conv = nacl.decode_b64(my_pubk64, 'public')
@@ -306,16 +305,24 @@ class Client(ChatIO):
         """Recv trust decision from askee."""
         # Answer to prompt from T handler.
         # Do you want to trust?
-        wanna_trust_msg = self.unpack_msg(serv_sock).decode()
+        wanna_trust_msg = self.unpack_msg(sock).decode()
         print(wanna_trust_msg)
         self.message_type = 'V'
+        # Turn off encryption for answer. 
+        self.encrypt_traffic = False
 
     def _k_handler(self, sock: socket):
         """Recv. Keys"""
         # print("And I am a type K")
-        pubk64 = self.unpack_msg(serv_sock).decode()
+        pubk64 = self.unpack_msg(sock).decode()
         recip_pubk = PublicKey(pubk64, Base64Encoder)
-        print('got key', recip_pubk)
+        shrk = nacl.make_shared_key_from_new_box(pubk=recip_pubk)
+        shrk = nacl.encode_b64(shrk, 'shared')
+
+        with open('secret.key', 'wb') as f:
+            f.write(shrk)
+        with open('secret2.key', 'wb') as f:
+            f.write(shrk)
         # shared_key = nacl.get_shared_key(pub_key)
         # print(pub_key)
         # msg = "test this message dawg"
