@@ -368,7 +368,7 @@ class Client(ChatIO):
         # if input to V pipe is Y, Server gets key by Alice and sends to bob as Key type
         # Server sends key to Bob with key type.
         # Keys are both shared and encryption is startd.
-        user = msg[1]
+        user = ' '.join(msg[1:])
         if not user:
             user = input('Whom would you like to trust? @')
         self.pack_n_send(serv_sock, 'T', user)
@@ -489,7 +489,7 @@ if __name__ == "__main__":
 
     client_ctxt = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
     client_ctxt.check_hostname = False
-    client_ctxt.verify_mode = ssl.CERT_REQUIRED
+    client_ctxt.verify_mode = ssl.CERT_NONE
     client_ctxt.set_ciphers('ECDHE-ECDSA-AES256-SHA384')    
     client_ctxt.options |= ssl.OP_NO_COMPRESSION
     client_ctxt.load_verify_locations(cert_path)
