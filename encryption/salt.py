@@ -55,7 +55,7 @@ class NaclCipher():
         if key_type != 'shared':
             b64_key = key.encode(encoder=Base64Encoder)
         else:
-            b64_key = Base64Encoder.decode(key)
+            b64_key = Base64Encoder.encode(key)
         return b64_key
 
     def decode_b64(self, b64_key: bytes, key_type: str = "public"):
