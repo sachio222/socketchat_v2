@@ -114,9 +114,10 @@ class Server(ChatIO, Channel):
         elif data == b'X':
             self._serv_x_handler(client_cnxn, data)
         elif data == b'P':
+            # Pack public key.
             self._serv_p_handler(client_cnxn)
         elif data == b'T':
-            # Lookup user for trust.
+            # Trust user lookup.
             self._serv_t_handler(client_cnxn)
         elif data == b'V':
             self._serv_v_handler(client_cnxn)
@@ -190,9 +191,7 @@ class Server(ChatIO, Channel):
 
     def _serv_t_handler(self, client_cnxn):
         user_name = self.unpack_msg(client_cnxn)
-
         asker = sock_nick_dict[client_cnxn]
-
         user_found = self.lookup_user(client_cnxn, user_name)
         print('user found: ', user_found)
         if user_found:
@@ -231,10 +230,11 @@ class Server(ChatIO, Channel):
             self.broadcast(msg, sockets, client_cnxn, 'recip', self.SENDER_SOCK)
 
     def _serv_p_handler(self, sock: socket):
-        """Store public key on server when join."""
+        """Store public key on server on join."""
         # Stores public keys
-        pub_key = self.unpack_msg(sock)
-        user_key_dict[sock] = pub_key
+        pubk64 = self.unpack_msg(sock)
+        user_key_dict[sock] = pubk64
+        print(user_key_dict)
 
     def lookup_user(self, sock: socket, user_query: str) -> bool:
         """Checks if user exists. If so, returns user and address.
@@ -400,11 +400,11 @@ if __name__ == "__main__":
     server_ctxt = ssl.SSLContext(ssl.PROTOCOL_TLS)
     server_ctxt.verify_mode = ssl.CERT_NONE
     server_ctxt.set_ecdh_curve('prime256v1')
-    server_ctxt.load_cert_chain(cert_path, rsa_key_path)
-    server_ctxt.set_ciphers('ECDHE-RSA-AES256-GCM-SHA384')
+    server_ctxt.set_ciphers('ECDHE-ECDSA-AES256-SHA384')
     server_ctxt.options |= ssl.OP_NO_COMPRESSION
     server_ctxt.options |= ssl.OP_SINGLE_ECDH_USE
     server_ctxt.options |= ssl.OP_CIPHER_SERVER_PREFERENCE
+    server_ctxt.load_cert_chain(cert_path, rsa_key_path)
 
     try:
         sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
