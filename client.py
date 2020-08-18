@@ -9,8 +9,9 @@ import argparse
 import requests
 
 from encryption.fernet import Cipher
-from encryption.salt import SaltCipher
-from nacl.encoding import Base64Encoder, RawEncoder
+from encryption.salt import NaclCipher
+
+from nacl.encoding import Base64Encoder
 from nacl.public import PublicKey
 import nacl.utils
 
@@ -287,10 +288,8 @@ class Client(ChatIO):
         self.print_message(msg, style_name='GREEN_INVERT')
 
         # Generate and upload public nacl key.
-        # pub_key = nacl.get_pub_key()
-        # pub_key = pub_key.encode(Base64Encoder).decode()
-        # print(pub_key)
-        # self.pack_n_send(serv_sock, 'P', pub_key)
+        _, my_pubk = nacl.generate_keys()
+        
 
         # self.introduced begins encryption after name has been sent.
         # this is because currently, the name is being sent/stored in plaintext.
@@ -476,7 +475,7 @@ if __name__ == "__main__":
 
     # Establish keys
     fernet = Cipher()
-    nacl = SaltCipher()
+    nacl = NaclCipher()
 
     rsa_key_path = 'encryption/keys/TLS/rsa_key.pem'
     cert_path = 'encryption/keys/TLS/certificate.pem'
