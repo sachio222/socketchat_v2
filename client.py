@@ -135,8 +135,8 @@ class Client(ChatIO):
             self.trust(msg)
         elif msg[0] == '/exit' or msg == '/close':
             print('Disconnected.')
-            # sock.shutdown(socket.SHUT_RDWR)
-            # sock.close()
+            sock.shutdown(socket.SHUT_RDWR)
+            sock.close()
             pass
         elif msg[0] == '/weather':
             weather.report(msg)
@@ -323,11 +323,6 @@ class Client(ChatIO):
             f.write(shrk)
         with open('secret2.key', 'wb') as f:
             f.write(shrk)
-        # shared_key = nacl.get_shared_key(pub_key)
-        # print(pub_key)
-        # msg = "test this message dawg"
-        # enc_msg = nacl.encrypt(pub_key, msg)
-        # print(enc_msg)
         self.encrypt_traffic = True
         self.encrypt_flag = True
 
