@@ -22,8 +22,8 @@ def _run_urbandict(search):
     return json.loads(response.read())
 
 
-def urbandict(word):
-    term = word[8:]
+def urbandict(term):
+    term = " ".join(term[1:])
     try:
         entry = _run_urbandict(term)
         entry = entry['list'][0].get('definition').replace('[',

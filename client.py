@@ -104,41 +104,45 @@ class Client(ChatIO):
 
         if type(msg) == bytes:
             msg.decode()
+        # Split into command and keywords
+        msg = msg.split(' ')
 
-        if msg == '/about':
+        if msg[0] == '/about':
             # Read from file in config folder.
             path = 'config/about.txt'
             utils.print_from_file(path)
-        elif msg == '/help' or msg == '/h':
+        elif msg[0] == '/help' or msg[0] == '/h':
             # Read from file in config folder.
             path = 'config/help.txt'
             utils.print_from_file(path)
-        elif msg == '/sendfile' or msg == '/sf':
+        elif msg[0] == '/sendfile' or msg[0] == '/sf':
             # Initiates Send File (SF) sequence.
             self.start_sendfile_process(sock)
-        elif msg[:7] == '/status':
+        elif msg[0] == '/status':
             # Ask SERVER to broadcast who is online.
+            # join and strip. Send over full string.
+            msg = ' '.join(msg)
             msg = msg[1:]
             self.pack_n_send(sock, '/', msg)
-        elif msg == '/mute':
+        elif msg[0] == '/mute':
             self.muted = True
             self.print_message("@YO: Muted. Type /unmute to restore sound.")
-        elif msg == '/unmute':
+        elif msg[0] == '/unmute':
             self.muted = False
             self.print_message("@YO: B00P! Type /mute to turn off sound.")
-        elif msg[:6] == '/trust':
+        elif msg[0] == '/trust':
             self.trust_cmd_hdlr(msg)
-        elif msg == '/exit' or msg == '/close':
+        elif msg[0] == '/exit' or msg == '/close':
             print('Disconnected.')
             sock.shutdown(socket.SHUT_RDWR)
             sock.close()
             pass
-        elif msg[:8] == '/weather':
+        elif msg[0] == '/weather':
             weather.report(msg)
             # print('\r-=-', report)
-        elif msg[:7] == '/urband':
+        elif msg[0] == '/urband':
             urbandict.urbandict(msg)
-        elif msg == '/moon':
+        elif msg[0] == '/moon':
             moon.phase()
         else:
             print('-!- Command not recognized.')
