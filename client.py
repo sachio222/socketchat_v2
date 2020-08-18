@@ -132,11 +132,11 @@ class Client(ChatIO):
             self.muted = False
             self.print_message("@YO: B00P! Type /mute to turn off sound.")
         elif msg[0] == '/trust':
-            self.trust_cmd_hdlr(msg)
+            self.trust(msg)
         elif msg[0] == '/exit' or msg == '/close':
             print('Disconnected.')
-            sock.shutdown(socket.SHUT_RDWR)
-            sock.close()
+            # sock.shutdown(socket.SHUT_RDWR)
+            # sock.close()
             pass
         elif msg[0] == '/weather':
             weather.report(msg)
@@ -289,16 +289,18 @@ class Client(ChatIO):
 
         # Generate and upload public nacl key.
         _, my_pubk = nacl.generate_keys()
-        print('public key: ',my_pubk)
         my_pubk64 = nacl.encode_b64(my_pubk)
-        print('b64 public key:', my_pubk64)
-        my_pubk_conv = nacl.decode_b64(my_pubk64, 'public')
-        print('converted public key:', my_pubk_conv)
+        self.pack_n_send(sock, 'P', my_pubk64)
+
+        # print('public key: ',my_pubk)
+        # print('b64 public key:', my_pubk64)
+        # my_pubk_conv = nacl.decode_b64(my_pubk64, 'public')
+        # print('converted public key:', my_pubk_conv)
 
         # self.introduced begins encryption after name has been sent.
         # this is because currently, the name is being sent/stored in plaintext.
         self.introduced = True
-        self.pack_n_send(serv_sock, '/', 'status self')
+        self.pack_n_send(sock, '/', 'status self')
 
     def _t_handler(self, sock: socket):
         """Recv trust decision from askee."""
@@ -311,9 +313,10 @@ class Client(ChatIO):
     def _k_handler(self, sock: socket):
         """Recv. Keys"""
         # print("And I am a type K")
-        pub_key = self.unpack_msg(serv_sock).decode()
+        pubk64 = self.unpack_msg(serv_sock).decode()
+        recip_pubk = PublicKey(pubk64, Base64Encoder)
+        print('got key', recip_pubk)
         # shared_key = nacl.get_shared_key(pub_key)
-        self.recip_pub_key = PublicKey(pub_key, Base64Encoder)
         # print(pub_key)
         # msg = "test this message dawg"
         # enc_msg = nacl.encrypt(pub_key, msg)
@@ -354,7 +357,7 @@ class Client(ChatIO):
         'K': _k_handler
     }
 
-    def trust_cmd_hdlr(self, msg):
+    def trust(self, msg):
         """TODO: Move to module."""
         #* Alices sends client lookup to server for 'Bob' with T(rust) type.
         #* Server listens for 'Trust' message. if receive:
@@ -363,11 +366,9 @@ class Client(ChatIO):
         # if input to V pipe is Y, Server gets key by Alice and sends to bob as Key type
         # Server sends key to Bob with key type.
         # Keys are both shared and encryption is startd.
-        user = msg[7:]
+        user = msg[1]
         if not user:
-            user = input('Who do you want to trust?')
-
-        print(user)
+            user = input('Whom would you like to trust? @')
         self.pack_n_send(serv_sock, 'T', user)
 
     def start_sendfile_process(self, sock: socket):
@@ -486,10 +487,13 @@ if __name__ == "__main__":
 
     client_ctxt = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
     client_ctxt.check_hostname = False
-    # client_ctxt.verify_mode = ssl.CERT_REQUIRED
-    client_ctxt.set_ciphers('ECDHE-RSA-AES256-GCM-SHA384')
+    client_ctxt.verify_mode = ssl.CERT_REQUIRED
+    client_ctxt.set_ciphers('ECDHE-ECDSA-AES256-SHA384')    
     client_ctxt.options |= ssl.OP_NO_COMPRESSION
-    client_ctxt.load_cert_chain(cert_path, rsa_key_path)
+    client_ctxt.load_verify_locations(cert_path)
+
+    # If you want to lock with cert password. 
+    # client_ctxt.load_cert_chain(cert_path, rsa_key_path)
 
     serv_sock = socket.socket()
 
@@ -500,6 +504,7 @@ if __name__ == "__main__":
     print(f'-+- SSL Established. {serv_sock.version()}')
     print(f'-+- Connected to {host}')
     # print(f'Peer certificate: {serv_sock.getpeercert()}')
+    # print(f'Ciphers: {client_ctxt.get_ciphers()}')
 
     channel.encrypt_flag = args.is_encrypted
     if channel.encrypt_flag:
