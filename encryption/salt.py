@@ -39,12 +39,18 @@ class NaclCipher():
         return prv_key, pub_key
 
     def encode_b64(self, key: bytes):
+        """Change key to base64"""
         b64_key = key.encode(encoder=Base64Encoder)
         return b64_key
-    
-    def decode_b64(self, b64_key: bytes, key_type: str = "private"):
-        keys = {'public' : PublicKey, 'private' : PrivateKey }
-        key = PrivateKey(b64_key)
+
+    def decode_b64(self, b64_key: bytes, key_type: str = "public"):
+        """Decode from base64 to key objects."""
+        if key_type != 'shared':
+            keys = {'public': PublicKey, 'private': PrivateKey}
+            key = keys.get(key_type, "valid options: public, private, shared.")(
+                b64_key, encoder=Base64Encoder)
+        else:
+            key = Base64Encoder.decode(b64_key)
         return key
 
     def load_pub_key(self, fn: str = 'public.key') -> PublicKey:
@@ -205,7 +211,8 @@ if __name__ == "__main__":
     print(pub_key)
     # Convert back
     prv_key = PrivateKey(prv_key, encoder=Base64Encoder)
-    pub_key = PublicKey(pub_key, encoder=Base64Encoder)
+    # pub_key = PublicKey(pub_key, encoder=Base64Encoder)
+    pub_key = salt.decode_b64(pub_key, 'public')
     box = salt.make_public_box(prv_key, pub_key)
     msg = "hello how are you?"
     print(msg)
@@ -217,9 +224,10 @@ if __name__ == "__main__":
 
     print('shared key to b64:', shared_key)
 
-    shared_key2 = Base64Encoder.decode(shared_key)
+    # shared_key2 = Base64Encoder.decode(shared_key)
+    shared_key2 = salt.decode_b64(shared_key, 'shared')
     print('shared key back:', shared_key2)
-    print( shared_key_orig == shared_key2)
+    print(shared_key_orig == shared_key2)
     print('========END==========')
     # cipher_txt = salt.encrypt(box, msg.encode())
 
@@ -235,7 +243,6 @@ if __name__ == "__main__":
     # print('encoded private key:', )
     # print('decoded private key:', PrivateKey(enc_prv_key).encode(encoder=Base64Encoder))
     # print('=========here=======')
-
 
     # enc_pub_key = Base64Encoder.encode(salt.load_pub_key())
     # print('encoded private key:', enc_pub_key)

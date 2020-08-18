@@ -5,7 +5,7 @@ from threading import Thread
 
 from .channel import Chime, Colors
 from encryption.fernet import Cipher
-from encryption.salt import SaltCipher
+from encryption.salt import NaclCipher
 
 
 class ChatIO(Chime, Colors):

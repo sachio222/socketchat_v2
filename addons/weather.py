@@ -14,11 +14,10 @@ def report(msg):
             fmt = 'format=4'
         else:
             fmt = ''
-        
+
         if msg[1:]:
             loc = ' '.join(msg[1:])
 
-        
         url = f'http://wttr.in/{loc}?{fmt}'
         weather = requests.get(url)
 
