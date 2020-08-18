@@ -289,11 +289,11 @@ class Client(ChatIO):
 
         # Generate and upload public nacl key.
         _, my_pubk = nacl.generate_keys()
-        print(my_pubk)
+        print('public key: ',my_pubk)
         my_pubk64 = nacl.encode_b64(my_pubk)
-        print(my_pubk64)
-        my_pubk = nacl.decode_b64(my_pubk64, 'public')
-        print(my_pubk)
+        print('b64 public key:', my_pubk64)
+        my_pubk_conv = nacl.decode_b64(my_pubk64, 'public')
+        print('converted public key:', my_pubk_conv)
 
         # self.introduced begins encryption after name has been sent.
         # this is because currently, the name is being sent/stored in plaintext.
@@ -373,31 +373,31 @@ class Client(ChatIO):
     def start_sendfile_process(self, sock: socket):
         """A complex process that communicates between SERVER and 2 CLIENTS
         
-        Process
+        Steps to send a file with recipient and confirmation.
 
-        CLIENT1: Wishes to send file.
+        1. CLIENT1: Wishes to send file.
         /sendfile -> sendfile_process...
-        LOCAL CHANNEL: Asks for file to send.
+        2. LOCAL CHANNEL: Asks for file to send.
         xfer.sender_prompt() -> bool
-        LOCAL CHANNEL: Asks for recipient.
+        3. LOCAL CHANNEL: Asks for recipient.
         xfer.user_prompt() -> xfer.get_username() -> sends U-type (user) message->
-        SERVER: Receives U-type message.
+        4. SERVER: Receives U-type message.
         _serv_u_handler() -> lookup_user() -> sends bool as U-type reply to CLIENT1 ->
-        CLIENT1: Receives U-type message.
+        5. CLIENT1: Receives U-type message.
         _u_handler() false ? -> U-type loop to SERVER | true ? xfer.recip_prompt(path, fn) -> CHANNEL
-        LOCAL CHANNEL: Prints User Found, Sends fileinfo and accept prompt to CLIENT 2
+        6. LOCAL CHANNEL: Prints User Found, Sends fileinfo and accept prompt to CLIENT 2
         xfer.recip_prompt(path, fn) -> F-type (file) prompt - SERVER
-        SERVER: Receives F-type message.
+        7. SERVER: Receives F-type message.
         _serv_f_handler() -> Prompt with file info as F-type msg -> CLIENT2
-        CLIENT2: Prompt if wish to accept?
+        8. CLIENT2: Prompt if wish to accept?
         _f_handler() -> Shows prompt, waits for answer as A-type (answer) -> 
-        SERVER: Receives A-type message.
+        9. SERVER: Receives A-type message.
         _serv_a_handler() -> invalid? Loopback as F-type : valid? Routes A-type -> CLIENT1 as A-type msg ->
-        CLIENT1: receives A-type message. Tells if accepted or rejected.
+        10. CLIENT1: receives A-type message. Tells if accepted or rejected.
         _a_handler() -> 'n' ? break : 'y' ? xfer.file_xfer() -> Send as X-type (Xfer) -> SERVER
-        SERVER: Receives X-type message.
+        11. SERVER: Receives X-type message.
         _serv_x_handler() -> transfers open buffer from CLIENT1 to CLIENT2
-        CLIENT2: receives X-type message. File downloads
+        12. CLIENT2: receives X-type message. File downloads
         x_handler() -> write file. -> print msg receipt as M-type (message). 
         Done.
 
