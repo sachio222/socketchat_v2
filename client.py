@@ -516,7 +516,8 @@ if __name__ == "__main__":
     # print(f'Peer certificate: {serv_sock.getpeercert()}')
     # print(f'Ciphers: {client_ctxt.get_ciphers()}')
 
-    channel.encrypt_flag = args.is_encrypted
+    # channel.encrypt_flag = args.is_encrypted
+    channel.encrypt_flag = False
     if channel.encrypt_flag:
         encr_msg = f'\n-!- 🔐 Encryption is ON.\n-!- However, your handle may still be visible in plaintext.'
     else:
