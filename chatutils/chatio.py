@@ -6,6 +6,7 @@ from threading import Thread
 from .channel import Chime, Colors
 from encryption.fernet import Cipher
 from encryption.salt import NaclCipher, Box
+from nacl.encoding import Base64Encoder
 
 
 class ChatIO(Chime, Colors):
@@ -232,9 +233,8 @@ class ChatIO(Chime, Colors):
         def dcryp_nacl_pub_box(msg: bytes, box) -> bytes:
             msg64 = Base64Encoder.decode(msg)
             dcrypt_msg = box.decrypt(msg64)
-
             return dcrypt_msg
-            
+
         def dcryp_nacl_sld_box(msg: bytes, box) -> bytes:
             pass
 
