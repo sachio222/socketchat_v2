@@ -76,7 +76,7 @@ class Client(ChatIO):
                             if self.encrypt_traffic:
                                 self.msg = nacl.encrypt(self.pub_box,
                                                         self.msg.encode())
-                                self.msg = fernet.encrypt(self.msg)
+                                # self.msg = fernet.encrypt(self.msg)
                                 self.msg = Base64Encoder.encode(self.msg)
                 else:
                     self.msg = ''
@@ -304,7 +304,7 @@ class Client(ChatIO):
         _, my_pubk = nacl.generate_keys()
         my_pubk64 = nacl.encode_b64(my_pubk)
         self.pack_n_send(sock, 'P', my_pubk64)
-        print('my b64 public key:', my_pubk64)
+        # print('my b64 public key:', my_pubk64)
 
         # self.introduced begins encryption after name has been sent.
         # this is because currently, the name is being sent/stored in plaintext.
@@ -324,15 +324,13 @@ class Client(ChatIO):
     def _k_handler(self, sock: socket):
         """Recv. Keys"""
         pbk64 = self.unpack_msg(sock)
-        print('Their public key:', pbk64)
+        # print('Their public key:', pbk64)
         recip_pbk = PublicKey(pbk64, Base64Encoder)
         pvk64 = nacl.load_prv_key()
         pvk = PrivateKey(pvk64, encoder=Base64Encoder)
         self.pub_box = nacl.make_public_box(pvk, recip_pbk)
         shrk = nacl.gen_shared_key(self.pub_box)
-        print("Shared key is", shrk)
-        # self.pub_box = Box(pvk, recip_pbk)
-
+        # print("Shared key is", shrk)
         self.encrypt_traffic = True
         self.encrypt_flag = True
  
