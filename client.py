@@ -333,7 +333,6 @@ class Client(ChatIO):
         # print("Shared key is", shrk)
         self.encrypt_traffic = True
         self.encrypt_flag = True
- 
 
     def _err_handler(self, *args):
         # print('Prefix: ', typ_pfx)
