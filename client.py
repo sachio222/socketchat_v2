@@ -321,8 +321,8 @@ class Client(ChatIO):
 
         with open('secret.key', 'wb') as f:
             f.write(shrk)
-        with open('secret2.key', 'wb') as f:
-            f.write(shrk)
+        
+        fernet.load_key()
         self.encrypt_traffic = True
         self.encrypt_flag = True
 
