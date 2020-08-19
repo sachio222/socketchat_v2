@@ -205,8 +205,8 @@ class Server(ChatIO, Channel):
         if choice.lower() == 'y':
             a_key = user_key_dict[self.SENDER_SOCK]
             b_key = user_key_dict[self.RECIP_SOCK]
-            a_key = self.pack_message('K', b_key)
-            b_key = self.pack_message('K', a_key)
+            a_key = self.pack_message('K', a_key)
+            b_key = self.pack_message('K', b_key)
 
             msg = "Trust acquired. You are now chatting with some hardcore encryption."
             msg = self.pack_message('S', msg)
