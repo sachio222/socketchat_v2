@@ -5,7 +5,7 @@ from threading import Thread
 
 from .channel import Chime, Colors
 from encryption.fernet import Cipher
-from encryption.salt import NaclCipher
+from encryption.salt import NaclCipher, Box
 
 
 class ChatIO(Chime, Colors):
@@ -161,14 +161,14 @@ class ChatIO(Chime, Colors):
         """Converts size prefix data to int."""
         return int(data[:n])
 
-    def print_message(self, msg, enc=False, style_name=None):
+    def print_message(self, msg, enc=False, style_name=None, box: Box=None):
         """Print message to screen."""
 
         ERASE_LINE = '\x1b[2K'
         sys.stdout.write(ERASE_LINE)
 
         if enc:
-            handle, msg = self.split_n_decrypt(msg, pub_box)
+            handle, msg = self.decrypt_incoming(msg, 'nacl-pub-box', box=box)
 
             handle = self.make_fancy(self.GREEN, f'@{handle}:')
             msg = self.make_fancy(self.GREEN, f' {msg}')
@@ -193,21 +193,70 @@ class ChatIO(Chime, Colors):
             print(f'\r{msg}')
 
     def remove_pfx(self, data, n=5):
+        """UTILITY: cuts off the prefix for any reason."""
         # Accepts bytes input, chops off prefix and returns plain message as bytes.
         return data[5:]
 
-    def split_n_decrypt(self, raw_msg):
+    def split_to_str(self, raw_msg: bytes) -> (str, str):
+        """UTILITY: Separates message from raw_msg from server.
 
-        handle, msg = Cipher().split(raw_msg)
+        Returns:
+            handle: (str) user name
+            cipher_msg: (bytes)
+        """
+        SEPARATOR = ': '
+        msg = raw_msg.decode()  # to str
+        split = msg.split(SEPARATOR)
 
+        handle = split[0]
+        cipher_msg = split[1]  # to bytes
         
-        # raw_msg = SaltCipher().decrypt(raw_msg)
-        # try:
-        # try:
-        msg = Cipher().decrypt(msg).decode()
+        return handle, cipher_msg
 
-        # except:
-        #     handle = ''
-        #     msg = raw_msg.decode()
- 
+    def _check_path(self, path):
+        """UTILITY: Makes sure path exists."""
+        folders = os.path.dirname(path)
+        if not os.path.exists(folders):
+            os.makedirs(folders)
+
+    def decrypt_incoming(self, raw_msg: bytes, encrpyt_method: str='nacl-pub-box',
+                         split: bool=True, box: Box=None) -> (str, str):
+
+        if split:
+            handle, msg = self.split_to_str(raw_msg)
+            msg = msg.encode() # To bytes
+        else:
+            handle = ''
+            msg = raw_msg
+
+        def dcryp_nacl_pub_box(msg: bytes, box) -> bytes:
+            return NaclCipher().decrypt(box, msg)
+
+        def dcryp_nacl_sld_box(msg: bytes, box) -> bytes:
+            pass
+
+        def dcryp_nacl_sec_box(msg: bytes, box) -> bytes:
+            pass
+
+        def dcryp_AES256(msg: bytes, *args) -> bytes:
+            pass
+
+        def dcryp_fernet(msg: bytes, *args) -> bytes:
+            return Cipher().decrypt(msg).decode()
+
+        def err_handler(*args) -> bytes:
+            raise ValueError("encrypt_method must be 'nacl-pub-box', " \
+                "'nacl-sld-box', 'nacl-sec-box', 'aes256', or 'fernet'")
+
+        dispatch = {
+            'nacl-pub-box': dcryp_nacl_pub_box,
+            'nacl-sld-box': dcryp_nacl_sld_box,
+            'nacl-sec-box': dcryp_nacl_sec_box,
+            'aes256': dcryp_AES256,
+            'fernet': dcryp_fernet
+        }
+
+        msg = dispatch.get(encrpyt_method, err_handler)(msg, box)
+        msg = msg.decode()
+
         return handle, msg
