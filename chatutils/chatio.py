@@ -230,8 +230,11 @@ class ChatIO(Chime, Colors):
             msg = raw_msg
 
         def dcryp_nacl_pub_box(msg: bytes, box) -> bytes:
-            return NaclCipher().decrypt(box, msg)
+            msg64 = Base64Encoder.decode(msg)
+            dcrypt_msg = box.decrypt(msg64)
 
+            return dcrypt_msg
+            
         def dcryp_nacl_sld_box(msg: bytes, box) -> bytes:
             pass
 
