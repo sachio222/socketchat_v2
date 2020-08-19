@@ -39,7 +39,7 @@ class Client(ChatIO):
         self.encrypt_flag = True
         self.encrypt_traffic = self.encrypt_flag
         self.recip_pub_key = ''
-        self.pub_box = b''
+        self.pub_box = None
 
     #===================== SENDING METHODS =====================#
     def sender(self):
