@@ -162,7 +162,7 @@ class ChatIO(Chime, Colors):
         """Converts size prefix data to int."""
         return int(data[:n])
 
-    def print_message(self, msg, enc=False, style_name=None, box: Box=None):
+    def print_message(self, msg, enc=False, style_name=None, box: Box = None):
         """Print message to screen."""
 
         ERASE_LINE = '\x1b[2K'
@@ -211,7 +211,7 @@ class ChatIO(Chime, Colors):
 
         handle = split[0]
         cipher_msg = split[1]  # to bytes
-        
+
         return handle, cipher_msg
 
     def _check_path(self, path):
@@ -220,12 +220,15 @@ class ChatIO(Chime, Colors):
         if not os.path.exists(folders):
             os.makedirs(folders)
 
-    def decrypt_incoming(self, raw_msg: bytes, encrpyt_method: str='nacl-pub-box',
-                         split: bool=True, box: Box=None) -> (str, str):
+    def decrypt_incoming(self,
+                         raw_msg: bytes,
+                         encrpyt_method: str = 'nacl-pub-box',
+                         split: bool = True,
+                         box: Box = None) -> (str, str):
 
         if split:
             handle, msg = self.split_to_str(raw_msg)
-            msg = msg.encode() # To bytes
+            msg = msg.encode()  # To bytes
         else:
             handle = ''
             msg = raw_msg

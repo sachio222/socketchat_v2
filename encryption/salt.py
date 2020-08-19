@@ -70,8 +70,9 @@ class NaclCipher():
         """
         if key_type != 'shared':
             keys = {'public': PublicKey, 'private': PrivateKey}
-            key = keys.get(key_type, print("valid options: public, private, shared."))(
-                b64_key, encoder=Base64Encoder)
+            key = keys.get(key_type,
+                           print("valid options: public, private, shared."))(
+                               b64_key, encoder=Base64Encoder)
         else:
             key = Base64Encoder.decode(b64_key)
         return key
@@ -254,7 +255,6 @@ if __name__ == "__main__":
     print(shared_key_orig == shared_key2)
     print('========END==========')
 
-
     # Get encoded message from box.
     cipher_txt = salt.encrypt(box, msg.encode())
     print('ciphertext is\n', cipher_txt)
@@ -272,9 +272,6 @@ if __name__ == "__main__":
     decrypted = salt.decrypt(box, cipher_txt)
     print(decrypted)
     # exit()
-
-
-
 
     # # Encode shared key to b64.
     # enc_shared_key = Base64Encoder.encode(shared_key)
