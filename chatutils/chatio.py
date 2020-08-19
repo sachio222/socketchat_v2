@@ -161,7 +161,7 @@ class ChatIO(Chime, Colors):
         """Converts size prefix data to int."""
         return int(data[:n])
 
-    def print_message(self, msg, enc=False, style_name=None, pub_box=None,):
+    def print_message(self, msg, enc=False, style_name=None):
         """Print message to screen."""
 
         ERASE_LINE = '\x1b[2K'
@@ -196,20 +196,18 @@ class ChatIO(Chime, Colors):
         # Accepts bytes input, chops off prefix and returns plain message as bytes.
         return data[5:]
 
-    def split_n_decrypt(self, raw_msg, pub_box=None):
+    def split_n_decrypt(self, raw_msg):
 
         handle, msg = Cipher().split(raw_msg)
 
-        if not pub_box:
-            # raw_msg = SaltCipher().decrypt(raw_msg)
-            # try:
-            # try:
-            msg = Cipher().decrypt(msg).decode()
+        
+        # raw_msg = SaltCipher().decrypt(raw_msg)
+        # try:
+        # try:
+        msg = Cipher().decrypt(msg).decode()
 
-            # except:
-            #     handle = ''
-            #     msg = raw_msg.decode()
-        else:
-            msg = NaclCipher().decrypt(pub_box, msg)
+        # except:
+        #     handle = ''
+        #     msg = raw_msg.decode()
  
         return handle, msg
