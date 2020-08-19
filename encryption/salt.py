@@ -70,7 +70,7 @@ class NaclCipher():
         """
         if key_type != 'shared':
             keys = {'public': PublicKey, 'private': PrivateKey}
-            key = keys.get(key_type, "valid options: public, private, shared.")(
+            key = keys.get(key_type, print("valid options: public, private, shared."))(
                 b64_key, encoder=Base64Encoder)
         else:
             key = Base64Encoder.decode(b64_key)
@@ -124,7 +124,6 @@ class NaclCipher():
 
     def decrypt(self, box: Box, cipher_msg: bytes) -> str:
         """Decrypt a bytes message with a public box."""
-
         plaintext = box.decrypt(cipher_msg)
         return plaintext.decode()
 
@@ -226,6 +225,7 @@ if __name__ == "__main__":
     # Usage Examples
     # Init and gen keys.
     salt = NaclCipher()
+
     # Access created key vars as key objects.
     print(salt.prv_key)
     print(salt.pub_key)
@@ -238,7 +238,7 @@ if __name__ == "__main__":
     prv_key = PrivateKey(prv_key, encoder=Base64Encoder)
     pub_key = PublicKey(pub_key, encoder=Base64Encoder)
     # Or use helper function
-    pub_key = salt.decode_b64(pub_key, 'public')
+    # pub_key = salt.decode_b64(pub_key, 'public')
     # Make a pub box with key objects.
     box = salt.make_public_box(prv_key, pub_key)
     msg = "hello how are you?"
@@ -253,37 +253,94 @@ if __name__ == "__main__":
     print('shared key back:', shared_key2)
     print(shared_key_orig == shared_key2)
     print('========END==========')
+
+
     # Get encoded message from box.
     cipher_txt = salt.encrypt(box, msg.encode())
-    print(cipher_txt)
+    print('ciphertext is\n', cipher_txt)
+    cipher_txt64 = Base64Encoder.encode(cipher_txt)
+    print(cipher_txt64)
+    cipher_txtstr = cipher_txt64.decode()
+    print(cipher_txtstr)
+    cipher_txt_cat = '00555' + cipher_txtstr
+    print(cipher_txt_cat)
+    ciphertxt_split = cipher_txt_cat.replace('00555', '')
+    print(ciphertxt_split)
+    cipher_txt64 = Base64Encoder.decode(ciphertxt_split)
+    print(cipher_txt64)
     # Decrypt message from box that created it.
     decrypted = salt.decrypt(box, cipher_txt)
     print(decrypted)
-    # Encode shared key to b64.
-    enc_shared_key = Base64Encoder.encode(shared_key)
-    print('encoded shared key:', enc_shared_key)
+    # exit()
 
-    print('original key:', salt.prv_key)
-    print('encoded private key:',)
-    print('=========here=======')
-    # Make a secret box from a shared key.
-    secret_box = salt.make_secret_box(shared_key)
-    # Encrypt something with the secret box.
-    encrypted = salt.put_in_secret_box(secret_box, msg.encode())
-    print(encrypted)
-    # Decrypt that thing with the same box.
-    decrypted = salt.open_secret_box(secret_box, encrypted)
-    print(decrypted)
-    # Create sign/verify keys.
-    signing_key, verify_key = salt.generate_signing_keys()
-    # Created signed document.
-    signed = salt.sign(signing_key, decrypted.encode())
-    print(signed)
-    # message_bytes = salt.verify(verify_key.encode(), signed)
-    # Verify signed document.
-    message_bytes = salt.verify(verify_key, signed)
-    print(message_bytes)
-    # Show that its forged.
-    forged = signed[:-1] + bytes([int(signed[-1]) ^ 1])
-    # verify_key.verify(forged)
-    # salt.verify(verify_key.encode(), signed)
+
+
+
+    # # Encode shared key to b64.
+    # enc_shared_key = Base64Encoder.encode(shared_key)
+    # print('encoded shared key:', enc_shared_key)
+
+    # print('original key:', salt.prv_key)
+    # print('encoded private key:',)
+    # print('=========here=======')
+    # # Make a secret box from a shared key.
+    # secret_box = salt.make_secret_box(shared_key)
+    # # Encrypt something with the secret box.
+    # encrypted = salt.put_in_secret_box(secret_box, msg.encode())
+    # print(encrypted)
+    # # Decrypt that thing with the same box.
+    # decrypted = salt.open_secret_box(secret_box, encrypted)
+    # print(decrypted)
+    # # Create sign/verify keys.
+    # signing_key, verify_key = salt.generate_signing_keys()
+    # # Created signed document.
+    # signed = salt.sign(signing_key, decrypted.encode())
+    # print(signed)
+    # # message_bytes = salt.verify(verify_key.encode(), signed)
+    # # Verify signed document.
+    # message_bytes = salt.verify(verify_key, signed)
+    # print(message_bytes)
+    # # Show that its forged.
+    # forged = signed[:-1] + bytes([int(signed[-1]) ^ 1])
+    # # verify_key.verify(forged)
+    # # salt.verify(verify_key.encode(), signed)
+
+    # import nacl.utils
+    # from nacl.public import PrivateKey, Box
+
+    # Generate Bob's private key, which must be kept secret
+    skbob = PrivateKey.generate()
+    print('pvk', skbob)
+
+    # Bob's public key can be given to anyone wishing to send
+    #   Bob an encrypted message
+    pkbob = skbob.public_key
+
+    # Alice does the same and then Alice and Bob exchange public keys
+    skalice = PrivateKey.generate()
+    pkalice = skalice.public_key
+
+    print('pvk', skalice)
+
+    # Bob wishes to send Alice an encrypted message so Bob must make a Box with
+    #   his private key and Alice's public key
+    bob_box = Box(skbob, pkalice)
+    # bobshrk = salt.gen_shared_key(bob_box)
+    bobshrk = salt.gen_shared_key(bob_box)
+    print('bob share', bobshrk)
+
+    # This is our message to send, it must be a bytestring as Box will treat it
+    #   as just a binary blob of data.
+    message = b"Love all humans"
+
+    encrypted = bob_box.encrypt(message)
+
+    # Alice creates a second box with her private key to decrypt the message
+    alice_box = Box(skalice, pkbob)
+    aliceshrk = salt.gen_shared_key(alice_box)
+    print('alice share', aliceshrk)
+
+    # Decrypt our message, an exception will be raised if the encryption was
+    #   tampered with or there was otherwise an error.
+    plaintext = alice_box.decrypt(encrypted)
+    print(plaintext.decode('utf-8'))

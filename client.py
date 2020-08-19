@@ -12,7 +12,7 @@ from encryption.fernet import Cipher
 from encryption.salt import NaclCipher
 
 from nacl.encoding import Base64Encoder
-from nacl.public import PublicKey, PrivateKey
+from nacl.public import PublicKey, PrivateKey, Box
 import nacl.utils
 
 from chatutils import utils
@@ -76,7 +76,9 @@ class Client(ChatIO):
                             if self.encrypt_traffic:
                                 self.msg = nacl.encrypt(self.pub_box,
                                                         self.msg.encode())
+                                print('outgoingn:', self.msg)
                                 self.msg = Base64Encoder.encode(self.msg)
+                                print('outgoing, enc', self.msg)
                                 # self.msg = fernet.encrypt(self.msg)
                 else:
                     self.msg = ''
@@ -183,9 +185,17 @@ class Client(ChatIO):
 
     def _m_handler(self, sock: socket):
         """Default. Prints to screen."""
+        shrk = nacl.gen_shared_key(self.pub_box)
+        print("Shared key # 2 is", shrk)
         trim_msg = self.unpack_msg(serv_sock)
-        # handle, msg = self.decrypt_incoming(trim_msg)
-        self.print_message(trim_msg, enc=self.encrypt_traffic, box=self.pub_box)
+        print(trim_msg)
+        handle, msg = self.split_to_str(trim_msg)
+        print(msg)
+        msg64 = Base64Encoder.decode(msg)
+        print(msg64)
+        decrypted = self.pub_box.decrypt(msg64)
+        print(decrypted)
+        # self.print_message(trim_msg, enc=self.encrypt_traffic, box=self.pub_box)
 
     def _c_handler(self, sock: socket):
         """Incoming controller message."""
@@ -296,10 +306,7 @@ class Client(ChatIO):
         _, my_pubk = nacl.generate_keys()
         my_pubk64 = nacl.encode_b64(my_pubk)
         self.pack_n_send(sock, 'P', my_pubk64)
-        # print('public key: ',my_pubk)
-        # print('b64 public key:', my_pubk64)
-        # my_pubk_conv = nacl.decode_b64(my_pubk64, 'public')
-        # print('converted public key:', my_pubk_conv)
+        print('my b64 public key:', my_pubk64)
 
         # self.introduced begins encryption after name has been sent.
         # this is because currently, the name is being sent/stored in plaintext.
@@ -318,18 +325,19 @@ class Client(ChatIO):
 
     def _k_handler(self, sock: socket):
         """Recv. Keys"""
-        # print("And I am a type K")
-        pbk64 = self.unpack_msg(sock).decode()
+        pbk64 = self.unpack_msg(sock)
+        print('Their public key:', pbk64)
         recip_pbk = PublicKey(pbk64, Base64Encoder)
         pvk64 = nacl.load_prv_key()
         pvk = PrivateKey(pvk64, encoder=Base64Encoder)
         self.pub_box = nacl.make_public_box(pvk, recip_pbk)
-        # shrk = nacl.encode_b64(shrk, 'shared')
-        # sec_box = nacl.make_secret_box(shrk)
-        # cipher_text = nacl.put_in_secret_box(sec_box, b'Secret message biyahh')
+        shrk = nacl.gen_shared_key(self.pub_box)
+        print("Shared key is", shrk)
+        # self.pub_box = Box(pvk, recip_pbk)
 
         self.encrypt_traffic = True
         self.encrypt_flag = True
+ 
 
     def _err_handler(self, *args):
         # print('Prefix: ', typ_pfx)
