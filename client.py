@@ -32,13 +32,13 @@ class Client(ChatIO):
         super(Client, self).__init__()
         self.muted = muted
         self.message_type = 'M'
-        self.msg = ''
-        self.filesize = ''
-        self.path = ''
+        self.msg = None
+        self.filesize = None
+        self.path = None
         self.introduced = False
         self.encrypt_flag = True
         self.encrypt_traffic = self.encrypt_flag
-        self.recip_pub_key = ''
+        self.recip_pub_key = None
         self.pub_box = None
 
     #===================== SENDING METHODS =====================#
@@ -185,17 +185,17 @@ class Client(ChatIO):
 
     def _m_handler(self, sock: socket):
         """Default. Prints to screen."""
-        shrk = nacl.gen_shared_key(self.pub_box)
-        print("Shared key # 2 is", shrk)
+        # shrk = nacl.gen_shared_key(self.pub_box)
+        # print("Shared key # 2 is", shrk)
         trim_msg = self.unpack_msg(serv_sock)
-        print(trim_msg)
-        handle, msg = self.split_to_str(trim_msg)
-        print(msg)
-        msg64 = Base64Encoder.decode(msg)
-        print(msg64)
-        decrypted = self.pub_box.decrypt(msg64)
-        print(decrypted)
-        # self.print_message(trim_msg, enc=self.encrypt_traffic, box=self.pub_box)
+        # print(trim_msg)
+        # handle, msg = self.split_to_str(trim_msg)
+        # # print(msg)
+        # msg64 = Base64Encoder.decode(msg)
+        # # print(msg64)
+        # decrypted = self.pub_box.decrypt(msg64)
+        # print(decrypted)
+        self.print_message(trim_msg, enc=self.encrypt_traffic, box=self.pub_box)
 
     def _c_handler(self, sock: socket):
         """Incoming controller message."""
