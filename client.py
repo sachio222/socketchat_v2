@@ -498,7 +498,7 @@ if __name__ == "__main__":
 
     client_ctxt = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
     client_ctxt.check_hostname = False
-    client_ctxt.verify_mode = ssl.CERT_NONE
+    client_ctxt.verify_mode = ssl.CERT_REQUIRED
     client_ctxt.set_ciphers('ECDHE-ECDSA-AES256-SHA384')
     client_ctxt.options |= ssl.OP_NO_COMPRESSION
     client_ctxt.load_verify_locations(cert_path)
