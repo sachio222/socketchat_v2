@@ -38,17 +38,21 @@ class NaclCipher():
             f.write(pub_key.encode(encoder=Base64Encoder))
 
         return prv_key, pub_key
-    
-    def make_shared_key_from_new_box(self, pubk: PublicKey, prvk: PrivateKey=None, box: Box=None) -> bytes:
+
+    def make_shared_key_from_new_box(self,
+                                     pubk: PublicKey,
+                                     prvk: PrivateKey = None,
+                                     box: Box = None) -> (bytes, Box):
         prvk = prvk or self.load_prv_key()
         prvk = self.decode_b64(prvk, 'private')
 
         if not box:
             box = self.make_public_box(prvk, pubk)
             shrk = self.gen_shared_key(box)
+            with open(self.path + 'shared.key', 'wb') as f:
+                f.write(shrk)
 
-            return shrk
-
+            return shrk, box
 
     def encode_b64(self, key: bytes, key_type: str = None) -> bytes:
         """Change key to base64"""
@@ -261,14 +265,14 @@ if __name__ == "__main__":
     print('encoded shared key:', enc_shared_key)
 
     print('original key:', salt.prv_key)
-    print('encoded private key:', )
+    print('encoded private key:',)
     print('=========here=======')
     # Make a secret box from a shared key.
     secret_box = salt.make_secret_box(shared_key)
     # Encrypt something with the secret box.
     encrypted = salt.put_in_secret_box(secret_box, msg.encode())
     print(encrypted)
-    # Decrypt that thing with the same box. 
+    # Decrypt that thing with the same box.
     decrypted = salt.open_secret_box(secret_box, encrypted)
     print(decrypted)
     # Create sign/verify keys.

@@ -73,7 +73,8 @@ class Client(ChatIO):
                         # If name has been given, encrypt everything else.
                         if self.introduced:
                             if self.encrypt_traffic:
-                                self.msg = fernet.encrypt(self.msg)
+                                self.msg = nacl.encrypt(self.pub_box, self.msg)
+                                # self.msg = fernet.encrypt(self.msg)
                 else:
                     self.msg = ''
 
@@ -308,7 +309,7 @@ class Client(ChatIO):
         wanna_trust_msg = self.unpack_msg(sock).decode()
         print(wanna_trust_msg)
         self.message_type = 'V'
-        # Turn off encryption for answer. 
+        # Turn off encryption for answer.
         self.encrypt_traffic = False
 
     def _k_handler(self, sock: socket):
@@ -316,12 +317,11 @@ class Client(ChatIO):
         # print("And I am a type K")
         pubk64 = self.unpack_msg(sock).decode()
         recip_pubk = PublicKey(pubk64, Base64Encoder)
-        shrk = nacl.make_shared_key_from_new_box(pubk=recip_pubk)
-        shrk = nacl.encode_b64(shrk, 'shared')
+        shrk, self.pub_box = nacl.make_shared_key_from_new_box(pubk=recip_pubk)
+        # shrk = nacl.encode_b64(shrk, 'shared')
+        # sec_box = nacl.make_secret_box(shrk)
+        # cipher_text = nacl.put_in_secret_box(sec_box, b'Secret message biyahh')
 
-        with open('secret.key', 'wb') as f:
-            f.write(shrk)
-        
         self.encrypt_traffic = True
         self.encrypt_flag = True
 
@@ -489,11 +489,11 @@ if __name__ == "__main__":
     client_ctxt = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
     client_ctxt.check_hostname = False
     client_ctxt.verify_mode = ssl.CERT_NONE
-    client_ctxt.set_ciphers('ECDHE-ECDSA-AES256-SHA384')    
+    client_ctxt.set_ciphers('ECDHE-ECDSA-AES256-SHA384')
     client_ctxt.options |= ssl.OP_NO_COMPRESSION
     client_ctxt.load_verify_locations(cert_path)
 
-    # If you want to lock with cert password. 
+    # If you want to lock with cert password.
     # client_ctxt.load_cert_chain(cert_path, rsa_key_path)
 
     serv_sock = socket.socket()
