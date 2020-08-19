@@ -222,8 +222,6 @@ class Server(ChatIO, Channel):
 
             self.broadcast(msg, sockets, client_cnxn, 'recip', self.RECIP_SOCK)
             self.broadcast(msg, sockets, client_cnxn, 'recip', self.SENDER_SOCK)
-            print('a_key', a_key)
-            print('b_key', b_key)
 
         elif choice.lower() == 'n':
             msg = 'Trust not acquired.'
