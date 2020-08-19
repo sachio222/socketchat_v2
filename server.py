@@ -207,8 +207,8 @@ class Server(ChatIO, Channel):
 
         if choice.lower() == 'y':
             a_key = user_key_dict[self.SENDER_SOCK]
-            b_key = user_key_dict[self.RECIP_SOCK]
             a_key = self.pack_message('K', a_key)
+            b_key = user_key_dict[self.RECIP_SOCK]
             b_key = self.pack_message('K', b_key)
 
             msg = "Trust acquired. You are now chatting with some hardcore encryption."
@@ -228,6 +228,9 @@ class Server(ChatIO, Channel):
             msg = self.pack_message('S', msg)
             self.broadcast(msg, sockets, client_cnxn, 'recip', self.RECIP_SOCK)
             self.broadcast(msg, sockets, client_cnxn, 'recip', self.SENDER_SOCK)
+
+        self.RECIP_SOCK = ''
+        self.SENDER_SOCK = ''
 
     def _serv_p_handler(self, sock: socket):
         """Store public key on server on join."""
