@@ -74,7 +74,7 @@ class Client(ChatIO):
                         # If name has been given, encrypt everything else.
                         if self.introduced:
                             if self.encrypt_traffic:
-                                self.msg = nacl.encrypt(self.pub_box, self.msg)
+                                self.msg = nacl.encrypt(self.pub_box, self.msg.encode())
                                 print(self.msg)
                                 # self.msg = fernet.encrypt(self.msg)
                 else:
