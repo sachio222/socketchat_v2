@@ -75,7 +75,7 @@ class Client(ChatIO):
                         if self.introduced:
                             if self.encrypt_traffic:
                                 self.msg = nacl.encrypt(self.pub_box, self.msg.encode())
-                                print(self.msg)
+                                self.msg = Base64Encoder.encode(self.msg)
                                 # self.msg = fernet.encrypt(self.msg)
                 else:
                     self.msg = ''
@@ -183,7 +183,8 @@ class Client(ChatIO):
     def _m_handler(self, sock: socket):
         """Default. Prints to screen."""
         trim_msg = self.unpack_msg(serv_sock)
-        self.print_message(trim_msg, enc=self.encrypt_traffic)
+        print(trim_msg)
+        # self.print_message(trim_msg, enc=self.encrypt_traffic)
 
     def _c_handler(self, sock: socket):
         """Incoming controller message."""
