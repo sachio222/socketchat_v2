@@ -76,10 +76,8 @@ class Client(ChatIO):
                             if self.encrypt_traffic:
                                 self.msg = nacl.encrypt(self.pub_box,
                                                         self.msg.encode())
-                                print('outgoingn:', self.msg)
+                                self.msg = fernet.encrypt(self.msg)
                                 self.msg = Base64Encoder.encode(self.msg)
-                                print('outgoing, enc', self.msg)
-                                # self.msg = fernet.encrypt(self.msg)
                 else:
                     self.msg = ''
 
