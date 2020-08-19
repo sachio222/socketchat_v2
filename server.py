@@ -72,11 +72,14 @@ class Server(ChatIO, Channel):
                     self.broadcast(packed_msg, sockets, sock, 'other')
 
                     # Clean up user artifacts
-                    if user_key_dict[sock]: del user_key_dict[sock]
+                    if user_key_dict[sock]:
+                        del user_key_dict[sock]
                     if (nick_addy_dict[sock_nick_dict[sock]]):
                         del (nick_addy_dict[sock_nick_dict[sock]])
-                    if sock_nick_dict[sock]: del (sock_nick_dict[sock])
-                    if sockets[sock]: del (sockets[sock])  # remove address
+                    if sock_nick_dict[sock]:
+                        del (sock_nick_dict[sock])
+                    if sockets[sock]:
+                        del (sockets[sock])  # remove address
 
                     sock.close()
                     break
