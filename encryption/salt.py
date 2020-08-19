@@ -119,8 +119,9 @@ class NaclCipher():
 
     def encrypt(self, box: Box, bytes_msg: bytes) -> bytes:
         """Encrypt from a public box."""
-
+        print(bytes_msg)
         cipher_msg = box.encrypt(bytes_msg)
+        print(cipher_msg)
         return cipher_msg
 
     def decrypt(self, box: Box, cipher_msg: bytes) -> str:

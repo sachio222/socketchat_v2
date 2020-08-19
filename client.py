@@ -12,7 +12,7 @@ from encryption.fernet import Cipher
 from encryption.salt import NaclCipher
 
 from nacl.encoding import Base64Encoder
-from nacl.public import PublicKey
+from nacl.public import PublicKey, PrivateKey
 import nacl.utils
 
 from chatutils import utils
@@ -39,6 +39,7 @@ class Client(ChatIO):
         self.encrypt_flag = True
         self.encrypt_traffic = self.encrypt_flag
         self.recip_pub_key = ''
+        self.pub_box = b''
 
     #===================== SENDING METHODS =====================#
     def sender(self):
@@ -74,6 +75,7 @@ class Client(ChatIO):
                         if self.introduced:
                             if self.encrypt_traffic:
                                 self.msg = nacl.encrypt(self.pub_box, self.msg)
+                                print(self.msg)
                                 # self.msg = fernet.encrypt(self.msg)
                 else:
                     self.msg = ''
@@ -315,9 +317,11 @@ class Client(ChatIO):
     def _k_handler(self, sock: socket):
         """Recv. Keys"""
         # print("And I am a type K")
-        pubk64 = self.unpack_msg(sock).decode()
-        recip_pubk = PublicKey(pubk64, Base64Encoder)
-        shrk, self.pub_box = nacl.make_shared_key_from_new_box(pubk=recip_pubk)
+        pbk64 = self.unpack_msg(sock).decode()
+        recip_pbk = PublicKey(pbk64, Base64Encoder)
+        pvk64 = nacl.load_prv_key()
+        pvk = PrivateKey(pvk64, encoder=Base64Encoder)
+        self.pub_box = nacl.make_public_box(pvk, recip_pbk)
         # shrk = nacl.encode_b64(shrk, 'shared')
         # sec_box = nacl.make_secret_box(shrk)
         # cipher_text = nacl.put_in_secret_box(sec_box, b'Secret message biyahh')
@@ -368,7 +372,7 @@ class Client(ChatIO):
         # Server sends key to Bob with key type.
         # Keys are both shared and encryption is startd.
         user = ' '.join(msg[1:])
-        if not user:
+        while not user:
             user = input('Whom would you like to trust? @')
         self.pack_n_send(serv_sock, 'T', user)
 
