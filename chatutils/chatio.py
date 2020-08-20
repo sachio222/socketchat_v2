@@ -171,14 +171,14 @@ class ChatIO(Chime, Colors):
         if enc:
             try:
                 handle, msg = self.decrypt_incoming(msg, 'nacl-pub-box', box=box)
+            except:
+                pass
 
                 handle = self.make_fancy(self.GREEN, f'@{handle}:')
                 msg = self.make_fancy(self.GREEN, f' {msg}')
                 print(f'\r{handle}{msg}')
 
                 self.play_chime()
-            except:
-                pass
         else:
             if type(msg) == bytes:
                 msg = msg.decode()
