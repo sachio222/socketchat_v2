@@ -6,7 +6,9 @@ from cryptography.hazmat.backends import default_backend
 
 key_path = 'encryption/keys/aes256/secret.key'
 
+
 class AES256Cipher():
+
     def __init__(self):
         self.backend = default_backend()
         self.iv = self.new_iv()
@@ -30,17 +32,17 @@ class AES256Cipher():
         iv = secrets.token_bytes(16)
         return iv
 
-    def padder(self, msg: bytes, size: int=128) -> bytes:
+    def padder(self, msg: bytes, size: int = 128) -> bytes:
         padder = padding.ANSIX923(size).padder()
         padded_data = padder.update(msg)
         padded_data += padder.finalize()
         return padded_data
 
-    def unpadder(self, padded_data: bytes, size: int=128) -> bytes:
+    def unpadder(self, padded_data: bytes, size: int = 128) -> bytes:
         unpadder = padding.ANSIX923(128).unpadder()
         data = unpadder.update(padded_data)
         data = data + unpadder.finalize()
-        return data 
+        return data
 
     def encrypt(self, msg: bytes) -> bytes:
         self.nonce = self.new_iv()
@@ -62,6 +64,7 @@ class AES256Cipher():
         if not os.path.exists(folders):
             os.makedirs(folders)
 
+
 if __name__ == "__main__":
     aes = AES256Cipher()
     # print(aes.key)
@@ -72,7 +75,7 @@ if __name__ == "__main__":
     msg = aes.encrypt(msg)
     # print(enc_msg)
     msg = aes.decrypt(msg)
-    msg= aes.unpadder(msg)
+    msg = aes.unpadder(msg)
     print(msg)
     # msg = aes.padder(msg, 128)
     # enc_msg = aes.encrypt(msg)
@@ -98,6 +101,3 @@ if __name__ == "__main__":
     # pt = aes.decrypt(enc_msg)
     # pt = aes.unpadder(pt)
     # print(pt)
-
-    
-

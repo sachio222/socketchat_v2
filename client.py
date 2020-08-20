@@ -284,7 +284,7 @@ class Client(ChatIO):
             f.write(chunk)
 
         bytes_recd = uneven_buffer  # start count
-        
+
         while bytes_recd < filesize:
             print(f'{bytes_recd}/{filesize}\r', end='')
             chunk = serv_sock.recv(XBFFR)
