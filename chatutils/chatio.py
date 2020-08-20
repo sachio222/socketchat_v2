@@ -170,7 +170,9 @@ class ChatIO(Chime, Colors):
 
         if enc:
             try:
-                handle, msg = self.decrypt_incoming(msg, 'nacl-pub-box', box=box)
+                handle, msg = self.decrypt_incoming(msg,
+                                                    'nacl-pub-box',
+                                                    box=box)
                 handle = self.make_fancy(self.GREEN, f'@{handle}:')
                 msg = self.make_fancy(self.GREEN, f' {msg}')
                 print(f'\r{handle}{msg}')
