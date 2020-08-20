@@ -224,7 +224,8 @@ class Client(ChatIO):
         elif user_exists == "True":
             # Prompt recipient.
             xfer.recip_prompt(serv_sock,
-                              filename=self.path,
+                              path=self.path,
+                              filename=self.filename,
                               filesize=self.filesize)
             self.message_type = 'M'  # Reset message type.
             self.encrypt_traffic = self.encrypt_flag  # Reset encryption
@@ -255,7 +256,7 @@ class Client(ChatIO):
 
         elif recip_choice.lower() == 'y':
             # Recipient
-            xfer.file_xfer(serv_sock, self.path, self.filesize)
+            xfer.file_xfer(serv_sock, self.path, self.filename, self.filesize)
             # Sender
             print("Sent...")
 
@@ -415,7 +416,7 @@ class Client(ChatIO):
 
         """
 
-        self.path, self.filesize = xfer.sender_prompt()
+        self.path, self.filename, self.filesize = xfer.sender_prompt()
         if self.path:
             self.user = xfer.user_prompt(serv_sock)
 

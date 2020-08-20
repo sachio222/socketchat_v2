@@ -32,14 +32,14 @@ class FileXfer(ChatIO):
         while not path:
 
             # Get filepath and filesize.
-            path, filesize = self._get_file_info(path)
+            path, filename, filesize = self._get_file_info(path)
 
             if not path:
                 break
 
-            print(f'OK! Found: {path} | {filesize}bytes')
+            print(f'OK! Found: {filename} | {filesize}bytes')
 
-        return path, filesize
+        return path, filename, filesize
 
     def user_prompt(self, sock, user=''):
 
@@ -51,7 +51,7 @@ class FileXfer(ChatIO):
 
         return user
 
-    def recip_prompt(self, sock, filename=None, filesize=None, user=None):
+    def recip_prompt(self, sock, path, filename=None, filesize=None, user=None):
         """Sends filename and filesize. Prompts user to accept file transfer.
         
         Args:
@@ -92,10 +92,17 @@ class FileXfer(ChatIO):
 
             else:
                 # remove absolute path if there is one
-                path = os.path.basename(path)
-                filesize = os.path.getsize(path)
-
-        return path, filesize
+                try:
+                    path = os.path.abspath(path)
+                    print('path is:', path)
+                    filename = os.path.basename(path)
+                    print('filename is:', filename)
+                    filesize = os.path.getsize(path)
+                    # filesize = 748
+                    print('filesize is: ', filesize)
+                except:
+                    print("-!- File should be in your project root.")
+        return path, filename, filesize
 
     def get_username(self, sock, user=''):
         """ Returns valid recipient for file send."""
@@ -121,9 +128,9 @@ class FileXfer(ChatIO):
         else:
             return False
 
-    def file_xfer(self, sock, path, filesize, recip=''):
+    def file_xfer(self, sock, path, filename, filesize, recip=''):
 
-        file_info = f'{str(filesize)}::{path}'
+        file_info = f'{str(filesize)}::{filename}'
 
         try:
             with open(path, 'rb') as f:
@@ -132,11 +139,12 @@ class FileXfer(ChatIO):
         except:
             print('Unknown exception. I dunno whut u did.')
 
-    def new_path(self, path):
+    def new_path(self, path, download_folder='downloads/'):
+        if not os.path.exists(download_folder):
+            os.makedirs(download_folder)
 
-        main, ext = utils.split_path_ext(path)
-
-        if os.path.exists(path):
+        if os.path.exists(download_folder + path):
+            main, ext = utils.split_path_ext(path)
             path = f"{main}_copy.{ext}"
-        path = 'transfers/' + path
+        path = download_folder + path
         return path
