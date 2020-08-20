@@ -8,8 +8,6 @@ from threading import Thread
 import argparse
 import requests
 
-from tqdm import tqdm
-
 from encryption.fernet import FernetCipher
 from encryption.salt import NaclCipher
 
@@ -281,23 +279,20 @@ class Client(ChatIO):
 
         print("-=- Receiving dawg!")
 
-
         chunk = serv_sock.recv(uneven_buffer)
         with open(path, 'wb') as f:
             f.write(chunk)
 
         bytes_recd = uneven_buffer  # start count
         
-        with tqdm(total=filesize) as t:
-            while bytes_recd < filesize:
-                chunk = serv_sock.recv(XBFFR)
-                with open(path, 'ab') as f:
-                    f.write(chunk)
-                t.update(bytes_recd)
-                bytes_recd += len(chunk)
+        while bytes_recd < filesize:
+            print(f'{bytes_recd}/{filesize}\r', end='')
+            chunk = serv_sock.recv(XBFFR)
+            with open(path, 'ab') as f:
+                f.write(chunk)
+            bytes_recd += len(chunk)
 
-
-        rec_msg = f"-=- {filesize}bytes received."
+        rec_msg = f"\r-=- {filesize}bytes received."
         print(rec_msg)
 
     def _w_handler(self, sock: socket):
