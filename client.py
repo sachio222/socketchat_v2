@@ -8,12 +8,14 @@ from threading import Thread
 import argparse
 import requests
 
+from tqdm import tqdm
+
 from encryption.fernet import Cipher
 from encryption.salt import NaclCipher
 
+import nacl.utils
 from nacl.encoding import Base64Encoder
 from nacl.public import PublicKey, PrivateKey, Box
-import nacl.utils
 
 from chatutils import utils
 from chatutils.xfer import FileXfer
@@ -279,17 +281,21 @@ class Client(ChatIO):
 
         print("-=- Receiving dawg!")
 
+
         chunk = serv_sock.recv(uneven_buffer)
         with open(path, 'wb') as f:
             f.write(chunk)
 
         bytes_recd = uneven_buffer  # start count
+        
+        with tqdm(total=filesize) as t:
+            while bytes_recd < filesize:
+                chunk = serv_sock.recv(XBFFR)
+                with open(path, 'ab') as f:
+                    f.write(chunk)
+                t.update(bytes_recd)
+                bytes_recd += len(chunk)
 
-        while bytes_recd < filesize:
-            chunk = serv_sock.recv(XBFFR)
-            with open(path, 'ab') as f:
-                f.write(chunk)
-            bytes_recd += len(chunk)
 
         rec_msg = f"-=- {filesize}bytes received."
         print(rec_msg)
@@ -516,8 +522,8 @@ if __name__ == "__main__":
     # print(f'Peer certificate: {serv_sock.getpeercert()}')
     # print(f'Ciphers: {client_ctxt.get_ciphers()}')
 
-    # channel.encrypt_flag = args.is_encrypted
-    channel.encrypt_flag = False
+    channel.encrypt_flag = args.is_encrypted
+    # channel.encrypt_flag = False
     if channel.encrypt_flag:
         encr_msg = f'\n-!- 🔐 Encryption is ON.\n-!- However, your handle may still be visible in plaintext.'
     else:
