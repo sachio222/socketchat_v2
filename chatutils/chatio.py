@@ -175,8 +175,6 @@ class ChatIO(Chime, Colors):
                 msg = self.make_fancy(self.GREEN, f' {msg}')
                 print(f'\r{handle}{msg}')
             except:
-                pass
-
                 if type(msg) == bytes:
                     msg = msg.decode()
 
