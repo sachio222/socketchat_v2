@@ -10,7 +10,7 @@ import requests
 
 from tqdm import tqdm
 
-from encryption.fernet import Cipher
+from encryption.fernet import FernetCipher
 from encryption.salt import NaclCipher
 
 import nacl.utils
@@ -495,7 +495,7 @@ if __name__ == "__main__":
     channel = Client()
 
     # Establish keys
-    fernet = Cipher()
+    fernet = FernetCipher()
     nacl = NaclCipher()
 
     rsa_key_path = 'encryption/keys/TLS/rsa_key.pem'

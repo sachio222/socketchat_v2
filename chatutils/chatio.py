@@ -4,7 +4,7 @@ import socket
 from threading import Thread
 
 from .channel import Chime, Colors
-from encryption.fernet import Cipher
+from encryption.fernet import FernetCipher
 from encryption.salt import NaclCipher, Box
 from nacl.encoding import Base64Encoder
 
@@ -177,19 +177,19 @@ class ChatIO(Chime, Colors):
             except:
                 pass
 
-            if type(msg) == bytes:
-                msg = msg.decode()
+                if type(msg) == bytes:
+                    msg = msg.decode()
 
-            self.play_chime()
-            if style_name == "GREEN_INVERT":
-                msg = self.make_fancy(self.GREEN_INVERT, msg)
+                self.play_chime()
+                if style_name == "GREEN_INVERT":
+                    msg = self.make_fancy(self.GREEN_INVERT, msg)
 
-            elif style_name == "BLUEWHITE":
-                msg = self.make_fancy(self.BLACKWHITE, msg)
+                elif style_name == "BLUEWHITE":
+                    msg = self.make_fancy(self.BLACKWHITE, msg)
 
-            else:
-                msg = self.make_fancy(self.BLACKGREY_BOLD, msg)
-            print(f'\r{msg}')
+                else:
+                    msg = self.make_fancy(self.BLACKGREY_BOLD, msg)
+                print(f'\r{msg}')
 
         else:
             if type(msg) == bytes:
@@ -262,7 +262,7 @@ class ChatIO(Chime, Colors):
             pass
 
         def dcryp_fernet(msg: bytes, *args) -> bytes:
-            return Cipher().decrypt(msg).decode()
+            return FernetCipher().decrypt(msg).decode()
 
         def err_handler(*args) -> bytes:
             raise ValueError("encrypt_method must be 'nacl-pub-box', " \
