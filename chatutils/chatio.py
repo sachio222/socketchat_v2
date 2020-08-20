@@ -171,14 +171,26 @@ class ChatIO(Chime, Colors):
         if enc:
             try:
                 handle, msg = self.decrypt_incoming(msg, 'nacl-pub-box', box=box)
+                handle = self.make_fancy(self.GREEN, f'@{handle}:')
+                msg = self.make_fancy(self.GREEN, f' {msg}')
+                print(f'\r{handle}{msg}')
             except:
                 pass
 
-            handle = self.make_fancy(self.GREEN, f'@{handle}:')
-            msg = self.make_fancy(self.GREEN, f' {msg}')
-            print(f'\r{handle}{msg}')
+            if type(msg) == bytes:
+                msg = msg.decode()
 
             self.play_chime()
+            if style_name == "GREEN_INVERT":
+                msg = self.make_fancy(self.GREEN_INVERT, msg)
+
+            elif style_name == "BLUEWHITE":
+                msg = self.make_fancy(self.BLACKWHITE, msg)
+
+            else:
+                msg = self.make_fancy(self.BLACKGREY_BOLD, msg)
+            print(f'\r{msg}')
+
         else:
             if type(msg) == bytes:
                 msg = msg.decode()
