@@ -4,7 +4,7 @@ from cryptography.fernet import Fernet
 key_path = 'encryption/keys/fernet/secret.key'
 
 
-class Cipher():
+class FernetCipher():
 
     def __init__(self, path=key_path):
         self.key_path = path
