@@ -62,6 +62,12 @@ class AES256Cipher():
         return data
 
     def encrypt(self, msg: bytes) -> (hex, hex):
+        """Encrypts message. Use same nonce to decrypt.
+
+        Returns:
+            cipher_txt: (hex)
+            nonce: (hex)
+        """
         nonce = self.new_iv()
         # print('The nonce:', self.nonce)
         cipher = self.new_cipher(self.key, nonce, self.backend)
@@ -69,11 +75,15 @@ class AES256Cipher():
         cipher_txt = encryptor.update(msg) + encryptor.finalize()
         return cipher_txt, nonce
 
-    def decrypt(self, cipher_txt: bytes, nonce: bytes) -> bytes:
+    def decrypt(self, cipher_txt: hex, nonce: hex) -> bytes:
+        """Decrypts message with same nonce used to send.
+        Returns:
+            plaintext: (bytes) plaintext message.
+        """
         cipher = self.new_cipher(self.key, nonce, self.backend)
         decryptor = cipher.decryptor()
-        msg = decryptor.update(cipher_txt) + decryptor.finalize()
-        return msg
+        plaintext = decryptor.update(cipher_txt) + decryptor.finalize()
+        return plaintext
 
     def _rand_split(self, byt_str: bytes) -> (int, int, int):
         """Returns lengths of 2 rand. split bytes."""
@@ -95,7 +105,12 @@ class AES256Cipher():
         return payload
 
     def unpack_payload(self, payload: bytes) -> (hex, hex):
-        """Unpacks the attached nonce and ciphertext."""
+        """Unpacks the attached nonce and ciphertext.
+        
+        Returns
+            msg: (hex)
+            nonce: (hex)
+        """
         payload = payload.decode()
         d = int(payload[0])
         payload = payload[1:]
