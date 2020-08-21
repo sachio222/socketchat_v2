@@ -9,7 +9,6 @@ from cryptography.hazmat.backends import default_backend
 
 key_path = 'encryption/keys/aes256/secret.key'
 
-
 class AES256Cipher():
 
     def __init__(self):
@@ -62,23 +61,7 @@ class AES256Cipher():
         msg = decryptor.update(cipher_txt) + decryptor.finalize()
         return msg
 
-    def _check_path(self, path):
-        folders = os.path.dirname(path)
-        if not os.path.exists(folders):
-            os.makedirs(folders)
-
-
-if __name__ == "__main__":
-    aes = AES256Cipher()
-    msg = b"What is the question at hand? Do we evven really know?? What do we do if the message gets even huger? That's a big question to think about isn't it? Hmm but that's actually pretty cool, it is decrypting."
-    timea = time.perf_counter_ns()
-    msg = aes.padder(msg, 128)
-    msg, nonce = aes.encrypt(msg)
-
-    b64n = codecs.encode(nonce, 'hex')
-    b64_pkt = codecs.encode(msg, 'hex')
-
-    def _rand_split(byt_str: bytes) -> (int, int, int):
+    def _rand_split(self, byt_str: bytes) -> (int, int, int):
         """Returns lengths of 2 rand. split bytes."""
         str_length = len(byt_str)
         seed = secrets.randbelow(str_length)
@@ -86,15 +69,17 @@ if __name__ == "__main__":
         split_b = str_length - split_a
         return split_a, split_b, str_length
 
-    def pack_payload(nonce_b64, ct_b64) -> bytes:
+    def pack_payload(self, msg: hex, nonce: hex) -> bytes:
         """Packs nonce with the ciphertext. Ready for sending. """
-        a, b, b64_len = _rand_split(nonce_b64)
+        nonce_b64 = codecs.encode(nonce, 'hex')
+        ct_b64 = codecs.encode(msg, 'hex')
+        a, b, b64_len = self._rand_split(nonce_b64)
         digits = a // 10 > 0
         count = int(digits) + 1
         payload = str(count).encode() + str(a).encode() + nonce_b64[:a] + ct_b64 + nonce_b64[-b:] + str(b64_len).encode()
         return payload
 
-    def unpack_payload(payload):
+    def unpack_payload(self, payload : bytes) -> (hex, hex):
         """Unpacks the attached nonce and ciphertext."""
         payload = payload.decode()
         d = int(payload[0]); payload = payload[1:]
@@ -103,19 +88,36 @@ if __name__ == "__main__":
         b = l - a
         m = payload[a : -b]
         n = payload[:a] + payload[-b:]
-        return m.encode(), n.encode()
+        msg = codecs.decode(m.encode(), 'hex')
+        nonce = codecs.decode(n.encode(), 'hex')
+        return msg, nonce
 
+    def _check_path(self, path):
+        folders = os.path.dirname(path)
+        if not os.path.exists(folders):
+            os.makedirs(folders)
 
-    payload = pack_payload(b64n, b64_pkt)    
+if __name__ == "__main__":
+    aes = AES256Cipher()
+    # Example usage:
+    timea = time.perf_counter_ns()
+    # Get message or file.
+    msg = b"What is the question at hand? Do we evven really know?? What do we do if the message gets even huger? That's a big question to think about isn't it? Hmm but that's actually pretty cool, it is decrypting."
+    # Pad it to AES block size.
+    msg = aes.padder(msg, 128)
+    # Encrypt message.
+    msg, nonce = aes.encrypt(msg)
+    # Pack payload if sending as bytestream.
+    payload = aes.pack_payload(msg, nonce)    
 
-    msg, nonce = unpack_payload(payload)
-    msg = codecs.decode(msg, 'hex')
-    nonce = codecs.decode(nonce, 'hex')
-
+    # Unpack payload of received bytes.
+    msg, nonce = aes.unpack_payload(payload)
+    # Decrypt message.
     msg = aes.decrypt(msg, nonce)
+    # Remove padding from message.
     msg = aes.unpadder(msg)
     timeb = time.perf_counter_ns()
-    print('time:', (timeb-timea) / 1000000)
-
     print(msg)
+    print('time:', (timeb-timea) / 1000000)
+    
 
