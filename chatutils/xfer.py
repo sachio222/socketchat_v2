@@ -41,15 +41,16 @@ class FileXfer(ChatIO):
 
         return path, filename, filesize
 
-    def user_prompt(self, sock, mtype: str = 'U', user=None):
+    def user_prompt(self, sock, mtype: str = 'U', user=''):
 
         while not user:
-            user = self.get_username(sock, mtype, user=None)
+            user = self.get_username(sock, mtype, user='')
 
             if not user:
                 break
 
         return user
+
 
     def recip_prompt(self, sock, path, filename=None, filesize=None, user=None):
         """Sends filename and filesize. Prompts user to accept file transfer.
@@ -114,7 +115,7 @@ class FileXfer(ChatIO):
             if self._user_did_cancel(user):
                 user = ''
                 break
-
+            
             self.pack_n_send(sock, mtype, user)
 
         return user

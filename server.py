@@ -65,7 +65,7 @@ class Server(ChatIO, Channel):
                 # Testing if with lock should work so msgs don't get
                 #       separated from type prefix
                 data = sock.recv(1)
-
+                
                 if not data:
                     discon_msg = f'{sock_nick_dict[sock]} has been disconnected.'
                     print(discon_msg)
@@ -124,6 +124,11 @@ class Server(ChatIO, Channel):
             self._serv_t_handler(client_cnxn)
         elif data == b'V':
             self._serv_v_handler(client_cnxn)
+        elif data == b'Y':
+            print('running so wtf')
+            self._serv_y_handler(client_cnxn)
+        elif data == b'Z':
+            self._serv_z_handler(client_cnxn)
         else:
             buff_text = self.unpack_msg(client_cnxn)
             data = self.pack_message(data, buff_text)
@@ -239,6 +244,19 @@ class Server(ChatIO, Channel):
         pubk64 = self.unpack_msg(sock)
         user_key_dict[sock] = pubk64
 
+    def _serv_y_handler(self, sock):
+        """Sendkey name lookup. Should reuse a lil more."""
+        print('looking up')
+        username = self.unpack_msg(sock)
+        if username != b'cancel':
+            # Check for address.
+            match = self.lookup_user(sock, username)
+            # Send Y type to sender.
+            self.pack_n_send(sock, 'Y', str(match))
+        else:
+            cancel_msg = 'x-x Sendkey cancelled.. Continue chatting.'
+            self.pack_n_send(sock, 'M', cancel_msg)
+
     def lookup_user(self, sock: socket, user_query: str) -> bool:
         """Checks if user exists. If so, returns user and address.
 
@@ -274,6 +292,8 @@ class Server(ChatIO, Channel):
                     match = False
 
         return match
+    
+   
 
     def set_client_data(self, sock: socket) -> str:
         """Sets nick and addr of user."""

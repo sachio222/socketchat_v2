@@ -341,6 +341,19 @@ class Client(ChatIO):
         self.encrypt_traffic = True
         self.encrypt_flag = True
 
+    def _y_handler(self, sock: socket):
+        # Reply from server.
+        user_exists = self.unpack_msg(serv_sock).decode()
+        
+        if user_exists == "False":
+            print("-!- They're not here. Try again. \n-=- Send to >> @", end='')
+            self.message_type = 'Y'
+            self.encrypt_traffic = False
+
+        elif user_exists == "True":
+            print('Got eeeeem!')
+            print('Press Y to send key.')
+
     def _err_handler(self, *args):
         # print('Prefix: ', typ_pfx)
         print('-x- Unknown message type error.')
@@ -362,16 +375,17 @@ class Client(ChatIO):
             raise RuntimeError()
 
     dispatch_table = {
-        'M': _m_handler,
-        'C': _c_handler,
-        'S': _s_handler,
-        'U': _u_handler,
-        'F': _f_handler,
         'A': _a_handler,
-        'X': _x_handler,
-        'W': _w_handler,
+        'C': _c_handler,
+        'F': _f_handler,
+        'K': _k_handler,
+        'M': _m_handler,
+        'S': _s_handler,
         'T': _t_handler,
-        'K': _k_handler
+        'U': _u_handler,
+        'W': _w_handler,
+        'X': _x_handler,
+        'Y': _y_handler
     }
 
     def trust(self, msg):
@@ -433,9 +447,8 @@ class Client(ChatIO):
         5. SERVER: Z-type. Push to RECIP. 
         6. CLIENT: Z-type. Store as key. 
         """
-        print('printing getting username')
-        user = xfer.get_username(sock, mtype='Y')
-        print(user)
+        print('-+- 🔑 Share AES256 key with a trusted user. Do NOT share with strangers 👤')
+        user = xfer.user_prompt(sock, mtype='Y')
 
 
     def start(self):
