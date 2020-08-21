@@ -32,7 +32,6 @@ def report(msg):
         for line in weather.text.splitlines()[:print_lines]:
             print(line)
 
-
     except:
         pass
 
