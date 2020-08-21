@@ -1,3 +1,8 @@
+#! usr/bin/ python3
+"""Righteous AES256Cipher class for use in messaging. 
+written by J. Krajewski
+"""
+
 import os
 import secrets
 import codecs
@@ -7,10 +12,9 @@ from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 from cryptography.hazmat.primitives import padding
 from cryptography.hazmat.backends import default_backend
 
-key_path = 'encryption/keys/aes256/secret.key'
+key_path = 'encryption/keys/aes256/aes256.key'
 
 class AES256Cipher():
-
     def __init__(self):
         self.backend = default_backend()
         self.iv = self.new_iv()
@@ -19,12 +23,20 @@ class AES256Cipher():
         self.nonce = None
         self.IVb = 16
 
-    def generate_key(self):
+    def generate_key(self) -> bytes:
         key = secrets.token_bytes(32)
+        key_b64 = codecs.encode(key, 'hex')
         self._check_path(key_path)
-        with open(key_path, 'wb') as key_file:
-            key_file.write(key)
+        with open(key_path, 'wb') as kf:
+            kf.write(key_b64)
+        return key
 
+    def load_key(self) -> hex:
+        if not os.path.exists(key_path):
+            self.key = self.generate_key()
+        else:
+            with open(key_path, 'rb') as kf:
+                self.key = kf.read()
         return key
 
     def new_cipher(self, key, iv, backend):
@@ -47,13 +59,13 @@ class AES256Cipher():
         data = data + unpadder.finalize()
         return data
 
-    def encrypt(self, msg: bytes) -> bytes:
-        self.nonce = self.new_iv()
+    def encrypt(self, msg: bytes) -> (hex, hex):
+        nonce = self.new_iv()
         # print('The nonce:', self.nonce)
-        cipher = self.new_cipher(self.key, self.nonce, self.backend)
+        cipher = self.new_cipher(self.key, nonce, self.backend)
         encryptor = cipher.encryptor()
         cipher_txt = encryptor.update(msg) + encryptor.finalize()
-        return cipher_txt, self.nonce
+        return cipher_txt, nonce
 
     def decrypt(self, cipher_txt: bytes, nonce: bytes) -> bytes:
         cipher = self.new_cipher(self.key, nonce, self.backend)
@@ -71,8 +83,8 @@ class AES256Cipher():
 
     def pack_payload(self, msg: hex, nonce: hex) -> bytes:
         """Packs nonce with the ciphertext. Ready for sending. """
-        nonce_b64 = codecs.encode(nonce, 'hex')
-        ct_b64 = codecs.encode(msg, 'hex')
+        nonce_b64 = self.hex_to_b64(nonce)
+        ct_b64 = self.hex_to_b64(msg)
         a, b, b64_len = self._rand_split(nonce_b64)
         digits = a // 10 > 0
         count = int(digits) + 1
@@ -88,9 +100,17 @@ class AES256Cipher():
         b = l - a
         m = payload[a : -b]
         n = payload[:a] + payload[-b:]
-        msg = codecs.decode(m.encode(), 'hex')
-        nonce = codecs.decode(n.encode(), 'hex')
+        msg = self.b64_to_hex(m.encode())
+        nonce = self.b64_to_hex(n.encode())
         return msg, nonce
+
+    def hex_to_b64(self, hx_in) -> bytes:
+        b64_out = codecs.encode(hx_in, 'hex')
+        return b64_out
+
+    def b64_to_hex(self, b64_in : bytes):
+        hx_out = codecs.decode(b64_in, 'hex')
+        return hx_out
 
     def _check_path(self, path):
         folders = os.path.dirname(path)
