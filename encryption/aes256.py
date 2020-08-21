@@ -14,7 +14,9 @@ from cryptography.hazmat.backends import default_backend
 
 key_path = 'encryption/keys/aes256/aes256.key'
 
+
 class AES256Cipher():
+
     def __init__(self):
         self.backend = default_backend()
         self.iv = self.new_iv()
@@ -88,17 +90,21 @@ class AES256Cipher():
         a, b, b64_len = self._rand_split(nonce_b64)
         digits = a // 10 > 0
         count = int(digits) + 1
-        payload = str(count).encode() + str(a).encode() + nonce_b64[:a] + ct_b64 + nonce_b64[-b:] + str(b64_len).encode()
+        payload = str(count).encode() + str(a).encode(
+        ) + nonce_b64[:a] + ct_b64 + nonce_b64[-b:] + str(b64_len).encode()
         return payload
 
-    def unpack_payload(self, payload : bytes) -> (hex, hex):
+    def unpack_payload(self, payload: bytes) -> (hex, hex):
         """Unpacks the attached nonce and ciphertext."""
         payload = payload.decode()
-        d = int(payload[0]); payload = payload[1:]
-        a = int(payload[:d]); payload = payload[d:]
-        l = int(payload[-2:]); payload = payload[:-2]
+        d = int(payload[0])
+        payload = payload[1:]
+        a = int(payload[:d])
+        payload = payload[d:]
+        l = int(payload[-2:])
+        payload = payload[:-2]
         b = l - a
-        m = payload[a : -b]
+        m = payload[a:-b]
         n = payload[:a] + payload[-b:]
         msg = self.b64_to_hex(m.encode())
         nonce = self.b64_to_hex(n.encode())
@@ -108,7 +114,7 @@ class AES256Cipher():
         b64_out = codecs.encode(hx_in, 'hex')
         return b64_out
 
-    def b64_to_hex(self, b64_in : bytes):
+    def b64_to_hex(self, b64_in: bytes):
         hx_out = codecs.decode(b64_in, 'hex')
         return hx_out
 
@@ -116,6 +122,7 @@ class AES256Cipher():
         folders = os.path.dirname(path)
         if not os.path.exists(folders):
             os.makedirs(folders)
+
 
 if __name__ == "__main__":
     aes = AES256Cipher()
@@ -128,7 +135,7 @@ if __name__ == "__main__":
     # Encrypt message.
     msg, nonce = aes.encrypt(msg)
     # Pack payload if sending as bytestream.
-    payload = aes.pack_payload(msg, nonce)    
+    payload = aes.pack_payload(msg, nonce)
 
     # Unpack payload of received bytes.
     msg, nonce = aes.unpack_payload(payload)
@@ -138,6 +145,4 @@ if __name__ == "__main__":
     msg = aes.unpadder(msg)
     timeb = time.perf_counter_ns()
     print(msg)
-    print('time:', (timeb-timea) / 1000000)
-    
-
+    print('time:', (timeb - timea) / 1000000)

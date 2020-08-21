@@ -280,7 +280,6 @@ class Client(ChatIO):
 
         print("-=- Receiving dawg!")
 
-
         chunk = serv_sock.recv(uneven_buffer)
         with open(path, 'wb') as f:
             f.write(chunk)
