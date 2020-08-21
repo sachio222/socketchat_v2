@@ -98,6 +98,9 @@ class AES256Cipher():
         nonce_b64 = self.hex_to_b64(nonce)
         ct_b64 = self.hex_to_b64(msg)
         a, b, b64_len = self._rand_split(nonce_b64)
+        if b == 0:
+            a -= 1
+            b += 1
         digits = a // 10 > 0
         count = int(digits) + 1
         payload = str(count).encode() + str(a).encode(
@@ -111,6 +114,7 @@ class AES256Cipher():
             msg: (hex)
             nonce: (hex)
         """
+        print(payload)
         payload = payload.decode()
         d = int(payload[0])
         payload = payload[1:]
