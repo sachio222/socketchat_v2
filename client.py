@@ -74,13 +74,10 @@ class Client(ChatIO):
                         # If name has been given, encrypt everything else.
                         if self.introduced:
                             if self.encrypt_traffic:
-                                try:
-                                    self.msg = nacl.encrypt(self.pub_box,
-                                                            self.msg.encode())
-                                    # self.msg = fernet.encrypt(self.msg)
-                                    self.msg = Base64Encoder.encode(self.msg)
-                                except:
-                                    pass
+                                self.msg = nacl.encrypt(self.pub_box,
+                                                        self.msg.encode())
+                                # self.msg = fernet.encrypt(self.msg)
+                                self.msg = Base64Encoder.encode(self.msg)
                 else:
                     self.msg = ''
 
@@ -140,8 +137,6 @@ class Client(ChatIO):
             self.print_message("@YO: B00P! Type /mute to turn off sound.")
         elif msg[0] == '/trust':
             self.trust(msg)
-        elif msg[0] == '/sendkey':
-            self.sendkey(sock, 'Y', msg)
         elif msg[0] == '/exit' or msg == '/close':
             print('Disconnected.')
             sock.shutdown(socket.SHUT_RDWR)
@@ -285,6 +280,7 @@ class Client(ChatIO):
 
         print("-=- Receiving dawg!")
 
+
         chunk = serv_sock.recv(uneven_buffer)
         with open(path, 'wb') as f:
             f.write(chunk)
@@ -341,19 +337,6 @@ class Client(ChatIO):
         self.encrypt_traffic = True
         self.encrypt_flag = True
 
-    def _y_handler(self, sock: socket):
-        # Reply from server.
-        user_exists = self.unpack_msg(serv_sock).decode()
-        
-        if user_exists == "False":
-            print("-!- They're not here. Try again. \n-=- Send to >> @", end='')
-            self.message_type = 'Y'
-            self.encrypt_traffic = False
-
-        elif user_exists == "True":
-            print('Got eeeeem!')
-            print('Press Y to send key.')
-
     def _err_handler(self, *args):
         # print('Prefix: ', typ_pfx)
         print('-x- Unknown message type error.')
@@ -375,17 +358,16 @@ class Client(ChatIO):
             raise RuntimeError()
 
     dispatch_table = {
-        'A': _a_handler,
-        'C': _c_handler,
-        'F': _f_handler,
-        'K': _k_handler,
         'M': _m_handler,
+        'C': _c_handler,
         'S': _s_handler,
-        'T': _t_handler,
         'U': _u_handler,
-        'W': _w_handler,
+        'F': _f_handler,
+        'A': _a_handler,
         'X': _x_handler,
-        'Y': _y_handler
+        'W': _w_handler,
+        'T': _t_handler,
+        'K': _k_handler
     }
 
     def trust(self, msg):
@@ -439,6 +421,8 @@ class Client(ChatIO):
         if self.path:
             self.user = xfer.user_prompt(serv_sock)
 
+<<<<<<< HEAD
+=======
     def sendkey(self, sock, type, msg):
         """1. LOCALCLIENT: Make sure the user is added. -> Y-type
         2. SERVER: Make sure user exists.
@@ -447,10 +431,12 @@ class Client(ChatIO):
         5. SERVER: Z-type. Push to RECIP. 
         6. CLIENT: Z-type. Store as key. 
         """
-        print('-+- 🔑 Share AES256 key with a trusted user. Do NOT share with strangers 👤')
-        user = xfer.user_prompt(sock, mtype='Y')
+        print('printing getting username')
+        user = xfer.get_username(sock, mtype='Y')
+        print(user)
 
 
+>>>>>>> parent of 54e7b5d... sendkey dialog
     def start(self):
         self.t1 = Thread(target=self.receiver)
         self.t2 = Thread(target=self.sender)
