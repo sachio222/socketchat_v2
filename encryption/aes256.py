@@ -16,11 +16,14 @@ key_path = 'encryption/keys/aes256/aes256.key'
 
 
 class AES256Cipher():
+    """ATTN: This is AES256, CBC WITHOUT HMAC.
+    There is currently no sender verification.
+    """
 
     def __init__(self):
         self.backend = default_backend()
         self.iv = self.new_iv()
-        self.key = self.generate_key()
+        self.key = self.load_key()
         self.cipher = self.new_cipher(self.key, self.iv, self.backend)
         self.nonce = None
         self.IVb = 16
@@ -39,7 +42,8 @@ class AES256Cipher():
         else:
             with open(key_path, 'rb') as kf:
                 self.key = kf.read()
-        return key
+            self.key = self.b64_to_hex(self.key)
+        return self.key
 
     def new_cipher(self, key, iv, backend):
         cipher = Cipher(algorithms.AES(key), modes.CBC(iv), backend=backend)
@@ -49,7 +53,7 @@ class AES256Cipher():
         iv = secrets.token_bytes(16)
         return iv
 
-    def padder(self, msg: bytes, nonce: bytes, size: int = 128) -> bytes:
+    def padder(self, msg: bytes, size: int = 128) -> bytes:
         padder = padding.ANSIX923(size).padder()
         padded_data = padder.update(msg)
         padded_data += padder.finalize()
@@ -142,6 +146,18 @@ class AES256Cipher():
         if not os.path.exists(folders):
             os.makedirs(folders)
 
+    def full_encryption(self, msg:bytes) -> bytes:
+        msg = self.padder(msg, 128)
+        msg, nonce = self.encrypt(msg)
+        payload = self.pack_payload(msg, nonce)
+        return payload
+
+    def full_decryption(self, payload:bytes) -> bytes:
+        msg, nonce = self.unpack_payload(payload)
+        msg = self.decrypt(msg, nonce)
+        msg = self.unpadder(msg)
+        return msg
+
 
 if __name__ == "__main__":
     aes = AES256Cipher()
@@ -163,5 +179,25 @@ if __name__ == "__main__":
     # Remove padding from message.
     msg = aes.unpadder(msg)
     timeb = time.perf_counter_ns()
-    print(msg)
+    # print(msg)
     print('time:', (timeb - timea) / 1000000)
+
+    msg = b"hi there"
+    payload = aes.full_encryption(msg)
+    # msg = aes.padder(msg, 128)
+    # # Encrypt message.
+    # msg, nonce = aes.encrypt(msg)
+    # # Pack payload if sending as bytestream.
+    # payload = aes.pack_payload(msg, nonce)
+
+    msg = aes.full_decryption(payload)
+    
+    # msg2, nonce = aes.unpack_payload(payload)
+    # print(msg2)
+    # # # Decrypt message.
+    # msg2 = aes.decrypt(msg2, nonce)
+    # print(msg2)
+    # # # Remove padding from message.
+    # msg2 = aes.unpadder(msg2)
+    # print(msg == msg2)
+    print(msg)
