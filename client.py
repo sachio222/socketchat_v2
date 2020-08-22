@@ -141,7 +141,7 @@ class Client(ChatIO):
         elif msg[0] == '/trust':
             self.trust(msg)
         elif msg[0] == '/sendkey':
-            self.sendkey(sock, 'Y', msg)
+            self.sendkey(sock, msg)
         elif msg[0] == '/exit' or msg == '/close':
             print('Disconnected.')
             sock.shutdown(socket.SHUT_RDWR)
@@ -425,7 +425,7 @@ class Client(ChatIO):
         if self.path:
             self.user = xfer.user_prompt(serv_sock)
 
-    def sendkey(self, sock, type, msg):
+    def sendkey(self, sock, msg):
         """1. LOCALCLIENT: Make sure the user is added. -> Y-type
         2. SERVER: Make sure user exists.
         3. LOCALCLIENT: Warn, this will share AES256 private key. sure?
@@ -434,7 +434,7 @@ class Client(ChatIO):
         6. CLIENT: Z-type. Store as key. 
         """
         print('printing getting username')
-        user = xfer.get_username(sock, mtype='Y')
+        user = xfer.get_username(sock)
         print(user)
 
 
