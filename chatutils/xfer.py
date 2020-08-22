@@ -41,16 +41,22 @@ class FileXfer(ChatIO):
 
         return path, filename, filesize
 
-    def user_prompt(self, sock, mtype: str = 'U', user=''):
+<<<<<<< HEAD
+    def user_prompt(self, sock, user=''):
 
         while not user:
-            user = self.get_username(sock, mtype, user='')
+            user = self.get_username(sock, user)
+=======
+    def user_prompt(self, sock, mtype: str = 'U', user=None):
+
+        while not user:
+            user = self.get_username(sock, mtype, user=None)
+>>>>>>> parent of 54e7b5d... sendkey dialog
 
             if not user:
                 break
 
         return user
-
 
     def recip_prompt(self, sock, path, filename=None, filesize=None, user=None):
         """Sends filename and filesize. Prompts user to accept file transfer.
@@ -85,8 +91,7 @@ class FileXfer(ChatIO):
             path = input("-=- Input filepath >> ")
 
             if self._user_did_cancel(path):
-                path = None
-                filename = None
+                path = ''
                 break
 
             elif not os.path.exists(path):
@@ -106,7 +111,7 @@ class FileXfer(ChatIO):
                     print("-!- File should be in your project root.")
         return path, filename, filesize
 
-    def get_username(self, sock, mtype: str = 'U', user=''):
+    def get_username(self, sock, user=''):
         """ Returns valid recipient for file send."""
 
         while not user:
@@ -115,8 +120,12 @@ class FileXfer(ChatIO):
             if self._user_did_cancel(user):
                 user = ''
                 break
-            
+
+<<<<<<< HEAD
+            self.pack_n_send(sock, 'U', user)
+=======
             self.pack_n_send(sock, mtype, user)
+>>>>>>> parent of 54e7b5d... sendkey dialog
 
         return user
 
