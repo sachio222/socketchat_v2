@@ -5,6 +5,7 @@ from threading import Thread
 
 from .channel import Chime, Colors
 from encryption.fernet import FernetCipher
+from encryption.aes256 import AES256Cipher
 from encryption.salt import NaclCipher, Box
 from nacl.encoding import Base64Encoder
 
@@ -259,7 +260,10 @@ class ChatIO(Chime, Colors):
             pass
 
         def dcryp_AES256(msg: bytes, *args) -> bytes:
-            pass
+            msg, nonce = AES256Cipher().unpack_payload(msg)
+            msg = AES256Cipher().decrypt(msg, nonce)
+            dcrypt_msg = AES256Cipher().unpadder(msg)
+            return dcrypt_msg 
 
         def dcryp_fernet(msg: bytes, *args) -> bytes:
             return FernetCipher().decrypt(msg).decode()
