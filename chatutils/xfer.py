@@ -84,8 +84,7 @@ class FileXfer(ChatIO):
             path = input("-=- Input filepath >> ")
 
             if self._user_did_cancel(path):
-                path = None
-                filename = None
+                path = ''
                 break
 
             elif not os.path.exists(path):
@@ -105,7 +104,7 @@ class FileXfer(ChatIO):
                     print("-!- File should be in your project root.")
         return path, filename, filesize
 
-    def get_username(self, sock, mtype: str = 'U', user=''):
+    def get_username(self, sock, user=''):
         """ Returns valid recipient for file send."""
 
         while not user:
@@ -115,7 +114,7 @@ class FileXfer(ChatIO):
                 user = ''
                 break
 
-            self.pack_n_send(sock, mtype, user)
+            self.pack_n_send(sock, user)
 
         return user
 

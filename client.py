@@ -74,13 +74,10 @@ class Client(ChatIO):
                         # If name has been given, encrypt everything else.
                         if self.introduced:
                             if self.encrypt_traffic:
-                                try:
-                                    self.msg = nacl.encrypt(self.pub_box,
-                                                            self.msg.encode())
-                                    # self.msg = fernet.encrypt(self.msg)
-                                    self.msg = Base64Encoder.encode(self.msg)
-                                except:
-                                    pass
+                                self.msg = nacl.encrypt(self.pub_box,
+                                                        self.msg.encode())
+                                # self.msg = fernet.encrypt(self.msg)
+                                self.msg = Base64Encoder.encode(self.msg)
                 else:
                     self.msg = ''
 
@@ -140,8 +137,6 @@ class Client(ChatIO):
             self.print_message("@YO: B00P! Type /mute to turn off sound.")
         elif msg[0] == '/trust':
             self.trust(msg)
-        elif msg[0] == '/sendkey':
-            self.sendkey(sock, 'Y', msg)
         elif msg[0] == '/exit' or msg == '/close':
             print('Disconnected.')
             sock.shutdown(socket.SHUT_RDWR)
@@ -284,6 +279,7 @@ class Client(ChatIO):
         uneven_buffer = filesize % XBFFR
 
         print("-=- Receiving dawg!")
+
 
         chunk = serv_sock.recv(uneven_buffer)
         with open(path, 'wb') as f:

@@ -26,6 +26,7 @@ class AES256Cipher():
         self.IVb = 16
 
     def generate_key(self) -> bytes:
+        """Returns key in base64."""
         key = secrets.token_bytes(32)
         key_b64 = codecs.encode(key, 'hex')
         self._check_path(key_path)
@@ -33,8 +34,9 @@ class AES256Cipher():
             kf.write(key_b64)
         return key
 
-    def load_key(self) -> hex:
-        if not os.path.exists(key_path):
+    def load_key(self, path=key_path) -> bytes:
+        """Returns key from default path. Generates one if needed."""
+        if not os.path.exists(path):
             self.key = self.generate_key()
         else:
             with open(key_path, 'rb') as kf:
@@ -42,20 +44,24 @@ class AES256Cipher():
         return key
 
     def new_cipher(self, key, iv, backend):
+        """Returns cipher object."""
         cipher = Cipher(algorithms.AES(key), modes.CBC(iv), backend=backend)
         return cipher
 
     def new_iv(self) -> int:
+        """Returns initialization vector iv"""
         iv = secrets.token_bytes(16)
         return iv
 
     def padder(self, msg: bytes, nonce: bytes, size: int = 128) -> bytes:
+        """Returns padded msg to CBC block multiple."""
         padder = padding.ANSIX923(size).padder()
         padded_data = padder.update(msg)
         padded_data += padder.finalize()
         return padded_data
 
     def unpadder(self, padded_data: bytes, size: int = 128) -> bytes:
+        """Removes padding from padded msg made with padder."""
         unpadder = padding.ANSIX923(128).unpadder()
         data = unpadder.update(padded_data)
         data = data + unpadder.finalize()
@@ -130,14 +136,18 @@ class AES256Cipher():
         return msg, nonce
 
     def hex_to_b64(self, hx_in) -> bytes:
+        """Returns base64 from hex."""
         b64_out = codecs.encode(hx_in, 'hex')
         return b64_out
 
     def b64_to_hex(self, b64_in: bytes):
+        """Returns hex from base64."""
         hx_out = codecs.decode(b64_in, 'hex')
         return hx_out
 
     def _check_path(self, path):
+        # TODO: Move to utils. 
+        """Checks if path exists."""
         folders = os.path.dirname(path)
         if not os.path.exists(folders):
             os.makedirs(folders)
