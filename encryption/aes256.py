@@ -114,7 +114,7 @@ class AES256Cipher():
             msg: (hex)
             nonce: (hex)
         """
-        print(payload)
+        # print(payload)
         payload = payload.decode()
         d = int(payload[0])
         payload = payload[1:]
@@ -148,7 +148,7 @@ if __name__ == "__main__":
     # Example usage:
     timea = time.perf_counter_ns()
     # Get message or file.
-    msg = b"What is the question at hand? Do we evven really know?? What do we do if the message gets even huger? That's a big question to think about isn't it? Hmm but that's actually pretty cool, it is decrypting."
+    msg = b"What is the question at hand? Do we even really know?? What do we do if the message gets even huger? That's a big question to think about isn't it? Hmm but that's actually pretty cool, it is decrypting."
     # Pad it to AES block size.
     msg = aes.padder(msg, 128)
     # Encrypt message.
