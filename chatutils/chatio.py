@@ -171,9 +171,10 @@ class ChatIO(Chime, Colors):
 
         if enc:
             try:
-                handle, msg = self.decrypt_incoming(msg,
-                                                    'nacl-pub-box',
-                                                    box=box)
+                # handle, msg = self.decrypt_incoming(msg,
+                #                                     'nacl-pub-box',
+                #                                     box=box)
+                handle, msg = self.decrypt_incoming(msg, encrpyt_method="aes256")
                 handle = self.make_fancy(self.GREEN, f'@{handle}:')
                 msg = self.make_fancy(self.GREEN, f' {msg}')
                 print(f'\r{handle}{msg}')
@@ -259,11 +260,9 @@ class ChatIO(Chime, Colors):
         def dcryp_nacl_sec_box(msg: bytes, box) -> bytes:
             pass
 
-        def dcryp_AES256(msg: bytes, *args) -> bytes:
-            msg, nonce = AES256Cipher().unpack_payload(msg)
-            msg = AES256Cipher().decrypt(msg, nonce)
-            dcrypt_msg = AES256Cipher().unpadder(msg)
-            return dcrypt_msg 
+        def dcryp_AES256(payload: bytes, *args) -> bytes:
+            dcrypt_msg = AES256Cipher().full_decryption(payload)
+            return dcrypt_msg
 
         def dcryp_fernet(msg: bytes, *args) -> bytes:
             return FernetCipher().decrypt(msg).decode()

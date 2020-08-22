@@ -10,6 +10,7 @@ import requests
 
 from encryption.fernet import FernetCipher
 from encryption.salt import NaclCipher
+from encryption.aes256 import AES256Cipher
 
 import nacl.utils
 from nacl.encoding import Base64Encoder
@@ -75,10 +76,15 @@ class Client(ChatIO):
                         if self.introduced:
                             if self.encrypt_traffic:
                                 try:
-                                    self.msg = nacl.encrypt(self.pub_box,
-                                                            self.msg.encode())
-                                    # self.msg = fernet.encrypt(self.msg)
-                                    self.msg = Base64Encoder.encode(self.msg)
+                                    self.msg = aes.full_encryption(self.msg.encode())
+                                    # print(self.msg)
+                                    # self.msg = aes.full_decryption(self.msg)
+                                    # print(self.msg)
+                                    # print(self.msg)
+                                    # self.msg = nacl.encrypt(self.pub_box,
+                                    #                         self.msg)
+                                    # # self.msg = fernet.encrypt(self.msg)
+                                    # self.msg = Base64Encoder.encode(self.msg)
                                 except:
                                     pass
                 else:
@@ -511,6 +517,7 @@ if __name__ == "__main__":
     # Establish keys
     fernet = FernetCipher()
     nacl = NaclCipher()
+    aes = AES256Cipher()
 
     rsa_key_path = 'encryption/keys/TLS/rsa_key.pem'
     cert_path = 'encryption/keys/TLS/certificate.pem'
