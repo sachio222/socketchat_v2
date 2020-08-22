@@ -44,7 +44,7 @@ class FileXfer(ChatIO):
     def user_prompt(self, sock, mtype: str = 'U', user=None):
 
         while not user:
-            user = self.get_username(sock, mtype, user=None)
+            user = self.get_username(sock, mtype, user)
 
             if not user:
                 break
@@ -84,8 +84,7 @@ class FileXfer(ChatIO):
             path = input("-=- Input filepath >> ")
 
             if self._user_did_cancel(path):
-                path = None
-                filename = None
+                path = ''
                 break
 
             elif not os.path.exists(path):
