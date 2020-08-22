@@ -41,17 +41,10 @@ class FileXfer(ChatIO):
 
         return path, filename, filesize
 
-<<<<<<< HEAD
-    def user_prompt(self, sock, user=''):
-
-        while not user:
-            user = self.get_username(sock, user)
-=======
     def user_prompt(self, sock, mtype: str = 'U', user=None):
 
         while not user:
             user = self.get_username(sock, mtype, user=None)
->>>>>>> parent of 54e7b5d... sendkey dialog
 
             if not user:
                 break
@@ -121,11 +114,7 @@ class FileXfer(ChatIO):
                 user = ''
                 break
 
-<<<<<<< HEAD
-            self.pack_n_send(sock, 'U', user)
-=======
-            self.pack_n_send(sock, mtype, user)
->>>>>>> parent of 54e7b5d... sendkey dialog
+            self.pack_n_send(sock, user)
 
         return user
 

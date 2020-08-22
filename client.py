@@ -421,8 +421,6 @@ class Client(ChatIO):
         if self.path:
             self.user = xfer.user_prompt(serv_sock)
 
-<<<<<<< HEAD
-=======
     def sendkey(self, sock, type, msg):
         """1. LOCALCLIENT: Make sure the user is added. -> Y-type
         2. SERVER: Make sure user exists.
@@ -436,7 +434,6 @@ class Client(ChatIO):
         print(user)
 
 
->>>>>>> parent of 54e7b5d... sendkey dialog
     def start(self):
         self.t1 = Thread(target=self.receiver)
         self.t2 = Thread(target=self.sender)
