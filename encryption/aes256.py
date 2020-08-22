@@ -1,10 +1,18 @@
+#! usr/bin/ python3
+"""Righteous AES256Cipher class for use in messaging. 
+written by J. Krajewski
+"""
+
 import os
 import secrets
+import codecs
+import time
+
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 from cryptography.hazmat.primitives import padding
 from cryptography.hazmat.backends import default_backend
 
-key_path = 'encryption/keys/aes256/secret.key'
+key_path = 'encryption/keys/aes256/aes256.key'
 
 
 class AES256Cipher():
@@ -15,51 +23,131 @@ class AES256Cipher():
         self.key = self.generate_key()
         self.cipher = self.new_cipher(self.key, self.iv, self.backend)
         self.nonce = None
+        self.IVb = 16
 
-    def generate_key(self):
+    def generate_key(self) -> bytes:
+        """Returns key in base64."""
         key = secrets.token_bytes(32)
+        key_b64 = codecs.encode(key, 'hex')
         self._check_path(key_path)
-        with open(key_path, 'wb') as key_file:
-            key_file.write(key)
+        with open(key_path, 'wb') as kf:
+            kf.write(key_b64)
+        return key
 
+    def load_key(self, path=key_path) -> bytes:
+        """Returns key from default path. Generates one if needed."""
+        if not os.path.exists(path):
+            self.key = self.generate_key()
+        else:
+            with open(key_path, 'rb') as kf:
+                self.key = kf.read()
         return key
 
     def new_cipher(self, key, iv, backend):
+        """Returns cipher object."""
         cipher = Cipher(algorithms.AES(key), modes.CBC(iv), backend=backend)
         return cipher
 
     def new_iv(self) -> int:
+        """Returns initialization vector iv"""
         iv = secrets.token_bytes(16)
         return iv
 
-    def padder(self, msg: bytes, size: int = 128) -> bytes:
+    def padder(self, msg: bytes, nonce: bytes, size: int = 128) -> bytes:
+        """Returns padded msg to CBC block multiple."""
         padder = padding.ANSIX923(size).padder()
         padded_data = padder.update(msg)
         padded_data += padder.finalize()
         return padded_data
 
     def unpadder(self, padded_data: bytes, size: int = 128) -> bytes:
+        """Removes padding from padded msg made with padder."""
         unpadder = padding.ANSIX923(128).unpadder()
         data = unpadder.update(padded_data)
         data = data + unpadder.finalize()
         return data
 
-    def encrypt(self, msg: bytes) -> bytes:
-        self.nonce = self.new_iv()
-        print('The nonce:', self.nonce)
-        cipher = self.new_cipher(self.key, self.nonce, self.backend)
-        print('iv:', self.iv)
+    def encrypt(self, msg: bytes) -> (hex, hex):
+        """Encrypts message. Use same nonce to decrypt.
+
+        Returns:
+            cipher_txt: (hex)
+            nonce: (hex)
+        """
+        nonce = self.new_iv()
+        # print('The nonce:', self.nonce)
+        cipher = self.new_cipher(self.key, nonce, self.backend)
         encryptor = cipher.encryptor()
         cipher_txt = encryptor.update(msg) + encryptor.finalize()
-        return cipher_txt
+        return cipher_txt, nonce
 
-    def decrypt(self, cipher_txt: bytes) -> bytes:
-        cipher = self.new_cipher(self.key, self.nonce, self.backend)
+    def decrypt(self, cipher_txt: hex, nonce: hex) -> bytes:
+        """Decrypts message with same nonce used to send.
+        Returns:
+            plaintext: (bytes) plaintext message.
+        """
+        cipher = self.new_cipher(self.key, nonce, self.backend)
         decryptor = cipher.decryptor()
-        msg = decryptor.update(cipher_txt) + decryptor.finalize()
-        return msg
+        plaintext = decryptor.update(cipher_txt) + decryptor.finalize()
+        return plaintext
+
+    def _rand_split(self, byt_str: bytes) -> (int, int, int):
+        """Returns lengths of 2 rand. split bytes."""
+        str_length = len(byt_str)
+        seed = secrets.randbelow(str_length)
+        split_a = str_length - seed
+        split_b = str_length - split_a
+        return split_a, split_b, str_length
+
+    def pack_payload(self, msg: hex, nonce: hex) -> bytes:
+        """Packs nonce with the ciphertext. Ready for sending. """
+        nonce_b64 = self.hex_to_b64(nonce)
+        ct_b64 = self.hex_to_b64(msg)
+        a, b, b64_len = self._rand_split(nonce_b64)
+        if b == 0:
+            a -= 1
+            b += 1
+        digits = a // 10 > 0
+        count = int(digits) + 1
+        payload = str(count).encode() + str(a).encode(
+        ) + nonce_b64[:a] + ct_b64 + nonce_b64[-b:] + str(b64_len).encode()
+        return payload
+
+    def unpack_payload(self, payload: bytes) -> (hex, hex):
+        """Unpacks the attached nonce and ciphertext.
+        
+        Returns
+            msg: (hex)
+            nonce: (hex)
+        """
+        print(payload)
+        payload = payload.decode()
+        d = int(payload[0])
+        payload = payload[1:]
+        a = int(payload[:d])
+        payload = payload[d:]
+        l = int(payload[-2:])
+        payload = payload[:-2]
+        b = l - a
+        m = payload[a:-b]
+        n = payload[:a] + payload[-b:]
+        msg = self.b64_to_hex(m.encode())
+        nonce = self.b64_to_hex(n.encode())
+        return msg, nonce
+
+    def hex_to_b64(self, hx_in) -> bytes:
+        """Returns base64 from hex."""
+        b64_out = codecs.encode(hx_in, 'hex')
+        return b64_out
+
+    def b64_to_hex(self, b64_in: bytes):
+        """Returns hex from base64."""
+        hx_out = codecs.decode(b64_in, 'hex')
+        return hx_out
 
     def _check_path(self, path):
+        # TODO: Move to utils. 
+        """Checks if path exists."""
         folders = os.path.dirname(path)
         if not os.path.exists(folders):
             os.makedirs(folders)
@@ -67,37 +155,23 @@ class AES256Cipher():
 
 if __name__ == "__main__":
     aes = AES256Cipher()
-    # print(aes.key)
-    # print(aes.iv)
-    # print(aes.cipher)
+    # Example usage:
+    timea = time.perf_counter_ns()
+    # Get message or file.
     msg = b"What is the question at hand? Do we evven really know?? What do we do if the message gets even huger? That's a big question to think about isn't it? Hmm but that's actually pretty cool, it is decrypting."
+    # Pad it to AES block size.
     msg = aes.padder(msg, 128)
-    msg = aes.encrypt(msg)
-    # print(enc_msg)
-    msg = aes.decrypt(msg)
-    msg = aes.unpadder(msg)
-    print(msg)
-    # msg = aes.padder(msg, 128)
-    # enc_msg = aes.encrypt(msg)
-    # # print(enc_msg)
-    # pt = aes.decrypt(enc_msg)
-    # pt = aes.unpadder(pt)
+    # Encrypt message.
+    msg, nonce = aes.encrypt(msg)
+    # Pack payload if sending as bytestream.
+    payload = aes.pack_payload(msg, nonce)
 
-    # msg = aes.padder(msg, 128)
-    # enc_msg = aes.encrypt(msg)
-    # # print(enc_msg)
-    # pt = aes.decrypt(enc_msg)
-    # pt = aes.unpadder(pt)
-    # print(pt)
-    # msg = aes.padder(msg, 128)
-    # enc_msg = aes.encrypt(msg)
-    # # print(enc_msg)
-    # pt = aes.decrypt(enc_msg)
-    # pt = aes.unpadder(pt)
-    # print(pt)
-    # msg = aes.padder(msg, 128)
-    # enc_msg = aes.encrypt(msg)
-    # # print(enc_msg)
-    # pt = aes.decrypt(enc_msg)
-    # pt = aes.unpadder(pt)
-    # print(pt)
+    # Unpack payload of received bytes.
+    msg, nonce = aes.unpack_payload(payload)
+    # Decrypt message.
+    msg = aes.decrypt(msg, nonce)
+    # Remove padding from message.
+    msg = aes.unpadder(msg)
+    timeb = time.perf_counter_ns()
+    print(msg)
+    print('time:', (timeb - timea) / 1000000)
