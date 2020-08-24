@@ -76,15 +76,15 @@ class Client(ChatIO):
                         if self.introduced:
                             if self.encrypt_traffic:
                                 try:
-                                    self.msg = aes.full_encryption(self.msg.encode())
+                                    # self.msg = aes.full_encryption(self.msg.encode())
                                     # print(self.msg)
                                     # self.msg = aes.full_decryption(self.msg)
                                     # print(self.msg)
                                     # print(self.msg)
-                                    # self.msg = nacl.encrypt(self.pub_box,
-                                    #                         self.msg)
+                                    self.msg = nacl.encrypt(self.pub_box,
+                                                            self.msg)
                                     # # self.msg = fernet.encrypt(self.msg)
-                                    # self.msg = Base64Encoder.encode(self.msg)
+                                    self.msg = Base64Encoder.encode(self.msg)
                                 except:
                                     pass
                 else:
@@ -347,10 +347,10 @@ class Client(ChatIO):
         pvk64 = nacl.load_prv_key()
         pvk = PrivateKey(pvk64, encoder=Base64Encoder)
         self.pub_box = nacl.make_public_box(pvk, recip_pbk)
-        shrk = nacl.gen_shared_key(self.pub_box)
+        # shrk = nacl.gen_shared_key(self.pub_box)
         # print("Shared key is", shrk)
-        self.encrypt_traffic = True
         self.encrypt_flag = True
+        self.encrypt_traffic = True
 
     def _err_handler(self, *args):
         # print('Prefix: ', typ_pfx)
@@ -549,7 +549,6 @@ if __name__ == "__main__":
     # print(f'Ciphers: {client_ctxt.get_ciphers()}')
 
     channel.encrypt_flag = args.is_encrypted
-    # channel.encrypt_flag = False
     if channel.encrypt_flag:
         encr_msg = f'\n-!- 🔐 Encryption is ON.\n-!- However, your handle may still be visible in plaintext.'
     else:
