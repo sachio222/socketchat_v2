@@ -21,7 +21,7 @@ from chatutils.xfer import FileXfer
 from chatutils.chatio import ChatIO
 from chatutils.channel import Chime
 
-from addons import weather, urbandict, moon
+from addons import weather, urbandict, moon, mathfacts, bloomberg
 
 
 class Client(ChatIO):
@@ -160,6 +160,11 @@ class Client(ChatIO):
             urbandict.urbandict(msg)
         elif msg[0] == '/moon':
             moon.phase()
+        elif msg[0] == '/mathtrivia':
+            mathfacts.get_fact(msg)
+        elif msg[0] == '/bloomberg':
+            bloomberg.Bloomberg().get_stories_about(msg)
+
         else:
             print('-!- Command not recognized.')
 
