@@ -69,7 +69,6 @@ class AES256Cipher():
         return padded_data
 
     def unpadder(self, padded_data: bytes, size: int = 128) -> bytes:
-        breakpoint()
         unpadder = padding.ANSIX923(128).unpadder()
         data = unpadder.update(padded_data)
         data = data + unpadder.finalize()
@@ -163,13 +162,9 @@ class AES256Cipher():
         return payload
 
     def full_decryption(self, payload:bytes) -> bytes:
-        print('payload', payload)
         msg, nonce = self.unpack_payload(payload)
-        print('cipher', msg)
         msg = self.decrypt(msg, nonce)
-        print('decrypt', msg)
         msg = self.unpadder(msg)
-        print('msg:', msg)
         return msg
 
 
