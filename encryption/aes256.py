@@ -162,9 +162,13 @@ class AES256Cipher():
         return payload
 
     def full_decryption(self, payload:bytes) -> bytes:
+        print('payload', payload)
         msg, nonce = self.unpack_payload(payload)
+        print('cipher', msg)
         msg = self.decrypt(msg, nonce)
+        print('decrypt', msg)
         msg = self.unpadder(msg)
+        print('msg:', msg)
         return msg
 
 
