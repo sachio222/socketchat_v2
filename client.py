@@ -78,6 +78,7 @@ class Client(ChatIO):
                             if self.encrypt_traffic:
                                 try:
                                     self.msg = aes.full_encryption(self.msg.encode())
+                                    print('payload out:', self.msg)
                                     # print(self.msg)
                                     # self.msg = aes.full_decryption(self.msg)
 
