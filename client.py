@@ -353,6 +353,17 @@ class Client(ChatIO):
         self.encrypt_flag = True
         self.encrypt_traffic = True
 
+    def _lil_k_handler(self, sock: socket):
+        pbk64 = self.unpack_msg(sock)
+        recip_pbk = PublicKey(pbk64, Base64Encoder)
+        pvk64 = nacl.load_prv_key()
+        pvk = PrivateKey(pvk64, encoder=Base64Encoder)
+        self.pub_box = nacl.make_public_box(pvk, recip_pbk)
+        # print(self.pub_box)
+        shrk = nacl.gen_shared_key(self.pub_box)
+        aes_key = aes.generate_key()
+        print(aes_key)
+
     def _err_handler(self, *args):
         # print('Prefix: ', typ_pfx)
         print('-x- Unknown message type error.')
@@ -366,7 +377,7 @@ class Client(ChatIO):
         """
 
         try:
-            typ_pfx = typ_pfx.decode().upper()
+            typ_pfx = typ_pfx.decode()
             handler = self.dispatch_table.get(typ_pfx, self._err_handler)
             handler(self, sock)
 
@@ -383,7 +394,8 @@ class Client(ChatIO):
         'X': _x_handler,
         'W': _w_handler,
         'T': _t_handler,
-        'K': _k_handler
+        'K': _k_handler,
+        'k': _lil_k_handler
     }
 
     def trust(self, msg):

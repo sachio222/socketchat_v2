@@ -29,6 +29,7 @@ class AES256Cipher():
         self.IVb = 16
 
     def generate_key(self) -> bytes:
+        """Returns key as base64 bytes."""
         key = secrets.token_bytes(32)
         key_b64 = codecs.encode(key, 'hex')
         self._check_path(key_path)
