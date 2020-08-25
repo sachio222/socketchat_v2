@@ -323,7 +323,7 @@ class Client(ChatIO):
         data = nacl.open_secret_box(self.secret_box, data)
         # print('aes256key:', data)
         if aes.write_key(data.encode()):
-            # print('AES256 session key stored.')
+            print('AES256 session key stored.')
 
     def _w_handler(self, sock: socket):
         """Recv welcome msg. Send pub key."""
