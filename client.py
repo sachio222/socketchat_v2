@@ -323,7 +323,8 @@ class Client(ChatIO):
         data = Base64Encoder.decode(data)
         data = nacl.open_secret_box(self.secret_box, data)
         print('aes256key:', data)
-        if aes.write_key(data.encode()):
+        data = Base64Encoder.encode(data)
+        if aes.write_key(data):
             print('AES256 session key stored.')
 
     def _w_handler(self, sock: socket):
