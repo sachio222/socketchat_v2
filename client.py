@@ -77,15 +77,17 @@ class Client(ChatIO):
                         if self.introduced:
                             if self.encrypt_traffic:
                                 try:
-                                    # self.msg = aes.full_encryption(self.msg.encode())
+                                    self.msg = aes.full_encryption(self.msg.encode())
                                     # print(self.msg)
                                     # self.msg = aes.full_decryption(self.msg)
+
                                     # print(self.msg)
-                                    # print(self.msg)
-                                    self.msg = nacl.encrypt(self.pub_box,
-                                                            self.msg.encode())
+
+                                    # self.msg = nacl.encrypt(self.pub_box,
+                                    #                         self.msg.encode())
+                                    # self.msg = Base64Encoder.encode(self.msg)
+
                                     # # self.msg = fernet.encrypt(self.msg)
-                                    self.msg = Base64Encoder.encode(self.msg)
                                 except:
                                     pass
                 else:
@@ -402,7 +404,7 @@ class Client(ChatIO):
         involved in a different flow, like receiving information from the
         SERVER about a the presence of a RECIPIENT in the chat.
         """
-        print("incoming prefix:", typ_pfx)
+
         try:
             typ_pfx = typ_pfx.decode()
             handler = self.dispatch_table.get(typ_pfx, self._err_handler)
