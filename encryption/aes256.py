@@ -31,8 +31,8 @@ class AES256Cipher():
     def generate_key(self) -> bytes:
         """Returns key as base64 bytes."""
         key = secrets.token_bytes(32)
-        # key_b64 = codecs.encode(key, 'hex')
-        self.write_key(key)
+        key_b64 = codecs.encode(key, 'hex')
+        self.write_key(key_b64)
         return key
 
     def load_key(self) -> hex:
@@ -44,7 +44,7 @@ class AES256Cipher():
             self.key = self.b64_to_hex(self.key)
         return self.key
     
-    def write_key(self, key, key_path=key_path) -> bool:
+    def write_key(self, key:bytes, key_path=key_path) -> bool:
         try:
             self._check_path(key_path)
             with open(key_path, 'wb') as kf:
