@@ -213,9 +213,10 @@ class Server(ChatIO, Channel):
             b_key = self.pack_message('K', b_key)
 
             msg = "Trust acquired. You are now chatting with some hardcore "\
-                  "encryption.\nGreen text means that a shared secret has "\
-                  "been succesfully generated\nusing a combo of your private"\
-                  "and their public key, and vice versa for them."
+                  "encryption.\nIf their text is green, it means that a "\
+                  "shared secret key has been succesfully\n generated using "\
+                  "a combo of your private and their public key, and "\
+                  "vice versa for them."
             msg = self.pack_message('S', msg)
 
             self.broadcast(a_key, sockets, client_cnxn, 'recip',
