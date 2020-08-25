@@ -311,6 +311,13 @@ class Client(ChatIO):
 
         rec_msg = f"\r-=- {filesize}bytes received."
         print(rec_msg)
+    
+    def _lil_x_handler(self, sock: socket):
+        """Write aes256 key to local file"""
+        data = self.unpack_msg(sock)
+        data = nacl.decode_b64(data)
+        if aes.write_key(data):
+            print('AES256 session key stored.')
 
     def _w_handler(self, sock: socket):
         """Recv welcome msg. Send pub key."""
@@ -350,6 +357,10 @@ class Client(ChatIO):
         # print(self.pub_box)
         shrk = nacl.gen_shared_key(self.pub_box)
         print("Shared key is", shrk)
+        aes_key = aes.generate_key()
+        print("I also made you an aes key:", aes_key)
+        aes_key = nacl.encode_b64(aes_key)
+        self.pack_n_send(sock, 'x', aes_key)
         self.encrypt_flag = True
         self.encrypt_traffic = True
 
@@ -361,9 +372,7 @@ class Client(ChatIO):
         self.pub_box = nacl.make_public_box(pvk, recip_pbk)
         # print(self.pub_box)
         shrk = nacl.gen_shared_key(self.pub_box)
-        print(shrk)
-        # aes_key = aes.generate_key()
-        # print(aes_key)
+        print('Shared key is: ',shrk)
 
         self.encrypt_flag = True
         self.encrypt_traffic = True
@@ -396,6 +405,7 @@ class Client(ChatIO):
         'F': _f_handler,
         'A': _a_handler,
         'X': _x_handler,
+        'x': _lil_x_handler,
         'W': _w_handler,
         'T': _t_handler,
         'K': _k_handler,

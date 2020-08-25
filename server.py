@@ -116,6 +116,8 @@ class Server(ChatIO, Channel):
             self._serv_a_handler(client_cnxn, data)
         elif data == b'X':
             self._serv_x_handler(client_cnxn, data)
+        elif data == b'x':
+            self._serv_lil_x_handler(client_cnxn)
         elif data == b'P':
             # Pack public key.
             self._serv_p_handler(client_cnxn)
@@ -191,6 +193,18 @@ class Server(ChatIO, Channel):
             recd_bytes += len(chunk)
             self.broadcast(chunk, sockets, client_cnxn, 'recip',
                            self.RECIP_SOCK)
+
+    def _serv_lil_x_handler(self, client_cnxn):
+        data = self.unpack_msg(client_cnxn)
+        data = self.pack_message('x', data)
+        self.broadcast(data, sockets, client_cnxn, target='recip',
+                       recip_socket=self.RECIP_SOCK)
+
+        # clear key data and sender/recip from server memory.
+        del data
+        del self.RECIP_SOCK
+        del self.SENDER_SOCK
+
 
     def _serv_t_handler(self, client_cnxn):
         user_name = self.unpack_msg(client_cnxn)
