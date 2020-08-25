@@ -39,7 +39,7 @@ class ChatIO(Chime, Colors):
         self.GOLDBLACK_BOLD = self.format('BOLD', 'BLACK', 'GOLD')
         self.GOLDBLACK = self.format('REG', 'BLACK', 'GOLD')
 
-    def pack_n_send(self, sock, typ_pfx, msg):
+    def pack_n_send(self, sock, typ_pfx:str, msg:str):
         """Adds message type and message length to any message, and then sends.
 
         Converts any string to a prefixed bytes transmission that includes
