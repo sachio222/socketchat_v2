@@ -373,7 +373,7 @@ class Client(ChatIO):
         enc_key = nacl.put_in_secret_box(self.secret_box, aes_key)
         # print('encoded aes_key:', enc_key)
         enc_key = Base64Encoder.encode(enc_key)
-        print(enc_key)
+        # print(enc_key)
         self.pack_n_send(sock, 'x', enc_key)
         del aes_key
 
