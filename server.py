@@ -200,7 +200,7 @@ class Server(ChatIO, Channel):
         data = self.unpack_msg(client_cnxn)
         data = self.pack_message('x', data.decode())
 
-        self.broadcast(data, sockets, client_cnxn, target='all',
+        self.broadcast(data, sockets, client_cnxn, target='recip',
                        recip_socket=self.RECIP_SOCK)
         # clear key data and sender/recip from server memory.
         del data
