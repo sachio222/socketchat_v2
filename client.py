@@ -230,7 +230,6 @@ class Client(ChatIO):
         After the server looks up a user, it sends its response as a U-type.
         The U type message either prompts the recipient if the exist, or asks
         the sender to re-enter their user choice.
-
         """
 
         # Reply from server.
@@ -317,14 +316,14 @@ class Client(ChatIO):
     
     def _lil_x_handler(self, sock: socket):
         """Write aes256 key to local file"""
-        print('running x handler')
+        # print('running x handler')
         data = self.unpack_msg(sock)
-        print('enc_key:', data )
+        # print('enc_key:', data )
         data = Base64Encoder.decode(data)
         data = nacl.open_secret_box(self.secret_box, data)
-        print('aes256key:', data)
+        # print('aes256key:', data)
         if aes.write_key(data.encode()):
-            print('AES256 session key stored.')
+            # print('AES256 session key stored.')
 
     def _w_handler(self, sock: socket):
         """Recv welcome msg. Send pub key."""
@@ -356,23 +355,23 @@ class Client(ChatIO):
     def _k_handler(self, sock: socket):
         """Recv. Keys"""
         pbk64 = self.unpack_msg(sock)
-        print('Their public key:', pbk64)
+        # print('Their public key:', pbk64)
         recip_pbk = PublicKey(pbk64, Base64Encoder)
         pvk64 = nacl.load_prv_key()
         pvk = PrivateKey(pvk64, encoder=Base64Encoder)
         self.pub_box = nacl.make_public_box(pvk, recip_pbk)
         # print(self.pub_box)
         shrk = nacl.gen_shared_key(self.pub_box)
-        print("Shared key is", shrk)
+        # print("Shared key is", shrk)
         self.secret_box = nacl.make_secret_box(shrk)
-        print('Made secret box')
+        # print('Made secret box')
         aes_key = aes.generate_key()
-        print("I also made you an aes key:", aes_key)
+        # print("I also made you an aes key:", aes_key)
         self.encrypt_flag = True
         self.encrypt_traffic = True
         aes_key = aes.hex_to_b64(aes_key)
         enc_key = nacl.put_in_secret_box(self.secret_box, aes_key)
-        print('encoded aes_key:', enc_key)
+        # print('encoded aes_key:', enc_key)
         enc_key = Base64Encoder.encode(enc_key)
         print(enc_key)
         self.pack_n_send(sock, 'x', enc_key)
@@ -386,9 +385,9 @@ class Client(ChatIO):
         self.pub_box = nacl.make_public_box(pvk, recip_pbk)
         # print(self.pub_box)
         shrk = nacl.gen_shared_key(self.pub_box)
-        print('Shared key is: ',shrk)
+        # print('Shared key is: ',shrk)
         self.secret_box = nacl.make_secret_box(shrk)
-        print('Made secret box')
+        # print('Made secret box')
         self.encrypt_flag = True
         self.encrypt_traffic = True
 
