@@ -264,7 +264,7 @@ class ChatIO(Chime, Colors):
             pass
 
         def dcryp_AES256(payload: bytes, *args) -> bytes:
-            # print('payload in:', payload)
+            print('payload in:', payload)
             # key = self.aes.load_key()
             dcrypt_msg = self.aes.full_decryption(payload)
             return dcrypt_msg
