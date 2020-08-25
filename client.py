@@ -320,6 +320,7 @@ class Client(ChatIO):
         print('enc_key:', data )
         data = nacl.open_secret_box(self.secret_box, data)
         print('aes256key:', data)
+        
         if aes.write_key(data):
             print('AES256 session key stored.')
 
