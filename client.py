@@ -318,7 +318,7 @@ class Client(ChatIO):
         print('running x handler')
         data = self.unpack_msg(sock)
         print('enc_key:', data )
-        data = nacl.decode_b64(data)
+        data = Base64Encoder.decode(data)
         data = nacl.open_secret_box(self.secret_box, data)
         print('aes256key:', data)
         
