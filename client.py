@@ -315,7 +315,6 @@ class Client(ChatIO):
     def _lil_x_handler(self, sock: socket):
         """Write aes256 key to local file"""
         data = self.unpack_msg(sock)
-        data = nacl.decode_b64(data)
         if aes.write_key(data):
             print('AES256 session key stored.')
 
