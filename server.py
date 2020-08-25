@@ -200,7 +200,8 @@ class Server(ChatIO, Channel):
         data = self.unpack_msg(client_cnxn)
         data = self.pack_message('x', data.decode())
 
-        self.broadcast(data, sockets, client_cnxn, target='all')
+        self.broadcast(data, sockets, client_cnxn, target='all',
+                       recip_socket=self.RECIP_SOCK)
         # clear key data and sender/recip from server memory.
         del data
         del self.RECIP_SOCK
@@ -246,9 +247,6 @@ class Server(ChatIO, Channel):
             msg = self.pack_message('S', msg)
             self.broadcast(msg, sockets, client_cnxn, 'recip', self.RECIP_SOCK)
             self.broadcast(msg, sockets, client_cnxn, 'recip', self.SENDER_SOCK)
-
-        self.RECIP_SOCK = ''
-        self.SENDER_SOCK = ''
 
     def _serv_p_handler(self, sock: socket):
         """Store public key on server on join."""
