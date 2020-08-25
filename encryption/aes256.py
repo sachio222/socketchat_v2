@@ -93,6 +93,7 @@ class AES256Cipher():
         Returns:
             plaintext: (bytes) plaintext message.
         """
+        print('my key:', self.key)
         cipher = self.new_cipher(self.key, nonce, self.backend)
         decryptor = cipher.decryptor()
         plaintext = decryptor.update(cipher_txt) + decryptor.finalize()
