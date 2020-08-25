@@ -185,7 +185,6 @@ class Client(ChatIO):
         while True:
             # Continually listen to first byte only.
             typ_pfx = serv_sock.recv(1)
-            print('first byte in:', typ_pfx)
 
             if not typ_pfx:
                 serv_sock.close()
