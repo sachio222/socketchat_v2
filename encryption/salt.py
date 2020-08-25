@@ -132,9 +132,9 @@ class NaclCipher():
         return plaintext.decode()
 
     #=== Secret Box ===#
-    def make_secret_box(self, key: hex) -> SecretBox:
+    def make_secret_box(self, shr_key: hex) -> SecretBox:
         """Create box with shared key opening."""
-        sec_box = SecretBox(key)
+        sec_box = SecretBox(shr_key)
         return sec_box
 
     def put_in_secret_box(self, secret_box: SecretBox, bytes_msg: bytes) -> hex:

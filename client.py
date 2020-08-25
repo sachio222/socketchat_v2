@@ -21,7 +21,7 @@ from chatutils.xfer import FileXfer
 from chatutils.chatio import ChatIO
 from chatutils.channel import Chime
 
-from addons import weather, urbandict, moon, mathfacts, bloomberg
+from addons import weather, urbandict, moon, mathfacts
 
 
 class Client(ChatIO):
@@ -163,8 +163,8 @@ class Client(ChatIO):
         elif msg[0] == '/mathtrivia':
             mathfacts.get_fact(msg)
         elif msg[0] == '/bloomberg':
-            bloomberg.Bloomberg().get_stories_about(msg)
-
+            # bloomberg.Bloomberg().get_stories_about(msg)
+            pass
         else:
             print('-!- Command not recognized.')
 
@@ -349,7 +349,7 @@ class Client(ChatIO):
         self.pub_box = nacl.make_public_box(pvk, recip_pbk)
         # print(self.pub_box)
         shrk = nacl.gen_shared_key(self.pub_box)
-        # print("Shared key is", shrk)
+        print("Shared key is", shrk)
         self.encrypt_flag = True
         self.encrypt_traffic = True
 
