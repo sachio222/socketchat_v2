@@ -361,8 +361,12 @@ class Client(ChatIO):
         self.pub_box = nacl.make_public_box(pvk, recip_pbk)
         # print(self.pub_box)
         shrk = nacl.gen_shared_key(self.pub_box)
-        aes_key = aes.generate_key()
-        print(aes_key)
+        print(shrk)
+        # aes_key = aes.generate_key()
+        # print(aes_key)
+
+        self.encrypt_flag = True
+        self.encrypt_traffic = True
 
     def _err_handler(self, *args):
         # print('Prefix: ', typ_pfx)
