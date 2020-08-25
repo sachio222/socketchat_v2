@@ -170,6 +170,8 @@ class AES256Cipher():
 
 if __name__ == "__main__":
     aes = AES256Cipher()
+    key = aes.load_key()
+    print('key is', key)
     # Example usage:
     timea = time.perf_counter_ns()
     # Get message or file.
