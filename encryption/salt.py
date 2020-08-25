@@ -120,8 +120,11 @@ class NaclCipher():
 
     def encrypt(self, box: Box, bytes_msg: bytes) -> bytes:
         """Encrypt from a public box."""
-        cipher_msg = box.encrypt(bytes_msg)
-        return cipher_msg
+        try:
+            cipher_msg = box.encrypt(bytes_msg)
+            return cipher_msg
+        except:
+            return('Failed to encrypt. U r not covered. Quit and try again.')
 
     def decrypt(self, box: Box, cipher_msg: bytes) -> str:
         """Decrypt a bytes message with a public box."""
