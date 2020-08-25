@@ -401,7 +401,7 @@ class Client(ChatIO):
         involved in a different flow, like receiving information from the
         SERVER about a the presence of a RECIPIENT in the chat.
         """
-
+        print("incoming prefix:", typ_pfx)
         try:
             typ_pfx = typ_pfx.decode()
             handler = self.dispatch_table.get(typ_pfx, self._err_handler)
