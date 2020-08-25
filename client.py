@@ -358,7 +358,7 @@ class Client(ChatIO):
         print("Shared key is", shrk)
         aes_key = aes.generate_key()
         print("I also made you an aes key:", aes_key)
-        aes_key = nacl.encode_b64(aes_key)
+        aes_key = aes.hex_to_b64(aes_key)
         self.pack_n_send(sock, 'x', aes_key)
         self.encrypt_flag = True
         self.encrypt_traffic = True
