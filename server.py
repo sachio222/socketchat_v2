@@ -419,5 +419,5 @@ if __name__ == "__main__":
     sock.settimeout(None)
     sock.listen(MAX_CNXN)
 
-    print(f'-+- Waiting for connections...')
+    print(f'-+- Waiting for secure connections...')
     server.start()
