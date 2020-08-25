@@ -31,7 +31,7 @@ class AES256Cipher():
     def generate_key(self) -> bytes:
         """Returns key as base64 bytes."""
         key = secrets.token_bytes(32)
-        key_b64 = codecs.encode(key, 'hex')
+        # key_b64 = codecs.encode(key, 'hex')
         self.write_key(key)
         return key
 
