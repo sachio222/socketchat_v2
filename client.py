@@ -347,7 +347,8 @@ class Client(ChatIO):
         pvk64 = nacl.load_prv_key()
         pvk = PrivateKey(pvk64, encoder=Base64Encoder)
         self.pub_box = nacl.make_public_box(pvk, recip_pbk)
-        # shrk = nacl.gen_shared_key(self.pub_box)
+        # print(self.pub_box)
+        shrk = nacl.gen_shared_key(self.pub_box)
         # print("Shared key is", shrk)
         self.encrypt_flag = True
         self.encrypt_traffic = True

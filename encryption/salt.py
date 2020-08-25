@@ -114,7 +114,7 @@ class NaclCipher():
     def make_public_box(self, prv_key: PrivateKey,
                         ur_pub_key: PublicKey) -> Box:
         """Make public box from one private, one public. Usually different."""
-
+        
         box = Box(prv_key, ur_pub_key)
         return box
 
