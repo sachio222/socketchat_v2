@@ -15,6 +15,7 @@ class ChatIO(Chime, Colors):
 
     def __init__(self, muted=False):
         super(ChatIO, self).__init__()
+        aes = AES256Cipher()
         self.LEN_PFX_LEN = 4
         self.muted = muted
         # Get color dicts
@@ -263,8 +264,8 @@ class ChatIO(Chime, Colors):
             pass
 
         def dcryp_AES256(payload: bytes, *args) -> bytes:
-            # AES256Cipher().load_key()
-            dcrypt_msg = AES256Cipher().full_decryption(payload)
+            aes.load_key()
+            dcrypt_msg = aes.full_decryption(payload)
             return dcrypt_msg
 
         def dcryp_fernet(msg: bytes, *args) -> bytes:
