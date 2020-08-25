@@ -134,7 +134,7 @@ class ChatIO(Chime, Colors):
             print(
                 'Target type error: Must be "other", "self", "all", or "recip"')
 
-    def unpack_msg(self, sock, shed_byte=False):
+    def unpack_msg(self, sock, shed_byte=False) -> bytes:
         """Unpacks prefix for file size, and returns trimmed message as bytes.
         
         This method does not read the message type. Call receiver() before
