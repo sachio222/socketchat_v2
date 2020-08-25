@@ -317,7 +317,7 @@ class Client(ChatIO):
     def _lil_x_handler(self, sock: socket):
         """Write aes256 key to local file"""
         print('running x handler')
-        data = self.unpack_msg(sock, data)
+        data = self.unpack_msg(sock)
         print('enc_key:', data )
         data = nacl.open_secret_box(self.secret_box, data)
         print('aes256key:', data)
