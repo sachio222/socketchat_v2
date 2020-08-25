@@ -78,7 +78,6 @@ class Client(ChatIO):
                             if self.encrypt_traffic:
                                 try:
                                     self.msg = aes.full_encryption(self.msg.encode())
-                                    print('payload out:', self.msg)
                                     # print(self.msg)
                                     # self.msg = aes.full_decryption(self.msg)
 
@@ -357,7 +356,7 @@ class Client(ChatIO):
     def _k_handler(self, sock: socket):
         """Recv. Keys"""
         pbk64 = self.unpack_msg(sock)
-        # print('Their public key:', pbk64)
+        print('Their public key:', pbk64)
         recip_pbk = PublicKey(pbk64, Base64Encoder)
         pvk64 = nacl.load_prv_key()
         pvk = PrivateKey(pvk64, encoder=Base64Encoder)
