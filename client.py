@@ -82,7 +82,7 @@ class Client(ChatIO):
                                     # print(self.msg)
                                     # print(self.msg)
                                     self.msg = nacl.encrypt(self.pub_box,
-                                                            self.msg)
+                                                            self.msg.encode())
                                     # # self.msg = fernet.encrypt(self.msg)
                                     self.msg = Base64Encoder.encode(self.msg)
                                 except:
