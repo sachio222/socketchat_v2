@@ -198,9 +198,7 @@ class Server(ChatIO, Channel):
         # data = client_cnxn.recv(2048)
         # print('raw input data:', data)
         data = self.unpack_msg(client_cnxn)
-        print('unpacked message:', data.decode())
         data = self.pack_message('x', data.decode())
-        print('packed data:', data)
         self.broadcast(data, sockets, client_cnxn, target='recip',
                        recip_socket=self.RECIP_SOCK)
 
