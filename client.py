@@ -105,7 +105,6 @@ class Client(ChatIO):
             self.encrypt_traffic = self.encrypt_flag
 
     def input_control_handler(self, sock: socket, msg: str):
-
         # TODO: Move to module.
         """Sorts through input control messages and calls controller funcs.
 
@@ -116,12 +115,13 @@ class Client(ChatIO):
         purposes.
 
         Args
-            msg - (Usually str) - the raw input command before processing.
+            msg - (str) - the raw input command before processing.
         """
 
         if type(msg) == bytes:
             msg.decode()
-        # Split into command and keywords
+
+        # Split into command and args
         msg = msg.split(' ')
 
         if msg[0] == '/about':
@@ -178,7 +178,7 @@ class Client(ChatIO):
         A continuously running thread that listens for 1 byte of data. This
         one byte is responsible for routing all incoming signals from SERVER.
         Every incoming transmission is prefixed with a message type. If the
-        prefix doesn't exist, it is considered a broken connection.
+        prefix is not received, it is considered a broken connection.
 
         The prefix is funneled into the Inbound Type Handler method or
         _inb_typ_handler, and is handled according to its type. 
@@ -316,12 +316,11 @@ class Client(ChatIO):
     
     def _lil_x_handler(self, sock: socket):
         """Write aes256 key to local file"""
-        # print('running x handler')
         data = self.unpack_msg(sock)
-        # print('enc_key:', data )
+        print('enc_key:', data )
         data = Base64Encoder.decode(data)
         data = nacl.open_secret_box(self.secret_box, data)
-        # print('aes256key:', data)
+        print('aes256key:', data)
         if aes.write_key(data.encode()):
             print('-%- AES256 session key received.')
 
@@ -335,7 +334,7 @@ class Client(ChatIO):
         _, my_pubk = nacl.generate_keys()
         my_pubk64 = nacl.encode_b64(my_pubk)
         self.pack_n_send(sock, 'P', my_pubk64)
-        # print('my b64 public key:', my_pubk64)
+        print('my b64 public key:', my_pubk64)
 
         # self.introduced begins encryption after name has been sent.
         # this is because currently, the name is being sent/stored in plaintext.
