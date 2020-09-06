@@ -11,13 +11,13 @@ from chatutils.channel import Channel
 
 import encryption.x509 as x509
 
-# Global vars
-
 # TODO: Are all these really necessary? Is there a better way?
 sockets = {}  # socket : ip
 sock_nick_dict = {}  # socket : nick
 nick_addy_dict = {}  # nick : ip
 user_key_dict = {}  # socket: key
+
+
 
 
 class Server(ChatIO, Channel):
@@ -46,6 +46,10 @@ class Server(ChatIO, Channel):
             sockets[client_cnxn] = client_addr  # Create cnxn:addr pairings.
             Thread(target=self.handle_clients, args=(client_cnxn,)).start()
 
+
+
+
+
     def handle_clients(self, sock: socket):
         """Continuous thread, runs for each client that joins.
         
@@ -72,7 +76,8 @@ class Server(ChatIO, Channel):
                     print(discon_msg)
                     packed_msg = self.pack_message('S', discon_msg)
                     self.broadcast(packed_msg, sockets, sock, 'other')
-
+                    
+                    # TODO: put into own method.
                     # Clean up user artifacts
                     if user_key_dict[sock]:
                         del user_key_dict[sock]
@@ -88,8 +93,12 @@ class Server(ChatIO, Channel):
 
                 self.data_router(sock, data)
 
+
+
+
+
     def data_router(self, client_cnxn, data):
-        """Handles incoming data based on its message type."""
+        """Look at message type, and tell client what to do with it."""
         # Send confirm dialog to recip if user is sending file.
         if data == "/".encode():
             # Drain socket of controller message so it doesn't print.
@@ -107,6 +116,9 @@ class Server(ChatIO, Channel):
                     target = 'all'
                 self.broadcast(status, sockets, client_cnxn, target=target)
 
+
+
+        # TODO: Put whole list into a dispatch table. s
         elif data == b'M':
             self._serv_m_handler(client_cnxn, data)
         elif data == b'U':
@@ -116,7 +128,7 @@ class Server(ChatIO, Channel):
         elif data == b'A':
             self._serv_a_handler(client_cnxn, data)
         elif data == b'X':
-            self._serv_x_handler(client_cnxn, data)
+            self._serv_X_handler(client_cnxn, data)
         elif data == b'x':
             self._serv_lil_x_handler(client_cnxn)
         elif data == b'P':
@@ -132,9 +144,15 @@ class Server(ChatIO, Channel):
             data = self.pack_message(data, buff_text)
             self.broadcast(data, sockets, client_cnxn)
 
+
+
+
+
+
     #=== HANDLERS ===#
+
     def _serv_m_handler(self, sock: socket, data):
-        """Standard message handler. Broadcast defaulted to 'other'."""
+        """Default message handler. Broadcast defaulted to 'other'."""
 
         sender = sock_nick_dict[sock]
         buff_text = self.unpack_msg(sock)
@@ -143,8 +161,10 @@ class Server(ChatIO, Channel):
         data = self.pack_message(data, buff_text)
         self.broadcast(data, sockets, sock, sender=sender)
 
+    #============= Move to own module ============#
+
     def _serv_u_handler(self, sock: socket):
-        """ U-type msgs used by SERVER and SENDER for user lookup exchanges.
+        """USER LOOKUP. used by SERVER and SENDER for user lookup exchanges.
 
         A U-type message tells the server to call lookup_user() method to
         search for a connected user by name. It sends the result back to
@@ -160,101 +180,6 @@ class Server(ChatIO, Channel):
         else:
             cancel_msg = 'x-x Send file cancelled. Continue chatting.'
             self.pack_n_send(sock, 'M', cancel_msg)
-
-    def _serv_f_handler(self, sock, data):
-        buff_text = self.unpack_msg(sock)
-        data = self.pack_message(data, buff_text)
-        self.broadcast(data,
-                       sockets,
-                       sock,
-                       target='recip',
-                       recip_socket=self.RECIP_SOCK)
-
-    def _serv_a_handler(self, sock, data):
-        buff_text = self.unpack_msg(sock)
-        data = self.pack_message(data, buff_text)
-        self.broadcast(data,
-                       sockets,
-                       sock,
-                       target='recip',
-                       recip_socket=self.SENDER_SOCK)
-
-    def _serv_x_handler(self, client_cnxn, data):
-        recd_bytes = 0
-        buff_text = self.unpack_msg(client_cnxn)
-
-        file_info = buff_text.decode().split('::')
-        filesize = int(file_info[0])
-
-        data = self.pack_message(data, buff_text)
-        self.broadcast(data, sockets, client_cnxn, 'recip', self.RECIP_SOCK)
-
-        while recd_bytes < filesize:
-            chunk = client_cnxn.recv(4096)
-            recd_bytes += len(chunk)
-            self.broadcast(chunk, sockets, client_cnxn, 'recip',
-                           self.RECIP_SOCK)
-
-    def _serv_lil_x_handler(self, client_cnxn):
-        # data = client_cnxn.recv(2048)
-        # print('raw input data:', data)
-        data = self.unpack_msg(client_cnxn)
-        data = self.pack_message('x', data.decode())
-
-        self.broadcast(data, sockets, client_cnxn, target='recip',
-                       recip_socket=self.RECIP_SOCK)
-        # clear key data and sender/recip from server memory.
-        del data
-        del self.RECIP_SOCK
-        del self.SENDER_SOCK
-
-
-    def _serv_t_handler(self, client_cnxn):
-        user_name = self.unpack_msg(client_cnxn)
-        asker = sock_nick_dict[client_cnxn]
-        user_found = self.lookup_user(client_cnxn, user_name)
-        print('user found: ', user_found)
-        if user_found:
-            msg = f'@YO: Wanna trust @{asker} (Y/N)?'
-            msg = self.pack_message('T', msg)
-            self.broadcast(msg, sockets, client_cnxn, 'recip', self.RECIP_SOCK)
-
-    def _serv_v_handler(self, client_cnxn):
-        """Trust acquisition exchange."""
-        choice = self.unpack_msg(client_cnxn).decode()
-
-        if choice.lower() == 'y':
-            a_key = user_key_dict[self.SENDER_SOCK]
-            a_key = self.pack_message('k', a_key) # small k
-            b_key = user_key_dict[self.RECIP_SOCK] # big K
-            b_key = self.pack_message('K', b_key)
-
-            msg = "Trust acquired. You are now chatting with some hardcore "\
-                    "encryption."
-            msg = self.pack_message('S', msg)
-            # msg = "(If their text is green, it means you're good to go!!)"
-            # msg = self.pack_message('M', msg)
-
-            self.broadcast(a_key, sockets, client_cnxn, 'recip',
-                           self.RECIP_SOCK)
-
-            self.broadcast(b_key, sockets, client_cnxn, 'recip',
-                           self.SENDER_SOCK)
-
-            self.broadcast(msg, sockets, client_cnxn, 'recip', self.RECIP_SOCK)
-            self.broadcast(msg, sockets, client_cnxn, 'recip', self.SENDER_SOCK)
-
-        elif choice.lower() == 'n':
-            msg = 'Trust not acquired.'
-            msg = self.pack_message('S', msg)
-            self.broadcast(msg, sockets, client_cnxn, 'recip', self.RECIP_SOCK)
-            self.broadcast(msg, sockets, client_cnxn, 'recip', self.SENDER_SOCK)
-
-    def _serv_p_handler(self, sock: socket):
-        """Store public key on server on join."""
-        # Stores public keys
-        pubk64 = self.unpack_msg(sock)
-        user_key_dict[sock] = pubk64
 
     def lookup_user(self, sock: socket, user_query: str) -> bool:
         """Checks if user exists. If so, returns user and address.
@@ -292,10 +217,185 @@ class Server(ChatIO, Channel):
 
         return match
 
+#======^^^^^^ Move to own module ^^^^^^======#
+
+
+
+    def _serv_f_handler(self, sock, data):
+        """Send payload to target recipient only."""
+        buff_text = self.unpack_msg(sock)
+        data = self.pack_message(data, buff_text)
+        self.broadcast(data,
+                       sockets,
+                       sock,
+                       target='recip',
+                       recip_socket=self.RECIP_SOCK)
+
+
+
+
+    def _serv_a_handler(self, sock, data):
+        """Send payload to Sender only."""
+        buff_text = self.unpack_msg(sock)
+        data = self.pack_message(data, buff_text)
+        self.broadcast(data,
+                       sockets,
+                       sock,
+                       target='recip',
+                       recip_socket=self.SENDER_SOCK)
+
+
+
+
+    def _serv_X_handler(self, client_cnxn, data):
+        """[FX] - TRANSFER FILE to target recip."""
+        recd_bytes = 0
+        buff_text = self.unpack_msg(client_cnxn)
+        file_info = buff_text.decode().split('::')
+        filesize = int(file_info[0])
+        data = self.pack_message(data, buff_text)
+        self.broadcast(data, sockets, client_cnxn, 'recip', self.RECIP_SOCK)
+
+        while recd_bytes < filesize:
+            chunk = client_cnxn.recv(4096)
+            recd_bytes += len(chunk)
+            self.broadcast(chunk, sockets, client_cnxn, 'recip',
+                           self.RECIP_SOCK)
+
+
+
+
+    def _serv_lil_x_handler(self, client_cnxn):
+        """[KX] - SEND DATA to RECIP ONLY. THEN DELETE."""
+        data = self.unpack_msg(client_cnxn)
+        data = self.pack_message('x', data.decode())
+        self.broadcast(data, sockets, client_cnxn, target='recip',
+                       recip_socket=self.RECIP_SOCK)
+        # clear key data and sender/recip from server memory.
+        del data
+        del self.RECIP_SOCK
+        del self.SENDER_SOCK
+
+
+
+
+    def _serv_t_handler(self, client_cnxn):
+        """[KX] - SEND TRUST REQUEST."""
+        user_name = self.unpack_msg(client_cnxn)
+        asker = sock_nick_dict[client_cnxn]
+        user_found = self.lookup_user(client_cnxn, user_name)
+        print('user found: ', user_found)
+        if user_found:
+            msg = f'@YO: Wanna trust @{asker} (Y/N)?'
+            msg = self.pack_message('T', msg)
+            self.broadcast(msg, sockets, client_cnxn, 'recip', self.RECIP_SOCK)
+
+
+
+
+
+    ##### CLEAN THIS ONE UP #####
+    def _serv_v_handler(self, client_cnxn):
+        """[KX] - EXCHANGE PUB KEYS."""
+        choice = self.unpack_msg(client_cnxn).decode()
+
+        if choice.lower() == 'y':
+            a_key = user_key_dict[self.SENDER_SOCK]
+            a_key = self.pack_message('k', a_key) # small k
+
+            b_key = user_key_dict[self.RECIP_SOCK] # big K
+            b_key = self.pack_message('K', b_key)
+
+            msg = "Trust acquired. You are now chatting with some hardcore "\
+                    "encryption."
+            msg = self.pack_message('S', msg)
+            # msg = "(If their text is green, it means you're good to go!!)"
+            # msg = self.pack_message('M', msg)
+
+            self.broadcast(a_key, sockets, client_cnxn, 'recip',
+                           self.RECIP_SOCK)
+
+            self.broadcast(b_key, sockets, client_cnxn, 'recip',
+                           self.SENDER_SOCK)
+
+            self.broadcast(msg, sockets, client_cnxn, 'recip', self.RECIP_SOCK)
+            self.broadcast(msg, sockets, client_cnxn, 'recip', self.SENDER_SOCK)
+
+        elif choice.lower() == 'n':
+            msg = 'Trust not acquired.'
+            msg = self.pack_message('S', msg)
+            self.broadcast(msg, sockets, client_cnxn, 'recip', self.RECIP_SOCK)
+            self.broadcast(msg, sockets, client_cnxn, 'recip', self.SENDER_SOCK)
+
+
+
+
+
+    def _serv_p_handler(self, sock: socket):
+        """[KX] - STORE PUBKEY on server on join."""
+        # Stores public keys
+        pubk64 = self.unpack_msg(sock)
+        user_key_dict[sock] = pubk64
+
+    # def lookup_user(self, sock: socket, user_query: str) -> bool:
+    #     """Checks if user exists. If so, returns user and address.
+
+    #     Loops through the sock_nick_dict to check if the user is not the 
+    #     user that is asking, and exists in the dict already.
+
+    #     Args: 
+    #         sock: (socket) Incoming socket object (from sender)
+    #         user_query: (str) Name of user to look up.
+        
+    #     Returns
+    #         match: (bool) True if user found
+    #     """
+    #     match = False
+    #     # Stores sock of user being looked up.
+    #     self.RECIP_SOCK = None
+    #     # Stores sock of Who's askin?
+    #     self.SENDER_SOCK = sock
+    #     # If user_query happens to be bytes for some reason, decode it.
+    #     try:
+    #         user_query = user_query.decode()
+    #     except:
+    #         pass
+
+    #     # Go through all the existing sockets/nicks
+    #     for s, n in sock_nick_dict.items():
+    #         if s != sock:  # Avoid self match.
+    #             if n == user_query:
+    #                 match = True
+    #                 self.RECIP_SOCK = s
+    #                 break
+    #             else:
+    #                 match = False
+
+    #     return match
+
+
+
+
+    def client_init(self, sock: socket) -> bool:
+        """[CC] - Get unique username, welcome client to channel."""
+
+        try:
+            user_name = self.set_client_data(sock)
+            self.client_welcome(sock, user_name)
+            return True
+
+        except Exception as e:
+            print(f'-!- {e}')
+            return False
+
+
+
+
     def set_client_data(self, sock: socket) -> str:
-        """Sets nick and addr of user."""
+        """[CC] - Sets nick and addr of user."""
 
         unique = False
+
         PROMPT = 'Choose a handle:'
         # Asks user for handle as soon as they join the room.
         self.pack_n_send(sock, 'S', PROMPT)
@@ -323,8 +423,10 @@ class Server(ChatIO, Channel):
 
         return user_name
 
+
+
     def client_welcome(self, sock: socket, user_name: str) -> bool:
-        """Welcomes user and announces joining to rest. Returns bool.
+        """[CC] - Welcomes user and announces joining to rest. Returns bool.
         
         The Welcome message is sent as a 'W' type message which runs
         unique processes on the client side. It is always the very first
@@ -354,22 +456,15 @@ class Server(ChatIO, Channel):
             print(f'-x- {e}')
             return False
 
-    def client_init(self, sock: socket) -> bool:
-        """Get unique username, welcome client to channel."""
 
-        try:
-            user_name = self.set_client_data(sock)
-            self.client_welcome(sock, user_name)
-            return True
 
-        except Exception as e:
-            print(f'-!- {e}')
-            return False
+
+    
 
     def start(self):
         """Begins the client acceptance loop as a threaded process."""
-
         Thread(target=self.accepting).start()
+
 
 
 if __name__ == "__main__":
