@@ -25,6 +25,7 @@ class Server(ChatIO, Channel):
 
     def __init__(self):
         super(Server, self).__init__()
+        # Init buffer, sender/recip socks
         self.BFFR = 1
         self.RECIP_SOCK = None
         self.SENDER_SOCK = None
@@ -374,7 +375,6 @@ class Server(ChatIO, Channel):
 if __name__ == "__main__":
 
     MAX_CNXN = 5
-
     if sys.argv[-1] == 'debug':
         # Runs if last arg to server.py is 'debug'
         debug = True
