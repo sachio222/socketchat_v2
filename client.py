@@ -128,11 +128,11 @@ class Client(ChatIO):
             # Read from file in config folder.
             path = 'config/about.txt'
             utils.print_from_file(path)
-        elif msg[0] == '/help' or msg[0] == '/h':
+        elif msg[0] in ('/help', '/h'):
             # Read from file in config folder.
             path = 'config/help.txt'
             utils.print_from_file(path)
-        elif msg[0] == '/sendfile' or msg[0] == '/sf':
+        elif msg[0] in ('/sendfile', '/sf'):
             # Initiates Send File (SF) sequence.
             self.start_sendfile_process(sock)
         elif msg[0] == '/status':
