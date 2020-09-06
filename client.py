@@ -593,6 +593,9 @@ if __name__ == "__main__":
     print(f'-+- Connected to {host}')
     # print(f'Peer certificate: {serv_sock.getpeercert()}')
     # print(f'Ciphers: {client_ctxt.get_ciphers()}')
+    
+    # Lock to false for now. 
+    args.is_encrypted = False
 
     channel.encrypt_flag = args.is_encrypted
     if channel.encrypt_flag:
