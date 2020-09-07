@@ -66,32 +66,32 @@ class Server(ChatIO, Channel):
 
         # Start listening.
         while client_init:
-            with lock:
-                # Testing if with lock should work so msgs don't get
-                #       separated from type prefix
-                data = sock.recv(1)
+            # with lock:
+            # Testing if with lock should work so msgs don't get
+            #       separated from type prefix
+            data = sock.recv(1)
 
-                if not data:
-                    discon_msg = f'{sock_nick_dict[sock]} has been disconnected.'
-                    print(discon_msg)
-                    packed_msg = self.pack_message('S', discon_msg)
-                    self.broadcast(packed_msg, sockets, sock, 'other')
-                    
-                    # TODO: put into own method.
-                    # Clean up user artifacts
-                    if user_key_dict[sock]:
-                        del user_key_dict[sock]
-                    if (nick_addy_dict[sock_nick_dict[sock]]):
-                        del (nick_addy_dict[sock_nick_dict[sock]])
-                    if sock_nick_dict[sock]:
-                        del (sock_nick_dict[sock])
-                    if sockets[sock]:
-                        del (sockets[sock])  # remove address
+            if not data:
+                discon_msg = f'{sock_nick_dict[sock]} has been disconnected.'
+                print(discon_msg)
+                packed_msg = self.pack_message('S', discon_msg)
+                self.broadcast(packed_msg, sockets, sock, 'other')
+                
+                # TODO: put into own method.
+                # Clean up user artifacts
+                if user_key_dict[sock]:
+                    del user_key_dict[sock]
+                if (nick_addy_dict[sock_nick_dict[sock]]):
+                    del (nick_addy_dict[sock_nick_dict[sock]])
+                if sock_nick_dict[sock]:
+                    del (sock_nick_dict[sock])
+                if sockets[sock]:
+                    del (sockets[sock])  # remove address
 
-                    sock.close()
-                    break
+                sock.close()
+                break
 
-                self.data_router(sock, data)
+            self.data_router(sock, data)
 
 
 

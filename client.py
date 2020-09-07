@@ -171,9 +171,13 @@ class Client(ChatIO):
         else:
             print('-!- Command not recognized.')
 
+
+
+
+
     #===================== RECEIVING METHODS =====================#
     def receiver(self):
-        """A Threaded socket that calls a function to check message type.
+        """A Threaded socket that checks message type.
         
         A continuously running thread that listens for 1 byte of data. This
         one byte is responsible for routing all incoming signals from SERVER.
@@ -214,9 +218,11 @@ class Client(ChatIO):
         # print(decrypted)
         self.print_message(trim_msg, enc=self.encrypt_traffic, box=self.pub_box)
 
+
     def _c_handler(self, sock: socket):
         """Incoming controller message."""
         self.unpack_msg(serv_sock)
+
 
     def _s_handler(self, sock: socket):
         """Server messages."""
@@ -225,13 +231,12 @@ class Client(ChatIO):
         self.print_message(msg, style_name='BLUEGREY')
 
     def _u_handler(self, sock: socket):
-        """SERVER response regarding user.
+        """[UTIL] SERVER response regarding user.
         
         After the server looks up a user, it sends its response as a U-type.
         The U type message either prompts the recipient if the exist, or asks
         the sender to re-enter their user choice.
         """
-
         # Reply from server.
         user_exists = self.unpack_msg(serv_sock).decode()
         if user_exists == "False":
@@ -354,7 +359,7 @@ class Client(ChatIO):
     def _k_handler(self, sock: socket):
         """Recv. Keys"""
         pbk64 = self.unpack_msg(sock)
-        # print('Their public key:', pbk64)
+        print('Their public key:', pbk64)
         recip_pbk = PublicKey(pbk64, Base64Encoder)
         print('-%- Public keys exchanged.')
         pvk64 = nacl.load_prv_key()
@@ -363,11 +368,11 @@ class Client(ChatIO):
         # print(self.pub_box)
         shrk = nacl.gen_shared_key(self.pub_box)
         print('-%- Shared key generated.')
-        # print("Shared key is", shrk)
+        print("Shared key is", shrk)
         self.secret_box = nacl.make_secret_box(shrk)
         # print('Made secret box')
         aes_key = aes.generate_key()
-        # print("I also made you an aes key:", aes_key)
+        print("I also made you an aes key:", aes_key)
         self.encrypt_flag = True
         self.encrypt_traffic = True
         aes_key = aes.hex_to_b64(aes_key)
