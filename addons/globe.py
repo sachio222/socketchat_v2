@@ -22,7 +22,7 @@ def animate():
     
     print('-=- Earth Polychromatic Imaging Camera (EPIC)')
     print(f'-=- Getting latest images from {data[0]["date"]}.')
-    for d in tqdm(data, desc='- Downloading'):
+    for d in tqdm(data, desc='-+- Downloading'):
         date = d['date'].split(' ')[0].replace('-', '/')
         img_id = d['image']
         # with open(f'{path}{img_id}.png', 'wb') as f:
@@ -32,13 +32,19 @@ def animate():
         stack.append(img)
             # f.write(r)
 
-    for i in tqdm(range(1), desc="- Animating PNG"):      
+    for i in tqdm(range(1), desc="-+- Animating PNG"):      
         stack[0].save(f'{path}{fn}', format='PNG', save_all=True, append_images=stack[1:], duration=1000, loop=0, allow_mixed=True)
     
     print(f'-+- File saved to {path}{fn}')
     del stack
-
-    os.system('open earth.png')
+    try:
+        os.system(f'open {path}{fn}')
+    except:
+        try:
+            # Something to try for windows
+            os.startfile(path)
+        except:
+            print('-!- Could not open file from terminal.')
 
 if __name__ == '__main__':
     animate()
