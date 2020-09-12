@@ -38,7 +38,7 @@ def open_map(msg):
     if 'zoom=' in msg:
         end = msg.find('zoom=') + len('zoom=')
         part = msg[end:].split(' ')
-        if 0 < int(part[0]) <= 20: 
+        if 0 < int(part[0]) <= 18: 
             zoom = int(part[0])
 
     address = new_msg

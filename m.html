@@ -23,7 +23,7 @@
             <meta name="viewport" content="width=device-width,
                 initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
             <style>
-                #map_de3daecb93374a38b5d47a48eeeb603e {
+                #map_fe24a5f45d3a4e2fac54b5195da2e69f {
                     position: relative;
                     width: 100.0%;
                     height: 100.0%;
@@ -35,17 +35,17 @@
 </head>
 <body>    
     
-            <div class="folium-map" id="map_de3daecb93374a38b5d47a48eeeb603e" ></div>
+            <div class="folium-map" id="map_fe24a5f45d3a4e2fac54b5195da2e69f" ></div>
         
 </body>
 <script>    
     
-            var map_de3daecb93374a38b5d47a48eeeb603e = L.map(
-                "map_de3daecb93374a38b5d47a48eeeb603e",
+            var map_fe24a5f45d3a4e2fac54b5195da2e69f = L.map(
+                "map_fe24a5f45d3a4e2fac54b5195da2e69f",
                 {
-                    center: [41.7689878, -72.4334173],
+                    center: [35.021041, 135.7556075],
                     crs: L.CRS.EPSG3857,
-                    zoom: 10,
+                    zoom: 17,
                     zoomControl: true,
                     preferCanvas: false,
                 }
@@ -55,37 +55,37 @@
 
         
     
-            var tile_layer_824143e5e1f2445a8e3bbd9db4466e07 = L.tileLayer(
+            var tile_layer_265463b753494a82aa09225c0e91e0d4 = L.tileLayer(
                 "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
                 {"attribution": "Data by \u0026copy; \u003ca href=\"http://openstreetmap.org\"\u003eOpenStreetMap\u003c/a\u003e, under \u003ca href=\"http://www.openstreetmap.org/copyright\"\u003eODbL\u003c/a\u003e.", "detectRetina": false, "maxNativeZoom": 18, "maxZoom": 18, "minZoom": 0, "noWrap": false, "opacity": 1, "subdomains": "abc", "tms": false}
-            ).addTo(map_de3daecb93374a38b5d47a48eeeb603e);
+            ).addTo(map_fe24a5f45d3a4e2fac54b5195da2e69f);
         
     
-                var lat_lng_popup_51cc5108f2f44255a322a7aa0d6fca31 = L.popup();
+                var lat_lng_popup_b5013c6b68804646a79dea563b3872ed = L.popup();
                 function latLngPop(e) {
-                    lat_lng_popup_51cc5108f2f44255a322a7aa0d6fca31
+                    lat_lng_popup_b5013c6b68804646a79dea563b3872ed
                         .setLatLng(e.latlng)
                         .setContent("Latitude: " + e.latlng.lat.toFixed(4) +
                                     "<br>Longitude: " + e.latlng.lng.toFixed(4))
-                        .openOn(map_de3daecb93374a38b5d47a48eeeb603e);
+                        .openOn(map_fe24a5f45d3a4e2fac54b5195da2e69f);
                     }
-                map_de3daecb93374a38b5d47a48eeeb603e.on('click', latLngPop);
+                map_fe24a5f45d3a4e2fac54b5195da2e69f.on('click', latLngPop);
             
     
-            var marker_71ed91a1ccfa470b9cc31c473c10c3c8 = L.marker(
-                [41.7689878, -72.4334173],
+            var marker_8b579acabdc140ca93c01ba8af5415c7 = L.marker(
+                [35.021041, 135.7556075],
                 {}
-            ).addTo(map_de3daecb93374a38b5d47a48eeeb603e);
+            ).addTo(map_fe24a5f45d3a4e2fac54b5195da2e69f);
         
     
-        var popup_b06ccd2a48554e7c8c36eba6ef55e48f = L.popup({"maxWidth": "100%"});
+        var popup_00455d368c22419a83ccf96b97f22b5b = L.popup({"maxWidth": "100%"});
 
         
-            var html_18eff7116f654bec9e399e10c7c138fb = $(`<div id="html_18eff7116f654bec9e399e10c7c138fb" style="width: 100.0%; height: 100.0%;"><i>Bolton, Tolland County, Connecticut, 06043, United States of America</i></div>`)[0];
-            popup_b06ccd2a48554e7c8c36eba6ef55e48f.setContent(html_18eff7116f654bec9e399e10c7c138fb);
+            var html_318703072e6b48b9948f42064d977526 = $(`<div id="html_318703072e6b48b9948f42064d977526" style="width: 100.0%; height: 100.0%;"><i>京都市, 京都府, 日本 (Japan)</i></div>`)[0];
+            popup_00455d368c22419a83ccf96b97f22b5b.setContent(html_318703072e6b48b9948f42064d977526);
         
 
-        marker_71ed91a1ccfa470b9cc31c473c10c3c8.bindPopup(popup_b06ccd2a48554e7c8c36eba6ef55e48f)
+        marker_8b579acabdc140ca93c01ba8af5415c7.bindPopup(popup_00455d368c22419a83ccf96b97f22b5b)
         ;
 
         
