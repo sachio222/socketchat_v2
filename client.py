@@ -21,7 +21,7 @@ from chatutils.xfer import FileXfer
 from chatutils.chatio import ChatIO
 from chatutils.channel import Chime
 
-from addons import weather, urbandict, moon, mathfacts, map
+from addons import weather, urbandict, moon, mathfacts, map, globe
 
 
 class Client(ChatIO):
@@ -167,6 +167,8 @@ class Client(ChatIO):
             mathfacts.get_fact(msg)
         elif msg[0] == '/map':
             map.open_map(msg)
+        elif msg[0] == '/epic':
+            globe.animate(msg)
         elif msg[0] == '/bloomberg':
             # bloomberg.Bloomberg().get_stories_about(msg)
             pass
