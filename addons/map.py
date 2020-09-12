@@ -70,16 +70,16 @@ def open_map(msg):
     else:
         folium.Marker(coords, popup=f'<i>{location.address}</i>').add_to(m)
 
-    url = 'map.html'
-    m.save(url)
+    path = 'downloads/map.html'
+    m.save(path)
 
     try:
         print(f'Opening map for {location.address}')
-        os.system(f'open {url}')
+        os.system(f'open {path}')
     except:
         try:
             # Something to try for windows
-            os.startfile(url)
+            os.startfile(path)
         except:
             print('Could not open file from terminal.')
 
