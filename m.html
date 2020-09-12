@@ -23,7 +23,7 @@
             <meta name="viewport" content="width=device-width,
                 initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
             <style>
-                #map_defad76ad3484ed7a5c0d3420ec8cf47 {
+                #map_de3daecb93374a38b5d47a48eeeb603e {
                     position: relative;
                     width: 100.0%;
                     height: 100.0%;
@@ -35,17 +35,17 @@
 </head>
 <body>    
     
-            <div class="folium-map" id="map_defad76ad3484ed7a5c0d3420ec8cf47" ></div>
+            <div class="folium-map" id="map_de3daecb93374a38b5d47a48eeeb603e" ></div>
         
 </body>
 <script>    
     
-            var map_defad76ad3484ed7a5c0d3420ec8cf47 = L.map(
-                "map_defad76ad3484ed7a5c0d3420ec8cf47",
+            var map_de3daecb93374a38b5d47a48eeeb603e = L.map(
+                "map_de3daecb93374a38b5d47a48eeeb603e",
                 {
-                    center: [35.6828387, 139.7594549],
+                    center: [41.7689878, -72.4334173],
                     crs: L.CRS.EPSG3857,
-                    zoom: 2,
+                    zoom: 10,
                     zoomControl: true,
                     preferCanvas: false,
                 }
@@ -55,37 +55,37 @@
 
         
     
-            var tile_layer_1cd380ae1fba48c786da687548e67d36 = L.tileLayer(
-                "https://stamen-tiles-{s}.a.ssl.fastly.net/terrain/{z}/{x}/{y}.jpg",
-                {"attribution": "Map tiles by \u003ca href=\"http://stamen.com\"\u003eStamen Design\u003c/a\u003e, under \u003ca href=\"http://creativecommons.org/licenses/by/3.0\"\u003eCC BY 3.0\u003c/a\u003e. Data by \u0026copy; \u003ca href=\"http://openstreetmap.org\"\u003eOpenStreetMap\u003c/a\u003e, under \u003ca href=\"http://creativecommons.org/licenses/by-sa/3.0\"\u003eCC BY SA\u003c/a\u003e.", "detectRetina": false, "maxNativeZoom": 18, "maxZoom": 18, "minZoom": 0, "noWrap": false, "opacity": 1, "subdomains": "abc", "tms": false}
-            ).addTo(map_defad76ad3484ed7a5c0d3420ec8cf47);
+            var tile_layer_824143e5e1f2445a8e3bbd9db4466e07 = L.tileLayer(
+                "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+                {"attribution": "Data by \u0026copy; \u003ca href=\"http://openstreetmap.org\"\u003eOpenStreetMap\u003c/a\u003e, under \u003ca href=\"http://www.openstreetmap.org/copyright\"\u003eODbL\u003c/a\u003e.", "detectRetina": false, "maxNativeZoom": 18, "maxZoom": 18, "minZoom": 0, "noWrap": false, "opacity": 1, "subdomains": "abc", "tms": false}
+            ).addTo(map_de3daecb93374a38b5d47a48eeeb603e);
         
     
-                var lat_lng_popup_25d844ee813349a2bd3acf54c9aa3128 = L.popup();
+                var lat_lng_popup_51cc5108f2f44255a322a7aa0d6fca31 = L.popup();
                 function latLngPop(e) {
-                    lat_lng_popup_25d844ee813349a2bd3acf54c9aa3128
+                    lat_lng_popup_51cc5108f2f44255a322a7aa0d6fca31
                         .setLatLng(e.latlng)
                         .setContent("Latitude: " + e.latlng.lat.toFixed(4) +
                                     "<br>Longitude: " + e.latlng.lng.toFixed(4))
-                        .openOn(map_defad76ad3484ed7a5c0d3420ec8cf47);
+                        .openOn(map_de3daecb93374a38b5d47a48eeeb603e);
                     }
-                map_defad76ad3484ed7a5c0d3420ec8cf47.on('click', latLngPop);
+                map_de3daecb93374a38b5d47a48eeeb603e.on('click', latLngPop);
             
     
-            var marker_b8c4af752a8e492cb92582f5028eecd8 = L.marker(
-                [35.6828387, 139.7594549],
+            var marker_71ed91a1ccfa470b9cc31c473c10c3c8 = L.marker(
+                [41.7689878, -72.4334173],
                 {}
-            ).addTo(map_defad76ad3484ed7a5c0d3420ec8cf47);
+            ).addTo(map_de3daecb93374a38b5d47a48eeeb603e);
         
     
-        var popup_988a2449a9dd4536879e626ced491a3b = L.popup({"maxWidth": "100%"});
+        var popup_b06ccd2a48554e7c8c36eba6ef55e48f = L.popup({"maxWidth": "100%"});
 
         
-            var html_bda574b70ba440bc818f8357035127ac = $(`<div id="html_bda574b70ba440bc818f8357035127ac" style="width: 100.0%; height: 100.0%;"><i>東京都, 日本 (Japan)</i></div>`)[0];
-            popup_988a2449a9dd4536879e626ced491a3b.setContent(html_bda574b70ba440bc818f8357035127ac);
+            var html_18eff7116f654bec9e399e10c7c138fb = $(`<div id="html_18eff7116f654bec9e399e10c7c138fb" style="width: 100.0%; height: 100.0%;"><i>Bolton, Tolland County, Connecticut, 06043, United States of America</i></div>`)[0];
+            popup_b06ccd2a48554e7c8c36eba6ef55e48f.setContent(html_18eff7116f654bec9e399e10c7c138fb);
         
 
-        marker_b8c4af752a8e492cb92582f5028eecd8.bindPopup(popup_988a2449a9dd4536879e626ced491a3b)
+        marker_71ed91a1ccfa470b9cc31c473c10c3c8.bindPopup(popup_b06ccd2a48554e7c8c36eba6ef55e48f)
         ;
 
         

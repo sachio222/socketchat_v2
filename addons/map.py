@@ -7,19 +7,7 @@ from geopy.geocoders import Nominatim
 import geocoder
 
 def open_map(msg):
-    def msg_ele(msg):
-        for word in msg:
-            if '=' in word:
-                return
-            yield word
 
-    new_msg = list(msg_ele(msg))
-    
-    print('generated msg: ', new_msg[1:])
-    try:
-        msg = ' '.join(msg[1:])
-    except:
-        pass
     map_style = 'OpenStreetMap'
     zoom = 10
 
@@ -27,6 +15,21 @@ def open_map(msg):
               'default': 'OpenStreetMap',
               'terrain': 'Stamen Terrain'  }
 
+    def msg_ele(msg):
+        """Generator, stops at args."""
+        for word in msg:
+            if '=' in word:
+                return
+            yield word
+
+    new_msg = list(msg_ele(msg))
+    new_msg = ' '.join(new_msg[1:])
+    
+    try:
+        msg = ' '.join(msg[1:])
+    except:
+        pass
+    
     if 'style=' in msg:
         end = msg.find('style=') + len('style=')
         part = msg[end:].split(' ')
@@ -38,7 +41,7 @@ def open_map(msg):
         if 0 < int(part[0]) <= 20: 
             zoom = int(part[0])
 
-    address = ' '.join(new_msg[1:])
+    address = new_msg
     geolocator = Nominatim(user_agent='myGeocoder')
 
     try:
