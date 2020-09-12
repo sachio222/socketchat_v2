@@ -29,6 +29,10 @@ Add-ons:
 /moon - Shows the current phase of the moon. Rad stuff. Check here for more:
         https://github.com/chubin/pyphoon
 
+/map -  Opens a map in the browser. Usage: /map <location> style=<style> zoom=<1-20>
+                styles: terrain, toner, default (Open Street Maps)
+                default zoom: 10
+
 
 
 
