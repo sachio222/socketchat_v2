@@ -168,7 +168,7 @@ class Client(ChatIO):
         elif msg[0] == '/map':
             map.open_map(msg)
         elif msg[0] == '/epic':
-            globe.animate(msg)
+            globe.animate()
         elif msg[0] == '/bloomberg':
             # bloomberg.Bloomberg().get_stories_about(msg)
             pass

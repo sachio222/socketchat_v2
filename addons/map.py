@@ -74,14 +74,14 @@ def open_map(msg):
     m.save(path)
 
     try:
-        print(f'Opening map for {location.address}')
+        print(f'-=- Opening map for {location.address}')
         os.system(f'open {path}')
     except:
         try:
             # Something to try for windows
             os.startfile(path)
         except:
-            print('Could not open file from terminal.')
+            print('-!- Could not open file from terminal.')
 
 if __name__ == "__main__":
     msg = '/map Tokyo, Japan style=terrain zoom=2'
