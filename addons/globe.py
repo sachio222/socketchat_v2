@@ -9,7 +9,7 @@ from pprint import pprint
 from tqdm import trange, tqdm
 
 def animate():
-    path = './downloads/globe/'
+    path = './downloads/epic/'
     if not os.path.exists(path):
         os.makedirs(path)
 
@@ -42,7 +42,7 @@ def animate():
     except:
         try:
             # Something to try for windows
-            os.startfile(path)
+            os.startfile(f'{path}{fn}')
         except:
             print('-!- Could not open file from terminal.')
 
