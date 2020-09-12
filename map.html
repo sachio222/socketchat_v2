@@ -23,7 +23,7 @@
             <meta name="viewport" content="width=device-width,
                 initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
             <style>
-                #map_a2b898b124894c7199bfa375dcbdf5b9 {
+                #map_000694c8db5b457cbc6f4447a934f02c {
                     position: relative;
                     width: 100.0%;
                     height: 100.0%;
@@ -35,17 +35,17 @@
 </head>
 <body>    
     
-            <div class="folium-map" id="map_a2b898b124894c7199bfa375dcbdf5b9" ></div>
+            <div class="folium-map" id="map_000694c8db5b457cbc6f4447a934f02c" ></div>
         
 </body>
 <script>    
     
-            var map_a2b898b124894c7199bfa375dcbdf5b9 = L.map(
-                "map_a2b898b124894c7199bfa375dcbdf5b9",
+            var map_000694c8db5b457cbc6f4447a934f02c = L.map(
+                "map_000694c8db5b457cbc6f4447a934f02c",
                 {
-                    center: [45.5236, -122.675],
+                    center: [27.9477595, -82.458444],
                     crs: L.CRS.EPSG3857,
-                    zoom: 13,
+                    zoom: 10,
                     zoomControl: true,
                     preferCanvas: false,
                 }
@@ -55,9 +55,39 @@
 
         
     
-            var tile_layer_8604dd9af18640d4a9b5f6ad9eaaf7b3 = L.tileLayer(
+            var tile_layer_e11cf7c4736c4742be00d75526e98ea5 = L.tileLayer(
                 "https://stamen-tiles-{s}.a.ssl.fastly.net/toner/{z}/{x}/{y}.png",
                 {"attribution": "Map tiles by \u003ca href=\"http://stamen.com\"\u003eStamen Design\u003c/a\u003e, under \u003ca href=\"http://creativecommons.org/licenses/by/3.0\"\u003eCC BY 3.0\u003c/a\u003e. Data by \u0026copy; \u003ca href=\"http://openstreetmap.org\"\u003eOpenStreetMap\u003c/a\u003e, under \u003ca href=\"http://www.openstreetmap.org/copyright\"\u003eODbL\u003c/a\u003e.", "detectRetina": false, "maxNativeZoom": 18, "maxZoom": 18, "minZoom": 0, "noWrap": false, "opacity": 1, "subdomains": "abc", "tms": false}
-            ).addTo(map_a2b898b124894c7199bfa375dcbdf5b9);
+            ).addTo(map_000694c8db5b457cbc6f4447a934f02c);
         
+    
+                var lat_lng_popup_44d3768ccee74d5dbc334012e50d098c = L.popup();
+                function latLngPop(e) {
+                    lat_lng_popup_44d3768ccee74d5dbc334012e50d098c
+                        .setLatLng(e.latlng)
+                        .setContent("Latitude: " + e.latlng.lat.toFixed(4) +
+                                    "<br>Longitude: " + e.latlng.lng.toFixed(4))
+                        .openOn(map_000694c8db5b457cbc6f4447a934f02c);
+                    }
+                map_000694c8db5b457cbc6f4447a934f02c.on('click', latLngPop);
+            
+    
+            var circle_877a5d92d05f404294bb64cddd9fd94b = L.circle(
+                [27.9477595, -82.458444],
+                {"bubblingMouseEvents": true, "color": "crimson", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "crimson", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 500, "stroke": true, "weight": 3}
+            ).addTo(map_000694c8db5b457cbc6f4447a934f02c);
+        
+    
+        var popup_04c0837dc20e42bc8e8030f6f181d6fa = L.popup({"maxWidth": "100%"});
+
+        
+            var html_8c9c91668de140c0b27e3a61c98f9bfe = $(`<div id="html_8c9c91668de140c0b27e3a61c98f9bfe" style="width: 100.0%; height: 100.0%;"><i>Tampa, Hillsborough County, Florida, United States of America</i></div>`)[0];
+            popup_04c0837dc20e42bc8e8030f6f181d6fa.setContent(html_8c9c91668de140c0b27e3a61c98f9bfe);
+        
+
+        circle_877a5d92d05f404294bb64cddd9fd94b.bindPopup(popup_04c0837dc20e42bc8e8030f6f181d6fa)
+        ;
+
+        
+    
 </script>

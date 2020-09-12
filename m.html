@@ -23,7 +23,7 @@
             <meta name="viewport" content="width=device-width,
                 initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
             <style>
-                #map_fe24a5f45d3a4e2fac54b5195da2e69f {
+                #map_67e3fd9720654875a3364468e253a047 {
                     position: relative;
                     width: 100.0%;
                     height: 100.0%;
@@ -35,17 +35,17 @@
 </head>
 <body>    
     
-            <div class="folium-map" id="map_fe24a5f45d3a4e2fac54b5195da2e69f" ></div>
+            <div class="folium-map" id="map_67e3fd9720654875a3364468e253a047" ></div>
         
 </body>
 <script>    
     
-            var map_fe24a5f45d3a4e2fac54b5195da2e69f = L.map(
-                "map_fe24a5f45d3a4e2fac54b5195da2e69f",
+            var map_67e3fd9720654875a3364468e253a047 = L.map(
+                "map_67e3fd9720654875a3364468e253a047",
                 {
-                    center: [35.021041, 135.7556075],
+                    center: [41.8700166, -72.3677153],
                     crs: L.CRS.EPSG3857,
-                    zoom: 17,
+                    zoom: 10,
                     zoomControl: true,
                     preferCanvas: false,
                 }
@@ -55,37 +55,37 @@
 
         
     
-            var tile_layer_265463b753494a82aa09225c0e91e0d4 = L.tileLayer(
-                "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-                {"attribution": "Data by \u0026copy; \u003ca href=\"http://openstreetmap.org\"\u003eOpenStreetMap\u003c/a\u003e, under \u003ca href=\"http://www.openstreetmap.org/copyright\"\u003eODbL\u003c/a\u003e.", "detectRetina": false, "maxNativeZoom": 18, "maxZoom": 18, "minZoom": 0, "noWrap": false, "opacity": 1, "subdomains": "abc", "tms": false}
-            ).addTo(map_fe24a5f45d3a4e2fac54b5195da2e69f);
+            var tile_layer_fb64c9e8497c4079b4cd990470fe101d = L.tileLayer(
+                "https://stamen-tiles-{s}.a.ssl.fastly.net/toner/{z}/{x}/{y}.png",
+                {"attribution": "Map tiles by \u003ca href=\"http://stamen.com\"\u003eStamen Design\u003c/a\u003e, under \u003ca href=\"http://creativecommons.org/licenses/by/3.0\"\u003eCC BY 3.0\u003c/a\u003e. Data by \u0026copy; \u003ca href=\"http://openstreetmap.org\"\u003eOpenStreetMap\u003c/a\u003e, under \u003ca href=\"http://www.openstreetmap.org/copyright\"\u003eODbL\u003c/a\u003e.", "detectRetina": false, "maxNativeZoom": 18, "maxZoom": 18, "minZoom": 0, "noWrap": false, "opacity": 1, "subdomains": "abc", "tms": false}
+            ).addTo(map_67e3fd9720654875a3364468e253a047);
         
     
-                var lat_lng_popup_b5013c6b68804646a79dea563b3872ed = L.popup();
+                var lat_lng_popup_21937876598a4607b492876af919fab3 = L.popup();
                 function latLngPop(e) {
-                    lat_lng_popup_b5013c6b68804646a79dea563b3872ed
+                    lat_lng_popup_21937876598a4607b492876af919fab3
                         .setLatLng(e.latlng)
                         .setContent("Latitude: " + e.latlng.lat.toFixed(4) +
                                     "<br>Longitude: " + e.latlng.lng.toFixed(4))
-                        .openOn(map_fe24a5f45d3a4e2fac54b5195da2e69f);
+                        .openOn(map_67e3fd9720654875a3364468e253a047);
                     }
-                map_fe24a5f45d3a4e2fac54b5195da2e69f.on('click', latLngPop);
+                map_67e3fd9720654875a3364468e253a047.on('click', latLngPop);
             
     
-            var marker_8b579acabdc140ca93c01ba8af5415c7 = L.marker(
-                [35.021041, 135.7556075],
+            var marker_b07f3d4030b94961b79f850b2621f113 = L.marker(
+                [41.8700166, -72.3677153],
                 {}
-            ).addTo(map_fe24a5f45d3a4e2fac54b5195da2e69f);
+            ).addTo(map_67e3fd9720654875a3364468e253a047);
         
     
-        var popup_00455d368c22419a83ccf96b97f22b5b = L.popup({"maxWidth": "100%"});
+        var popup_0750be4354d2474eba1f73ac29e09208 = L.popup({"maxWidth": "100%"});
 
         
-            var html_318703072e6b48b9948f42064d977526 = $(`<div id="html_318703072e6b48b9948f42064d977526" style="width: 100.0%; height: 100.0%;"><i>京都市, 京都府, 日本 (Japan)</i></div>`)[0];
-            popup_00455d368c22419a83ccf96b97f22b5b.setContent(html_318703072e6b48b9948f42064d977526);
+            var html_dbd9c0187cdf4c04acb6d37867ac33bc = $(`<div id="html_dbd9c0187cdf4c04acb6d37867ac33bc" style="width: 100.0%; height: 100.0%;"><i>Tolland, Tolland County, Connecticut, 06084, United States of America</i></div>`)[0];
+            popup_0750be4354d2474eba1f73ac29e09208.setContent(html_dbd9c0187cdf4c04acb6d37867ac33bc);
         
 
-        marker_8b579acabdc140ca93c01ba8af5415c7.bindPopup(popup_00455d368c22419a83ccf96b97f22b5b)
+        marker_b07f3d4030b94961b79f850b2621f113.bindPopup(popup_0750be4354d2474eba1f73ac29e09208)
         ;
 
         

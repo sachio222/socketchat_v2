@@ -59,9 +59,20 @@ def open_map(msg):
 
     m.add_child(folium.LatLngPopup())
 
-    folium.Marker(coords, popup=f'<i>{location.address}</i>').add_to(m)
-    url = 'm.html'
+    if map_style == 'Stamen Toner':
+        folium.Circle(
+        radius=500,
+        location=coords,
+        popup=f'<i>{location.address}</i>',
+        color='crimson',
+        fill=True,
+        ).add_to(m)
+    else:
+        folium.Marker(coords, popup=f'<i>{location.address}</i>').add_to(m)
+
+    url = 'map.html'
     m.save(url)
+
     try:
         print(f'Opening map for {location.address}')
         os.system(f'open {url}')
