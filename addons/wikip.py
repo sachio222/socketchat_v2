@@ -31,6 +31,7 @@ class WikiArticle():
             pass
 
     def print(self, r, s, p) -> None:
+        self.res = {}
         self.res = self.print_header(r)
         self.print_summary(s, p)
         self.show_options(p, self.res)
@@ -58,18 +59,19 @@ class WikiArticle():
     
     def print_full(self, p) -> None:
         """Prints full article"""
-        print('Content:\t', p.content)
+        print('-=- Content -=- \n', p.content)
         self.show_options(p, self.res)
     
     def print_links(self, p):
-        print("Related Topics:")
+        self.res = {}
+        print("-=- Related Topics -=- ")
         for i, link in enumerate(p.links):
             print(f'{i}: {link}')
             self.res[i] = link
         self.show_options(p, self.res)
     
     def show_options(self, p, results: dict) -> None:
-        print('\n-=- Options:')
+        print('\n-=- Options -=-')
         print('-=- (f) Show full article')
         print(f'-=- (#) See another article (1-{len(results)})')
         print('-=- (n) New search')
@@ -83,7 +85,7 @@ class WikiArticle():
         elif choice in ('t', 'T'):
             self.print_links(p)
         elif choice in ('q', 'Q'):
-            print('-=- Back to Chat\n')
+            print('-=- Back to Chat -=-\n')
             pass
         else:
             try:
