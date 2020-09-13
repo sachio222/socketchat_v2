@@ -67,7 +67,7 @@ class WikiArticle():
     def print_links(self, p):
         self.res = {}
         print("-=- Related Topics -=- ")
-        for i, link in enumerate(p.links):
+        for i, link in enumerate(p.links, 1):
             print(f'{i}: {link}')
             self.res[i] = link
         self.show_options(p, self.res)
@@ -78,7 +78,7 @@ class WikiArticle():
         print(f'-=- (#) See another article (1-{len(results)})')
         print('-=- (n) New search')
         print('-=- (t) Related topics')
-        print('-=- (q) quit')
+        print('-=- (q) Quit and return to chat')
         choice = input('-=- Choice: ')
         if choice in ('f', 'F'):
             self.print_full(p)
