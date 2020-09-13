@@ -77,7 +77,8 @@ class Client(ChatIO):
                         if self.introduced:
                             if self.encrypt_traffic:
                                 try:
-                                    self.msg = aes.full_encryption(self.msg.encode())
+                                    self.msg = aes.full_encryption(
+                                        self.msg.encode())
                                     # print(self.msg)
                                     # self.msg = aes.full_decryption(self.msg)
 
@@ -317,7 +318,7 @@ class Client(ChatIO):
 
         rec_msg = f"\r-=- {filesize}bytes received."
         print(rec_msg)
-    
+
     def _lil_x_handler(self, sock: socket):
         """Write aes256 key to local file"""
         # print('running x handler')
@@ -498,7 +499,6 @@ class Client(ChatIO):
         user = xfer.get_username(sock)
         print(user)
 
-
     def start(self):
         self.t1 = Thread(target=self.receiver)
         self.t2 = Thread(target=self.sender)
@@ -597,8 +597,8 @@ if __name__ == "__main__":
     print(f'-+- Connected to {host}')
     # print(f'Peer certificate: {serv_sock.getpeercert()}')
     # print(f'Ciphers: {client_ctxt.get_ciphers()}')
-    
-    # Lock to false for now. 
+
+    # Lock to false for now.
     args.is_encrypted = False
 
     channel.encrypt_flag = args.is_encrypted
