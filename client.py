@@ -21,8 +21,7 @@ from chatutils.xfer import FileXfer
 from chatutils.chatio import ChatIO
 from chatutils.channel import Chime
 
-from addons import weather, urbandict, moon, mathfacts, map, globe
-
+from addons import weather, urbandict, moon, mathfacts, map, globe, wikip
 
 class Client(ChatIO):
     """
@@ -170,6 +169,8 @@ class Client(ChatIO):
             map.open_map(msg)
         elif msg[0] == '/epic':
             globe.animate()
+        elif msg[0] in ('/wikipedia', '/wp'):
+            wikip.WikiArticle().run_from_cli(msg)
         elif msg[0] == '/bloomberg':
             # bloomberg.Bloomberg().get_stories_about(msg)
             pass
