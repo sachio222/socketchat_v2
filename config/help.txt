@@ -35,6 +35,8 @@ Add-ons:
                 MARBLE” API, taken from the Earth-Sun Lagrange point by 
                 DSCOVR's Earth Polychromatic Imaging Camera (EPIC) instrument.
                 Read more: https://epic.gsfc.nasa.gov/about/api
+/wikipedia  - Also '/wp'. Usage /wikipedia <search term>. Returns result from
+                wikipedia.com. 
 
 
 
