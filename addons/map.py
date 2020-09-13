@@ -1,7 +1,7 @@
 import os
 import re
 import folium
-from folium.plugins import MeasureControl, MiniMap
+from folium.plugins import MeasureControl, MiniMap, Fullscreen, LocateControl
 from geopy.geocoders import Nominatim
 # added geocoder later for ip address.
 # Some redundancy with geopy.
@@ -71,6 +71,8 @@ def open_map(msg):
     folium.LayerControl().add_to(m)
 
     m.add_child(MeasureControl())
+    m.add_child(Fullscreen())
+    m.add_child(LocateControl())
     m.add_child(
         MiniMap(position='bottomright',
                 zoom_animation=True,
