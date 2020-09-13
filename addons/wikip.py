@@ -59,7 +59,7 @@ class WikiArticle():
     
     def print_full(self, p) -> None:
         """Prints full article"""
-        print('-=- Content -=- \n', p.content)
+        print('\n-=- Content -=- \n', p.content)
         self.show_options(p, self.res)
     
     def print_links(self, p):
@@ -85,7 +85,7 @@ class WikiArticle():
         elif choice in ('t', 'T'):
             self.print_links(p)
         elif choice in ('q', 'Q'):
-            print('-=- Back to Chat -=-\n')
+            print('*** Back to Chat ***')
             pass
         else:
             try:
