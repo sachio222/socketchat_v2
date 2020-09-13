@@ -40,7 +40,7 @@ class ChatIO(Chime, Colors):
         self.GOLDBLACK_BOLD = self.format('BOLD', 'BLACK', 'GOLD')
         self.GOLDBLACK = self.format('REG', 'BLACK', 'GOLD')
 
-    def pack_n_send(self, sock, typ_pfx:str, msg:str):
+    def pack_n_send(self, sock, typ_pfx: str, msg: str):
         """Adds message type and message length to any message, and then sends.
 
         Converts any string to a prefixed bytes transmission that includes
@@ -176,8 +176,9 @@ class ChatIO(Chime, Colors):
                 #                                     'nacl-pub-box',
                 #                                     box=box)
 
-                handle, msg = self.decrypt_incoming(msg, encrpyt_method="aes256")
-                
+                handle, msg = self.decrypt_incoming(msg,
+                                                    encrpyt_method="aes256")
+
                 handle = self.make_fancy(self.GREEN, f'@{handle}:')
                 msg = self.make_fancy(self.GREEN, f' {msg}')
                 print(f'\r{handle}{msg}')
