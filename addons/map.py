@@ -61,12 +61,14 @@ def open_map(msg):
     m = folium.Map(location=coords, tiles=map_style, zoom_start=zoom)
 
     # folium.TileLayer('openstreetmap', name='Open Street Map').add_to(m)
+    folium.TileLayer('OpenStreetMap', name='Open Street Maps').add_to(m)
     folium.TileLayer('Stamen Toner', name='Toner').add_to(m)
     folium.TileLayer('Stamen Terrain', name='Terrain').add_to(m)
     folium.TileLayer('stamenwatercolor', name='Water Color').add_to(m)
     folium.TileLayer('cartodbpositron', name='Positron').add_to(m)
     folium.TileLayer('cartodbdark_matter', name='Dark Matter').add_to(m)
     folium.LayerControl().add_to(m)
+    
     m.add_child(folium.LatLngPopup())
 
     if map_style == 'Stamen Toner':
@@ -95,6 +97,6 @@ def open_map(msg):
 
 
 if __name__ == "__main__":
-    msg = '/map Tokyo, Japan zoom=15'
+    msg = '/map Tokyo, Japan style=toner zoom=15'
     msg = msg.split(' ')
     open_map(msg)
