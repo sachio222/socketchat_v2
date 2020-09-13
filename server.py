@@ -201,13 +201,15 @@ class Server(ChatIO, Channel):
         data = self.unpack_msg(client_cnxn)
         data = self.pack_message('x', data.decode())
 
-        self.broadcast(data, sockets, client_cnxn, target='recip',
+        self.broadcast(data,
+                       sockets,
+                       client_cnxn,
+                       target='recip',
                        recip_socket=self.RECIP_SOCK)
         # clear key data and sender/recip from server memory.
         del data
         del self.RECIP_SOCK
         del self.SENDER_SOCK
-
 
     def _serv_t_handler(self, client_cnxn):
         user_name = self.unpack_msg(client_cnxn)
@@ -225,8 +227,8 @@ class Server(ChatIO, Channel):
 
         if choice.lower() == 'y':
             a_key = user_key_dict[self.SENDER_SOCK]
-            a_key = self.pack_message('k', a_key) # small k
-            b_key = user_key_dict[self.RECIP_SOCK] # big K
+            a_key = self.pack_message('k', a_key)  # small k
+            b_key = user_key_dict[self.RECIP_SOCK]  # big K
             b_key = self.pack_message('K', b_key)
 
             msg = "Trust acquired. You are now chatting with some hardcore "\

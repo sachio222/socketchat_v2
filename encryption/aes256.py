@@ -43,8 +43,8 @@ class AES256Cipher():
                 self.key = kf.read()
             self.key = self.b64_to_hex(self.key)
         return self.key
-    
-    def write_key(self, key:bytes, key_path=key_path) -> bool:
+
+    def write_key(self, key: bytes, key_path=key_path) -> bool:
         try:
             self._check_path(key_path)
             with open(key_path, 'wb') as kf:
@@ -52,7 +52,6 @@ class AES256Cipher():
             return True
         except:
             return False
-
 
     def new_cipher(self, key, iv, backend):
         cipher = Cipher(algorithms.AES(key), modes.CBC(iv), backend=backend)
@@ -155,13 +154,13 @@ class AES256Cipher():
         if not os.path.exists(folders):
             os.makedirs(folders)
 
-    def full_encryption(self, msg:bytes) -> bytes:
+    def full_encryption(self, msg: bytes) -> bytes:
         msg = self.padder(msg, 128)
         msg, nonce = self.encrypt(msg)
         payload = self.pack_payload(msg, nonce)
         return payload
 
-    def full_decryption(self, payload:bytes) -> bytes:
+    def full_decryption(self, payload: bytes) -> bytes:
         msg, nonce = self.unpack_payload(payload)
         msg = self.decrypt(msg, nonce)
         msg = self.unpadder(msg)
@@ -202,7 +201,7 @@ if __name__ == "__main__":
     # payload = aes.pack_payload(msg, nonce)
 
     msg = aes.full_decryption(payload)
-    
+
     # msg2, nonce = aes.unpack_payload(payload)
     # print(msg2)
     # # # Decrypt message.

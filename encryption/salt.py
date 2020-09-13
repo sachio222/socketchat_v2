@@ -114,7 +114,7 @@ class NaclCipher():
     def make_public_box(self, prv_key: PrivateKey,
                         ur_pub_key: PublicKey) -> Box:
         """Make public box from one private, one public. Usually different."""
-        
+
         box = Box(prv_key, ur_pub_key)
         return box
 
@@ -124,7 +124,7 @@ class NaclCipher():
             cipher_msg = box.encrypt(bytes_msg)
             return cipher_msg
         except:
-            return('Failed to encrypt. U r not covered. Quit and try again.')
+            return ('Failed to encrypt. U r not covered. Quit and try again.')
 
     def decrypt(self, box: Box, cipher_msg: bytes) -> str:
         """Decrypt a bytes message with a public box."""
