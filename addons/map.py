@@ -1,6 +1,7 @@
 import os
 import re
 import folium
+from folium.plugins import MeasureControl, MiniMap
 from geopy.geocoders import Nominatim
 # added geocoder later for ip address.
 # Some redundancy with geopy.
@@ -68,7 +69,13 @@ def open_map(msg):
     folium.TileLayer('cartodbpositron', name='Positron').add_to(m)
     folium.TileLayer('cartodbdark_matter', name='Dark Matter').add_to(m)
     folium.LayerControl().add_to(m)
-    
+
+    m.add_child(MeasureControl())
+    m.add_child(
+        MiniMap(position='bottomright',
+                zoom_animation=True,
+                toggle_display=True,
+                minimized=True))
     m.add_child(folium.LatLngPopup())
 
     if map_style == 'Stamen Toner':
@@ -97,6 +104,6 @@ def open_map(msg):
 
 
 if __name__ == "__main__":
-    msg = '/map Tokyo, Japan style=toner zoom=15'
+    msg = '/map Tokyo, Japan style=default zoom=15'
     msg = msg.split(' ')
     open_map(msg)
