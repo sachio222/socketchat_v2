@@ -20,19 +20,21 @@ Add-ons:
 =======
 
 /weather - Get weather from wttr.in. Usage: /weather <location> <command>
-        Location can be a city, coords, or an airport. If no location is
-        provided, it uses your ip location. Use 1line command to return
-        weather as a single line.
-
+                Location can be a city, coords, or an airport. If no location
+                is provided, it uses your ip location. Use 1line command to
+                return weather as a single line.
 /urband - Returns top defition from urbandictionary.com. Usage /urband <term>
-
 /moon - Shows the current phase of the moon. Rad stuff. Check here for more:
-        https://github.com/chubin/pyphoon
-
-/map -  Opens a map in the browser. Usage: /map <location> style=<style> zoom=<1-18>
+                https://github.com/chubin/pyphoon
+/map -  Opens a map in the browser.
+                Usage: /map <location> style=<style> zoom=<1-18>
                 styles: terrain, toner, default (Open Street Maps)
                 default zoom: 10
                 default location: your ip.
+/epic - Downloads and stiches the latest images from the EPIC DAILY “BLUE
+                MARBLE” API, taken from the Earth-Sun Lagrange point by 
+                DSCOVR's Earth Polychromatic Imaging Camera (EPIC) instrument.
+                Read more: https://epic.gsfc.nasa.gov/about/api
 
 
 
