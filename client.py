@@ -23,6 +23,7 @@ from chatutils.channel import Chime
 
 from addons import weather, urbandict, moon, mathfacts, map, globe, wikip
 
+
 class Client(ChatIO):
     """
     Each message is prefixed with a single char, that helps it be sorted.

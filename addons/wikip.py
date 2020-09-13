@@ -1,9 +1,11 @@
 import wikipedia
 
+
 class WikiArticle():
+
     def __init__(self):
         self.res = {}
-    
+
     def run_from_cli(self, msg: list) -> str:
         """Joins msg parts, returns str"""
         try:
@@ -12,11 +14,11 @@ class WikiArticle():
         except:
             self.input_query()
 
-    def input_query(self, query:str = None) -> str:
+    def input_query(self, query: str = None) -> str:
         if not query:
             self.print_title()
             query = input('-+- New search: ')
-        
+
         self.lookup(query)
         return query
 
@@ -56,12 +58,12 @@ class WikiArticle():
         print('Title:\t', p.title)
         print('Page:\t', p.url)
         print('\n-=- Summary -=-\n', s)
-    
+
     def print_full(self, p) -> None:
         """Prints full article"""
         print('\n-=- Content -=- \n', p.content)
         self.show_options(p, self.res)
-    
+
     def print_links(self, p):
         self.res = {}
         print("-=- Related Topics -=- ")
@@ -69,7 +71,7 @@ class WikiArticle():
             print(f'{i}: {link}')
             self.res[i] = link
         self.show_options(p, self.res)
-    
+
     def show_options(self, p, results: dict) -> None:
         print('\n-=- Options -=-')
         print('-=- (f) Show full article')
@@ -91,21 +93,22 @@ class WikiArticle():
             try:
                 if int(choice):
                     while choice not in ('q', 'Q'):
-                        if int(choice) in(results):
+                        if int(choice) in (results):
                             print('Getting summary for:', results[int(choice)])
                             self.lookup(results[int(choice)])
                             break
                         else:
-                            print('Input a valid result from 1-10 or (q) to quit.')
+                            print(
+                                'Input a valid result from 1-10 or (q) to quit.'
+                            )
                             choice = input('Result: ')
             except:
                 print('Sorry, Invalid option, Quitting.')
 
-                
-
     def show_links(self, p):
         print(p.links)
 
+
 if __name__ == "__main__":
     wiki = WikiArticle()
-    wiki.run_from_cli(['/msg', 'Roger',  'Moore'])
+    wiki.run_from_cli(['/msg', 'Roger', 'Moore'])
