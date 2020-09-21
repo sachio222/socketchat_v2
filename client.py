@@ -21,9 +21,11 @@ from chatutils.xfer import FileXfer
 from chatutils.chatio import ChatIO
 from chatutils.channel import Chime
 
+from pathlib2 import Path
+
 from addons import weather, urbandict, moon, mathfacts, map, globe, wikip
 
-from handlers import InputControl
+from handlers import InputControl, CryptoHandler
 
 
 class Client(ChatIO):
@@ -64,13 +66,12 @@ class Client(ChatIO):
         while True:
             try:
                 # Input
-                self.msg = input('<me>')
+                self.msg = input('')
 
-                # Check for controller message.
+                # Check if controller message.
                 if self.msg:
                     # If controller, skip to controller handler.
                     if self.msg[0] == '/':
-                        print('msg is', self.msg)
                         typ_pfx = 'C'
                         InputControl.input_control_handler(serv_sock, self.msg)
                         continue
@@ -513,6 +514,16 @@ class Client(ChatIO):
 
 
 if __name__ == "__main__":
+
+    # Initialize paths to json parameters
+    json_path = Path().absolute() / "config/config.json"
+    config = utils.JSONConfig(json_path)
+    config.test = "test"
+    print(config)
+
+    # Load params json
+    assert json_path.is_file(
+    ), f"\n\nERROR: No config.json file found at {json_path}\n"
 
     parser = argparse.ArgumentParser(description='Lightweight encrypted chat.',
                                      epilog='Going under...')
