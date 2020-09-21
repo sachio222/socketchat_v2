@@ -1,4 +1,3 @@
-
 import json
 from pathlib2 import Path
 
@@ -20,7 +19,7 @@ def input_control_handler(sock, msg: str):
     Args
         msg - (Usually str) - the raw input command before processing.
     """
-    # Convert to string if needed. 
+    # Convert to string if needed.
     if type(msg) == bytes:
         msg.decode()
 
@@ -35,13 +34,12 @@ def input_control_handler(sock, msg: str):
         # Check through addons command dict.
         self_name = addons
         func = self_name.Router().cmd_dict.get(msg_parts[0], False)
-    
+
     if func:
         func(self_name.Router, msg_parts)
 
     else:
         print('-!- Not a valid command.')
-
 
     # if msg_parts[0] == '/about':
     #     # Read from file in config folder.
@@ -91,11 +89,12 @@ def input_control_handler(sock, msg: str):
     # elif msg[0] in ('/wikipedia', '/wp'):
     #     wikip.WikiArticle().run_from_cli(msg)
     # elif msg[0] == '/bloomberg':
-        # bloomberg.Bloomberg().get_stories_about(msg)
-    #     pass 
+    # bloomberg.Bloomberg().get_stories_about(msg)
+    #     pass
 
 
 class ConfigJson():
+
     def __init__(self, json_path):
         with open(json_path) as f:
             params = json.load(f)
@@ -115,6 +114,7 @@ class ConfigJson():
     def dict(self):
         """Gives dict-like access to Params instance by 'params.dict['learning_rate]."""
         return self.__dict__
+
 
 # Initialize paths to json parameters
 json_path = Path().absolute() / "config/config.json"

@@ -26,7 +26,6 @@ from addons import weather, urbandict, moon, mathfacts, map, globe, wikip
 from handlers import InputControl
 
 
-
 class Client(ChatIO):
     """
     Each message is prefixed with a single char, that helps it be sorted.

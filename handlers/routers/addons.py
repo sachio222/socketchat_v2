@@ -1,12 +1,15 @@
-"""To add an Addon:
-Step 1: Import <addon>.py file. 
-Step 2: Define function (can pass in split msg_parts).
-Step 3: Add command as Key, and function name as Value to cmd_dict
-"""
-
 from addons import weather, urbandict, moon, mathfacts, map, globe, wikip
 
+
 class Router:
+    """Routes all add-on commands.
+
+    To add an Addon:
+        Step 1: Import <addon>.py file. 
+        Step 2: Define function (can pass in split msg_parts).
+        Step 3: Add command as Key, and function name as Value to cmd_dict
+    """
+
     def __init__(self):
         pass
 
