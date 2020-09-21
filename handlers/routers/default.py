@@ -1,6 +1,9 @@
 from chatutils import utils
 
+
 class Router:
+    """Routes all default commands, excluding add-ons."""
+
     def __init__(self):
         pass
 
@@ -33,14 +36,14 @@ class Router:
     def mute(self, *args, **kwargs):
         cfg.muted = True
         self.print_message("@YO: Muted. Type /unmute to restore sound.")
-    
+
     def trust(self, *args, **kwargs):
         self.trust(msg_parts)
 
     def unmute(self, *args, **kwargs):
         cfg.muted = False
         self.print_message("@YO: B00P! Type /mute to turn off sound.")
-    
+
     cmd_dict = {
         '/about': about,
         '/help': help,
