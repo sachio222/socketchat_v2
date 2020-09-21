@@ -23,6 +23,9 @@ from chatutils.channel import Chime
 
 from addons import weather, urbandict, moon, mathfacts, map, globe, wikip
 
+from handlers import InputControl
+
+
 
 class Client(ChatIO):
     """
@@ -62,14 +65,15 @@ class Client(ChatIO):
         while True:
             try:
                 # Input
-                self.msg = input('')
+                self.msg = input('<me>')
 
                 # Check for controller message.
                 if self.msg:
                     # If controller, skip to controller handler.
                     if self.msg[0] == '/':
+                        print('msg is', self.msg)
                         typ_pfx = 'C'
-                        self.input_control_handler(serv_sock, self.msg)
+                        InputControl.input_control_handler(serv_sock, self.msg)
                         continue
                     # Give it a prefix of self.message_type. Default is 'M'
                     else:
@@ -97,7 +101,8 @@ class Client(ChatIO):
                 typ_pfx = self.message_type
                 self.pack_n_send(serv_sock, typ_pfx, self.msg)
 
-            except:
+            except Exception as e:
+                print(e)
                 serv_sock.close()
                 exit()
 
@@ -105,78 +110,78 @@ class Client(ChatIO):
             self.message_type = 'M'
             self.encrypt_traffic = self.encrypt_flag
 
-    def input_control_handler(self, sock: socket, msg: str):
+    # def input_control_handler(self, sock: socket, msg: str):
 
-        # TODO: Move to module.
-        """Sorts through input control messages and calls controller funcs.
+    #     # TODO: Move to module.
+    #     """Sorts through input control messages and calls controller funcs.
 
-        All of the controller commands are routed through this function based
-        on the presence of a "/" character at the beginning of the command,
-        which is detected by the sender function. Each command has a different
-        end point and they all behave differently depending on their defined
-        purposes.
+    #     All of the controller commands are routed through this function based
+    #     on the presence of a "/" character at the beginning of the command,
+    #     which is detected by the sender function. Each command has a different
+    #     end point and they all behave differently depending on their defined
+    #     purposes.
 
-        Args
-            msg - (Usually str) - the raw input command before processing.
-        """
+    #     Args
+    #         msg - (Usually str) - the raw input command before processing.
+    #     """
 
-        if type(msg) == bytes:
-            msg.decode()
-        # Split into command and keywords
-        msg = msg.split(' ')
+    #     if type(msg) == bytes:
+    #         msg.decode()
+    #     # Split into command and keywords
+    #     msg = msg.split(' ')
 
-        if msg[0] == '/about':
-            # Read from file in config folder.
-            path = 'config/about.txt'
-            utils.print_from_file(path)
-        elif msg[0] == '/help' or msg[0] == '/h':
-            # Read from file in config folder.
-            path = 'config/help.txt'
-            utils.print_from_file(path)
-        elif msg[0] == '/sendfile' or msg[0] == '/sf':
-            # Initiates Send File (SF) sequence.
-            self.start_sendfile_process(sock)
-        elif msg[0] == '/status':
-            # Ask SERVER to broadcast who is online.
-            # join and strip. Send over full string.
-            msg = ' '.join(msg)
-            msg = msg[1:]
-            self.pack_n_send(sock, '/', msg)
-        elif msg[0] == '/mute':
-            self.muted = True
-            self.print_message("@YO: Muted. Type /unmute to restore sound.")
-        elif msg[0] == '/unmute':
-            self.muted = False
-            self.print_message("@YO: B00P! Type /mute to turn off sound.")
-        elif msg[0] == '/trust':
-            self.trust(msg)
-        elif msg[0] == '/sendkey':
-            self.sendkey(sock, msg)
-        elif msg[0] == '/exit' or msg == '/close':
-            print('Disconnected.')
-            sock.shutdown(socket.SHUT_RDWR)
-            sock.close()
-            pass
-        elif msg[0] == '/weather':
-            weather.report(msg)
-            # print('\r-=-', report)
-        elif msg[0] == '/urband':
-            urbandict.urbandict(msg)
-        elif msg[0] == '/moon':
-            moon.phase()
-        elif msg[0] == '/mathtrivia':
-            mathfacts.get_fact(msg)
-        elif msg[0] == '/map':
-            map.open_map(msg)
-        elif msg[0] == '/epic':
-            globe.animate()
-        elif msg[0] in ('/wikipedia', '/wp'):
-            wikip.WikiArticle().run_from_cli(msg)
-        elif msg[0] == '/bloomberg':
-            # bloomberg.Bloomberg().get_stories_about(msg)
-            pass
-        else:
-            print('-!- Command not recognized.')
+    #     if msg[0] == '/about':
+    #         # Read from file in config folder.
+    #         path = 'config/about.txt'
+    #         utils.print_from_file(path)
+    #     elif msg[0] == '/help' or msg[0] == '/h':
+    #         # Read from file in config folder.
+    #         path = 'config/help.txt'
+    #         utils.print_from_file(path)
+    #     elif msg[0] == '/sendfile' or msg[0] == '/sf':
+    #         # Initiates Send File (SF) sequence.
+    #         self.start_sendfile_process(sock)
+    #     elif msg[0] == '/status':
+    #         # Ask SERVER to broadcast who is online.
+    #         # join and strip. Send over full string.
+    #         msg = ' '.join(msg)
+    #         msg = msg[1:]
+    #         self.pack_n_send(sock, '/', msg)
+    #     elif msg[0] == '/mute':
+    #         self.muted = True
+    #         self.print_message("@YO: Muted. Type /unmute to restore sound.")
+    #     elif msg[0] == '/unmute':
+    #         self.muted = False
+    #         self.print_message("@YO: B00P! Type /mute to turn off sound.")
+    #     elif msg[0] == '/trust':
+    #         self.trust(msg)
+    #     elif msg[0] == '/sendkey':
+    #         self.sendkey(sock, msg)
+    #     elif msg[0] == '/exit' or msg == '/close':
+    #         print('Disconnected.')
+    #         sock.shutdown(socket.SHUT_RDWR)
+    #         sock.close()
+    #         pass
+    #     elif msg[0] == '/weather':
+    #         weather.report(msg)
+    #         # print('\r-=-', report)
+    #     elif msg[0] == '/urband':
+    #         urbandict.urbandict(msg)
+    #     elif msg[0] == '/moon':
+    #         moon.phase()
+    #     elif msg[0] == '/mathtrivia':
+    #         mathfacts.get_fact(msg)
+    #     elif msg[0] == '/map':
+    #         map.open_map(msg)
+    #     elif msg[0] == '/epic':
+    #         globe.animate()
+    #     elif msg[0] in ('/wikipedia', '/wp'):
+    #         wikip.WikiArticle().run_from_cli(msg)
+    #     elif msg[0] == '/bloomberg':
+    #         # bloomberg.Bloomberg().get_stories_about(msg)
+    #         pass
+    #     else:
+    #         print('-!- Command not recognized.')
 
     #===================== RECEIVING METHODS =====================#
     def receiver(self):
