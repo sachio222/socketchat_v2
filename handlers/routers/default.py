@@ -9,7 +9,6 @@ class Router:
 
     def about(self, *args, **kwargs):
         """Read from file in config folder."""
-        print(args)
         path = 'config/about.txt'
         utils.print_from_file(path)
 

@@ -1,3 +1,5 @@
 {
-    "muted": false
+    "muted": false,
+    "encryption_type": "aes256",
+    "test": "nothing"
 }

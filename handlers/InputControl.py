@@ -1,13 +1,12 @@
 import json
 from pathlib2 import Path
-
 from chatutils import utils
 from handlers.routers import default, addons
 
 
+
 def input_control_handler(sock, msg: str):
 
-    # TODO: Move to module.
     """Sorts through input control messages and calls controller funcs.
 
     All of the controller commands are routed through this function based
@@ -19,24 +18,25 @@ def input_control_handler(sock, msg: str):
     Args
         msg - (Usually str) - the raw input command before processing.
     """
-    # Convert to string if needed.
+    # 1. Convert to string if needed.
     if type(msg) == bytes:
         msg.decode()
 
-    # Split msg into command and keywords
+    # 2. Split msg into command and keywords
     msg_parts = msg.split(' ')
 
-    # Check through default command dict.
+    # 3. Check through default command dict.
     self_name = default
     func = self_name.Router().cmd_dict.get(msg_parts[0], False)
 
     if not func:
-        # Check through addons command dict.
+        # 4. If no value, check through addons command dict.
         self_name = addons
         func = self_name.Router().cmd_dict.get(msg_parts[0], False)
 
+    # 5. Run command, passing self, msg_parts, sock, or Fail.
     if func:
-        func(self_name.Router, msg_parts)
+        func(self_name.Router, msg_parts, sock)
 
     else:
         print('-!- Not a valid command.')
@@ -92,35 +92,3 @@ def input_control_handler(sock, msg: str):
     # bloomberg.Bloomberg().get_stories_about(msg)
     #     pass
 
-
-class ConfigJson():
-
-    def __init__(self, json_path):
-        with open(json_path) as f:
-            params = json.load(f)
-            self.__dict__.update(params)
-
-    def save(self, json_path):
-        with open(json_path, "w") as f:
-            json.dump(self.__dict__, f, indent=4)
-
-    def update(self, json_path):
-        """Loads parameters from json file."""
-        with open(json_path) as f:
-            params = json.load(f)
-            self.__dict__.update(params)
-
-    @property
-    def dict(self):
-        """Gives dict-like access to Params instance by 'params.dict['learning_rate]."""
-        return self.__dict__
-
-
-# Initialize paths to json parameters
-json_path = Path().absolute() / "config/config.json"
-cfg = ConfigJson(json_path)
-print(cfg)
-
-# Load params json
-assert json_path.is_file(
-), f"\n\nERROR: No config.json file found at {json_path}\n"
