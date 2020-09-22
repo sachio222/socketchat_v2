@@ -21,10 +21,6 @@ from chatutils.xfer import FileXfer
 from chatutils.chatio import ChatIO
 from chatutils.channel import Chime
 
-# from pathlib2 import Path
-
-# from addons import weather, urbandict, moon, mathfacts, map, globe, wikip
-
 from handlers import InputControl, EncryptionControl
 
 
@@ -73,7 +69,7 @@ class Client(ChatIO):
                     # If controller, skip to controller handler.
                     if self.msg[0] == '/':
                         typ_pfx = 'C'
-                        InputControl.input_control_handler(serv_sock, self.msg)
+                        InputControl.input_command_handler(serv_sock, self.msg)
                         continue
                     # Give it a prefix of self.message_type. Default is 'M'
                     else:
