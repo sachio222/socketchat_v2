@@ -3,6 +3,9 @@ import sys
 import time
 import json
 
+# from pathlib2 import Path
+import config.filepaths as paths
+
 
 def countdown(secs=90, msg='-+- Try again in '):
     # util
@@ -37,24 +40,23 @@ def split_path_ext(path):
 
     return main, ext
 
-class JSONConfig():
 
-    def __init__(self, json_path):
-        with open(json_path) as f:
-            cfg_json = json.load(f)
-            self.__dict__.update(cfg_json)
+class ConfigJson():
+    """Loads and updates config.json file listed in config/filepaths.py"""
 
-    def save(self, json_path):
-        with open(json_path, "w") as f:
+    def __init__(self):
+        self.load(paths.json_path)
+
+    def load(self, path=paths.json_path):
+        with open(path) as f:
+            configs = json.load(f)
+            self.__dict__.update(configs)
+
+    def update(self, path=paths.json_path):
+        with open(path, 'w') as f:
             json.dump(self.__dict__, f, indent=4)
-
-    def update(self, json_path):
-        """Loads parameters from json file."""
-        with open(json_path) as f:
-            params = json.load(f)
-            self.__dict__.update(params)
 
     @property
     def dict(self):
-        """Gives dict-like access to Params instance by 'params.dict['learning_rate]."""
-        return self.__dict__
+        """Access class as dict."""
+        self.__dict__

@@ -1,5 +1,5 @@
 {
-    "muted": false,
-    "encryption_type": "aes256",
-    "test": "nothing"
+    "encryption": null,
+    "introduced": false,
+    "muted": false
 }

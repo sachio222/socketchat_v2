@@ -1,9 +1,10 @@
 
--$- ------------------------------
--$- Encryptochat v 2.0 Beta: About
--$- ------------------------------
+-$- ------------------------------ -$-
+-$- Encryptochat v 2.0 Beta: About -$-
+-$- ------------------------------ -$-
 
-Built for lightweight, encrypted chatting with minimal features and add-ons.
+Built for lightweight, encrypted
+chatting with add-ons.
 
 Developed by:
 J. Krajewski
@@ -12,4 +13,3 @@ M. Holcombe
 Copyright: 2020
 
 -:- End. Start chatting again.
-

@@ -1,21 +1,30 @@
 from chatutils import utils
+from chatutils.chatio import ChatIO
+import config.filepaths
 
 
 class Router:
     """Routes all default commands, excluding add-ons."""
+    configs = utils.ConfigJson()
 
     def __init__(self):
         pass
 
     def about(self, *args, **kwargs):
         """Read from file in config folder."""
-        path = 'config/about.txt'
+        path = config.filepaths.about
         utils.print_from_file(path)
 
     def help(self, *args, **kwargs):
         """Read from file in config folder."""
-        path = 'config/help.txt'
+        path = config.filepaths.help
         utils.print_from_file(path)
+
+    def exit(self, *args, **kwargs):
+        print('Disconnected.')
+        sock.shutdown(socket.SHUT_RDWR)
+        sock.close()
+        pass
 
     def sendfile(self, *args, **kwargs):
         """Initiates Send File (SF) sequence."""
@@ -33,18 +42,22 @@ class Router:
         self.pack_n_send(sock, '/', msg)
 
     def mute(self, *args, **kwargs):
-        cfg.muted = True
-        self.print_message("@YO: Muted. Type /unmute to restore sound.")
+        self.configs.muted = True
+        self.configs.update()
+        ChatIO().print_message("@YO: Muted. Type /unmute to restore sound.")
 
     def trust(self, *args, **kwargs):
         self.trust(msg_parts)
 
     def unmute(self, *args, **kwargs):
-        cfg.muted = False
-        self.print_message("@YO: B00P! Type /mute to turn off sound.")
+        self.configs.muted = False
+        self.configs.update()
+        ChatIO().print_message("@YO: B00P! Type /mute to turn off sound.")
 
     cmd_dict = {
         '/about': about,
+        '/close': exit,
+        '/exit': exit,
         '/help': help,
         '/h': help,
         '/sendfile': sendfile,
