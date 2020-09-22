@@ -1,9 +1,10 @@
-geocoder==1.38.1
-folium==0.11.0
-tqdm==4.48.2
-wikipedia==1.4.0
-geopy==2.0.0
-requests==2.24.0
 cryptography==3.0
+pathlib2==2.3.5
+wikipedia==1.4.0
+tqdm==4.48.2
+folium==0.11.0
+geopy==2.0.0
+geocoder==1.38.1
+requests==2.24.0
 Pillow==7.2.0
 secrets==1.0.2

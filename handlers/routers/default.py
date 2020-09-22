@@ -20,6 +20,9 @@ class Router:
         path = config.filepaths.help
         utils.print_from_file(path)
 
+    def encryption(self, *args, **kwargs):
+        print(f"-*- Encryption currently set to {self.configs.encryption}.")
+
     def exit(self, *args, **kwargs):
         print('Disconnected.')
         sock.shutdown(socket.SHUT_RDWR)
@@ -57,6 +60,7 @@ class Router:
     cmd_dict = {
         '/about': about,
         '/close': exit,
+        '/encryption': encryption,
         '/exit': exit,
         '/help': help,
         '/h': help,
