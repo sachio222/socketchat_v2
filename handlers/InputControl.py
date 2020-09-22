@@ -4,8 +4,8 @@ from chatutils import utils
 from handlers.routers import default, addons
 
 
-def input_control_handler(sock, msg: str):
-    """Sorts through input control messages and calls controller funcs.
+def input_command_handler(sock, msg: str):
+    """Sorts through input command messages and calls controller funcs.
 
     All of the controller commands are routed through this function based
     on the presence of a "/" character at the beginning of the command,
@@ -38,3 +38,6 @@ def input_control_handler(sock, msg: str):
 
     else:
         print('-!- Not a valid command.')
+
+def message_type_handler():
+    pass
