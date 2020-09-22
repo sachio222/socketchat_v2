@@ -32,12 +32,9 @@ def input_command_handler(sock, msg: str):
         self_name = addons
         func = self_name.Router().cmd_dict.get(msg_parts[0], False)
 
-    # 5. Run command, passing self, msg_parts, sock, or Fail.
+    # 5. Run command, passing self, msg_parts, sock.
     if func:
         func(self_name.Router, msg_parts, sock)
 
     else:
-        print('-!- Not a valid command.')
-
-def message_type_handler():
-    pass
+        print(f'-!- <{msg}> is not a valid command.')
