@@ -21,9 +21,9 @@ from chatutils.xfer import FileXfer
 from chatutils.chatio import ChatIO
 from chatutils.channel import Chime
 
-from pathlib2 import Path
+# from pathlib2 import Path
 
-from addons import weather, urbandict, moon, mathfacts, map, globe, wikip
+# from addons import weather, urbandict, moon, mathfacts, map, globe, wikip
 
 from handlers import InputControl, EncryptionControl
 

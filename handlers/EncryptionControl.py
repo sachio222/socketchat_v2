@@ -12,8 +12,11 @@ returns message as bytes.
 
 
 def encryption_handler():
-    print(configs.encryption)
     # If name has been given, encrypt everything else.
+    encryption = cipher_dict.get(configs.encryption, goober)
+    if encryption:
+        encryption()
+
     if configs.introduced:
         if self.encrypt_traffic:
             self.msg = aes.full_encryption(self.msg.encode())
@@ -34,7 +37,7 @@ def encrypt_message():
 
 
 def fernet():
-    pass
+    print("running fernet dawg")
 
 
 def aes256_ctc():
@@ -58,7 +61,10 @@ def chacha20_poly1305():
 
 
 def argon():
-    pass
+     print("running argon dawg")
+
+def goober():
+    print("Running naked dawg")
 
 
 cipher_dict = {
@@ -69,4 +75,5 @@ cipher_dict = {
     'nacl-secret-box': nacl_secret_box,
     'chacha20poly1305': chacha20_poly1305,
     'argon': argon,
+    'goober': goober
 }
