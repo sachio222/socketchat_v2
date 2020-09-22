@@ -25,7 +25,7 @@ from pathlib2 import Path
 
 from addons import weather, urbandict, moon, mathfacts, map, globe, wikip
 
-from handlers import InputControl, CryptoHandler
+from handlers import InputControl, EncryptionControl
 
 
 class Client(ChatIO):
@@ -77,24 +77,7 @@ class Client(ChatIO):
                         continue
                     # Give it a prefix of self.message_type. Default is 'M'
                     else:
-                        # If name has been given, encrypt everything else.
-                        if self.introduced:
-                            if self.encrypt_traffic:
-                                try:
-                                    self.msg = aes.full_encryption(
-                                        self.msg.encode())
-                                    # print(self.msg)
-                                    # self.msg = aes.full_decryption(self.msg)
-
-                                    # print(self.msg)
-
-                                    # self.msg = nacl.encrypt(self.pub_box,
-                                    #                         self.msg.encode())
-                                    # self.msg = Base64Encoder.encode(self.msg)
-
-                                    # # self.msg = fernet.encrypt(self.msg)
-                                except:
-                                    pass
+                        EncryptionControl.encryption_handler()
                 else:
                     self.msg = ''
 
@@ -109,79 +92,6 @@ class Client(ChatIO):
             # !!!!! Always revert to default message_type and encryption.
             self.message_type = 'M'
             self.encrypt_traffic = self.encrypt_flag
-
-    # def input_control_handler(self, sock: socket, msg: str):
-
-    #     # TODO: Move to module.
-    #     """Sorts through input control messages and calls controller funcs.
-
-    #     All of the controller commands are routed through this function based
-    #     on the presence of a "/" character at the beginning of the command,
-    #     which is detected by the sender function. Each command has a different
-    #     end point and they all behave differently depending on their defined
-    #     purposes.
-
-    #     Args
-    #         msg - (Usually str) - the raw input command before processing.
-    #     """
-
-    #     if type(msg) == bytes:
-    #         msg.decode()
-    #     # Split into command and keywords
-    #     msg = msg.split(' ')
-
-    #     if msg[0] == '/about':
-    #         # Read from file in config folder.
-    #         path = 'config/about.txt'
-    #         utils.print_from_file(path)
-    #     elif msg[0] == '/help' or msg[0] == '/h':
-    #         # Read from file in config folder.
-    #         path = 'config/help.txt'
-    #         utils.print_from_file(path)
-    #     elif msg[0] == '/sendfile' or msg[0] == '/sf':
-    #         # Initiates Send File (SF) sequence.
-    #         self.start_sendfile_process(sock)
-    #     elif msg[0] == '/status':
-    #         # Ask SERVER to broadcast who is online.
-    #         # join and strip. Send over full string.
-    #         msg = ' '.join(msg)
-    #         msg = msg[1:]
-    #         self.pack_n_send(sock, '/', msg)
-    #     elif msg[0] == '/mute':
-    #         self.muted = True
-    #         self.print_message("@YO: Muted. Type /unmute to restore sound.")
-    #     elif msg[0] == '/unmute':
-    #         self.muted = False
-    #         self.print_message("@YO: B00P! Type /mute to turn off sound.")
-    #     elif msg[0] == '/trust':
-    #         self.trust(msg)
-    #     elif msg[0] == '/sendkey':
-    #         self.sendkey(sock, msg)
-    #     elif msg[0] == '/exit' or msg == '/close':
-    #         print('Disconnected.')
-    #         sock.shutdown(socket.SHUT_RDWR)
-    #         sock.close()
-    #         pass
-    #     elif msg[0] == '/weather':
-    #         weather.report(msg)
-    #         # print('\r-=-', report)
-    #     elif msg[0] == '/urband':
-    #         urbandict.urbandict(msg)
-    #     elif msg[0] == '/moon':
-    #         moon.phase()
-    #     elif msg[0] == '/mathtrivia':
-    #         mathfacts.get_fact(msg)
-    #     elif msg[0] == '/map':
-    #         map.open_map(msg)
-    #     elif msg[0] == '/epic':
-    #         globe.animate()
-    #     elif msg[0] in ('/wikipedia', '/wp'):
-    #         wikip.WikiArticle().run_from_cli(msg)
-    #     elif msg[0] == '/bloomberg':
-    #         # bloomberg.Bloomberg().get_stories_about(msg)
-    #         pass
-    #     else:
-    #         print('-!- Command not recognized.')
 
     #===================== RECEIVING METHODS =====================#
     def receiver(self):
@@ -514,16 +424,10 @@ class Client(ChatIO):
 
 
 if __name__ == "__main__":
-
     # Initialize paths to json parameters
-    json_path = Path().absolute() / "config/config.json"
-    config = utils.JSONConfig(json_path)
-    config.test = "test"
-    print(config)
-
-    # Load params json
-    assert json_path.is_file(
-    ), f"\n\nERROR: No config.json file found at {json_path}\n"
+    # # Load params json
+    # assert json_path.is_file(
+    # ), f"\n\nERROR: No config.json file found at {json_path}\n"
 
     parser = argparse.ArgumentParser(description='Lightweight encrypted chat.',
                                      epilog='Going under...')

@@ -18,6 +18,9 @@ class Router:
     def epic(self, *args):
         globe.animate()
 
+    def mathfacts(self, msg_parts: list, *args):
+        mathfacts.get_fact(msg_parts)
+
     def map(self, msg_parts: list, *args):
         """Input location string"""
         map.open_map(msg_parts)
@@ -40,6 +43,7 @@ class Router:
     cmd_dict = {
         '/epic': epic,
         '/map': map,
+        '/mathfacts': mathfacts,
         '/moon': moon,
         '/urband': urband,
         '/weather': weather,
