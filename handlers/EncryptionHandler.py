@@ -8,7 +8,7 @@ import nacl.utils
 from nacl.encoding import Base64Encoder
 from nacl.public import PublicKey, PrivateKey, Box
 
-configs = utils.ConfigJson()
+configs = utils.ConfigJSON()
 """
 check config.
 I have been intrduced.
@@ -17,15 +17,18 @@ Get Encryption selection (AES256, ChaCha20Poly1305)
 Handle any size by passing through here.
 returns message as bytes.
 """
+class Handler():
+    def __init__(self):
+        configs.load()
+        self.encryption_method = cipher_dict.get(configs.cipher, goober)
 
+    def encryption_handler(self, data) -> bytes:
+        """Returns encrypted bytes of passed in string, based on encrypt config."""
+                
+        data_bytes = self.encryption_method(data)
 
-def encryption_handler(msg):
-    # If name has been given, encrypt everything else.
+        return data_bytes
     
-    encryption = cipher_dict.get(configs.encryption, goober)
-    if encryption:
-        encryption()
-
     # if configs.introduced:
     #     if self.encrypt_traffic:
     #         self.msg = aes.full_encryption(self.msg.encode())
@@ -41,39 +44,45 @@ def encryption_handler(msg):
             # # self.msg = fernet.encrypt(self.msg)
 
 
-def encrypt_message():
+def encrypt_message(data):
     pass
 
 
-def fernet():
-    print("running fernet dawg")
+def fernet(data) -> bytes:
+    encrypted_msg = FernetCipher().encrypt(data)
+    return encrypted_msg
 
 
-def aes256_ctc():
+def aes256_ctc(data):
     pass
 
 
-def aes256_hmac():
+def aes256_hmac(data):
     pass
 
 
-def nacl_public_box():
+def nacl_public_box(data):
     pass
 
 
-def nacl_secret_box():
+def nacl_secret_box(data):
     pass
 
 
-def chacha20_poly1305():
+def chacha20_poly1305(data):
     pass
 
 
-def argon():
+def argon(data):
      print("running argon dawg")
 
-def goober():
+def goober(data) -> bytes:
     print("Running naked dawg")
+    return data.encode()
+
+def test(data) -> bytes:
+    encrypted_msg = f'<<{data}>>'
+    return encrypted_msg.encode()
 
 
 cipher_dict = {
@@ -84,5 +93,6 @@ cipher_dict = {
     'nacl-secret-box': nacl_secret_box,
     'chacha20poly1305': chacha20_poly1305,
     'argon': argon,
-    'goober': goober
+    'goober': goober,
+    'test': test
 }

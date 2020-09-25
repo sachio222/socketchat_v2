@@ -1,13 +1,13 @@
 from chatutils import utils
 from handlers.routers import ServerCmds
 
-def data_router(client_cnxn, data):
+def data_router(sock, data):
     """Sorts through incoming data, by looking at prefixes."""
     
-    print(data)
-    if data == "/".encode():
-        print(data)
+    if data != "/".encode():
+        data = sock.recv(1024)
         
+    print(data)
 
     # """Handles incoming data based on its message type."""
     # # Send confirm dialog to recip if user is sending file.

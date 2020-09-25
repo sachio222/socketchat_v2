@@ -38,7 +38,4 @@ Add-ons:
 /wikipedia  - Also '/wp'. Usage /wikipedia <search term>. Returns result from
                 wikipedia.com. 
 
-
-
-
 -:- End. Start chatting again.

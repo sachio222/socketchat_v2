@@ -21,7 +21,7 @@ from chatutils.xfer import FileXfer
 from chatutils.chatio import ChatIO
 from chatutils.channel import Chime
 
-from handlers import InputControl, EncryptionControl
+from handlers import InputHandler, EncryptionHandler
 
 
 class Client(ChatIO):
@@ -64,7 +64,11 @@ class Client(ChatIO):
                 # Input
                 msg = input('')
 
-                InputControl.input_router(sock, msg)
+                data_bytes = InputHandler.input_router(sock, msg)
+
+                if data_bytes:
+                    # sock.send(data_bytes)
+                    self.pack_n_send(sock, "M", data_bytes)
 
                 # Check if controller message.
                 # if self.msg:
