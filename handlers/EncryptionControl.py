@@ -19,16 +19,17 @@ returns message as bytes.
 """
 
 
-def encryption_handler():
+def encryption_handler(msg):
     # If name has been given, encrypt everything else.
+    
     encryption = cipher_dict.get(configs.encryption, goober)
     if encryption:
         encryption()
 
-    if configs.introduced:
-        if self.encrypt_traffic:
-            self.msg = aes.full_encryption(self.msg.encode())
-            # print(self.msg)
+    # if configs.introduced:
+    #     if self.encrypt_traffic:
+    #         self.msg = aes.full_encryption(self.msg.encode())
+    #         # print(self.msg)
             # self.msg = aes.full_decryption(self.msg)
 
             # print(self.msg)

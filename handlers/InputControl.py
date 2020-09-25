@@ -1,8 +1,18 @@
 import json
-from pathlib2 import Path
 from chatutils import utils
-from handlers.routers import default, addons
+from handlers.routers import DefaultCmds, AddonCmds
+from handlers import EncryptionControl
 
+def input_router(sock, msg: str):
+    # If controller, skip to controller handler.
+    if msg[0] == '/':
+        typ_pfx = 'C'
+        
+        input_command_handler(sock, msg)
+    else:
+        encrypted_msg = EncryptionControl.encryption_handler(msg)
+
+            
 
 def input_command_handler(sock, msg: str):
     """Sorts through input command messages and calls controller funcs.
@@ -22,19 +32,17 @@ def input_command_handler(sock, msg: str):
 
     # 2. Split msg into command and keywords
     msg_parts = msg.split(' ')
+    
+    # 3. Search through commands for function, starting with default commands.
 
-    # 3. Check through default command dict.
-    self_name = default
-    func = self_name.Router().cmd_dict.get(msg_parts[0], False)
+    cmd_dicts = [DefaultCmds, AddonCmds]
 
-    if not func:
-        # 4. If no value, check through addons command dict.
-        self_name = addons
-        func = self_name.Router().cmd_dict.get(msg_parts[0], False)
-
-    # 5. Run command, passing self, msg_parts, sock.
-    if func:
-        func(self_name.Router, msg_parts, sock=sock)
-
-    else:
-        print(f'-!- <{msg}> is not a valid command.')
+    for cmd_dict in cmd_dicts:
+        func = cmd_dict.Router().dispatch_cmds.get(msg_parts[0], False)
+        if func:
+            break
+    try:
+        func(cmd_dict.Router, msg_parts, sock=sock)
+    except:
+        print(f'-!- {msg_parts[0]} is not a valid command.')
+        
