@@ -66,13 +66,16 @@ class SenderOperations():
         # self.show_prompts()
         pass
     
-    def show_prompts(self):
+    def show_prompts(self, sock):
         ### 0-------- Called by Sender
         fn, fs = self._what_is_filename()
         sn = self._what_is_username()
         user_accept = self.ask_server_if_user_exists(sn)
         if user_accept:
             ### -------> Outbound to Server
+            print(sock)
+            # SOCK.send()
+            
             ServerOperations().ask_recip_to_accept(sn, fn, fs)
 
     @sender_logging
