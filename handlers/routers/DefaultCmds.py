@@ -2,7 +2,6 @@ import config.filepaths
 from chatutils import utils
 from chatutils.chatio import ChatIO
 
-
 from lib.xfer.FileXfer import *
 
 
@@ -61,7 +60,7 @@ class Router:
         self.configs.update()
         ChatIO().print_message("@YO: B00P! Type /mute to turn off sound.")
 
-    cmd_dict = {
+    dispatch_cmds = {
         '/about': about,
         '/close': exit,
         '/encryption': encryption,

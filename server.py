@@ -11,6 +11,9 @@ from chatutils.channel import Channel
 
 import encryption.x509 as x509
 
+from handlers import ServControl
+from lib.xfer.FileXfer import ServerOperations
+
 # Global vars
 
 # TODO: Are all these really necessary? Is there a better way?
@@ -18,7 +21,6 @@ sockets = {}  # socket : ip
 sock_nick_dict = {}  # socket : nick
 nick_addy_dict = {}  # nick : ip
 user_key_dict = {}  # socket: key
-
 
 class Server(ChatIO, Channel):
     """Server class"""
@@ -31,20 +33,21 @@ class Server(ChatIO, Channel):
         self.SENDER_SOCK = None
         self.file_transfer = False
 
-    def accepting(self):
+    def accept_connections(self):
         """Continuous Thread that listens for and accepts new socket cnxns."""
 
         # Accept connections.
         while True:
             client_cnxn, client_addr = sock.accept()
-
             # Wrap client connection in secure TLS wrapper.
             client_cnxn = server_ctxt.wrap_socket(client_cnxn, server_side=True)
 
             print(f'-+- Connected... to {client_addr}')
-
             sockets[client_cnxn] = client_addr  # Create cnxn:addr pairings.
+
+            # Spin off thread for each client.
             Thread(target=self.handle_clients, args=(client_cnxn,)).start()
+
 
     def handle_clients(self, sock: socket):
         """Continuous thread, runs for each client that joins.
@@ -65,7 +68,8 @@ class Server(ChatIO, Channel):
             with lock:
                 # Testing if with lock should work so msgs don't get
                 #       separated from type prefix
-                data = sock.recv(1)
+                prefix_length = 1
+                data = sock.recv(prefix_length)
 
                 if not data:
                     discon_msg = f'{sock_nick_dict[sock]} has been disconnected.'
@@ -86,7 +90,8 @@ class Server(ChatIO, Channel):
                     sock.close()
                     break
 
-                self.data_router(sock, data)
+                # self.data_router(sock, data)
+                ServControl.data_router(sock, data)
 
     def data_router(self, client_cnxn, data):
         """Handles incoming data based on its message type."""
@@ -370,12 +375,10 @@ class Server(ChatIO, Channel):
 
     def start(self):
         """Begins the client acceptance loop as a threaded process."""
-
-        Thread(target=self.accepting).start()
+        Thread(target=self.accept_connections).start()
 
 
 if __name__ == "__main__":
-
     MAX_CNXN = 5
     if sys.argv[-1] == 'debug':
         # Runs if last arg to server.py is 'debug'
@@ -421,7 +424,7 @@ if __name__ == "__main__":
     server_ctxt = ssl.SSLContext(ssl.PROTOCOL_TLS)
     server_ctxt.verify_mode = ssl.CERT_NONE
     server_ctxt.set_ecdh_curve('prime256v1')
-    server_ctxt.set_ciphers('ECDHE-ECDSA-AES256-SHA384')
+    server_ctxt.set_ciphers('ECDHE-ECDSA-AES256-GCM-SHA384')
     server_ctxt.options |= ssl.OP_NO_COMPRESSION
     server_ctxt.options |= ssl.OP_SINGLE_ECDH_USE
     server_ctxt.options |= ssl.OP_CIPHER_SERVER_PREFERENCE
@@ -430,9 +433,11 @@ if __name__ == "__main__":
     try:
         sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         sock.bind(addy)
+
     except Exception as e:
         print(f'-x- {e}')
         utils.countdown(90)
+
     sock.settimeout(None)
     sock.listen(MAX_CNXN)
 

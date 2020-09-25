@@ -44,7 +44,7 @@ class Client(ChatIO):
         self.sec_box = None
 
     #===================== SENDING METHODS =====================#
-    def sender(self):
+    def sender(self, sock):
         """Accepts user input, checks type, and begins sending to recip.
 
         The sender function is a continuously running input thread. Any time
@@ -62,23 +62,25 @@ class Client(ChatIO):
         while True:
             try:
                 # Input
-                self.msg = input('')
+                msg = input('')
+
+                InputControl.input_router(sock, msg)
 
                 # Check if controller message.
-                if self.msg:
-                    # If controller, skip to controller handler.
-                    if self.msg[0] == '/':
-                        typ_pfx = 'C'
-                        InputControl.input_command_handler(serv_sock, self.msg)
-                        continue
-                    # Give it a prefix of self.message_type. Default is 'M'
-                    else:
-                        EncryptionControl.encryption_handler()
-                else:
-                    self.msg = ''
+                # if self.msg:
+                #     # If controller, skip to controller handler.
+                #     if self.msg[0] == '/':
+                #         typ_pfx = 'C'
+                #         InputControl.input_command_handler(sock, self.msg)
+                #         continue
+                #     # Give it a prefix of self.message_type. Default is 'M'
+                #     else:
+                #         EncryptionControl.encryption_handler()
+                # else:
+                #     self.msg = ''
 
-                typ_pfx = self.message_type
-                self.pack_n_send(serv_sock, typ_pfx, self.msg)
+                # typ_pfx = self.message_type
+                # self.pack_n_send(serv_sock, typ_pfx, self.msg)
 
             except Exception as e:
                 print(e)
@@ -414,7 +416,7 @@ class Client(ChatIO):
 
     def start(self):
         self.t1 = Thread(target=self.receiver)
-        self.t2 = Thread(target=self.sender)
+        self.t2 = Thread(target=self.sender, args=(serv_sock, ))
         self.t1.start()
         self.t2.start()
 
