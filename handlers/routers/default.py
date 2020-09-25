@@ -1,6 +1,9 @@
+import config.filepaths
 from chatutils import utils
 from chatutils.chatio import ChatIO
-import config.filepaths
+
+
+from lib.xfer.FileXfer import *
 
 
 class Router:
@@ -31,7 +34,8 @@ class Router:
 
     def sendfile(self, *args, **kwargs):
         """Initiates Send File (SF) sequence."""
-        self.start_sendfile_process(sock)
+        sock = kwargs["sock"]
+        SenderOperations().show_prompts(sock)
 
     def sendkey(self, *args, **kwargs):
         pass

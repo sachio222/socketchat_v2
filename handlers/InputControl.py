@@ -34,7 +34,7 @@ def input_command_handler(sock, msg: str):
 
     # 5. Run command, passing self, msg_parts, sock.
     if func:
-        func(self_name.Router, msg_parts, sock)
+        func(self_name.Router, msg_parts, sock=sock)
 
     else:
         print(f'-!- <{msg}> is not a valid command.')
