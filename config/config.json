@@ -1,5 +1,9 @@
 {
-    "encryption": null,
+    "cipher": "fernet",
     "introduced": false,
-    "muted": true
+    "muted": true,
+    "system": {
+        "prefixLength": 1,
+        "maxMsgBytesLen": 10
+    }
 }

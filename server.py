@@ -11,8 +11,10 @@ from chatutils.channel import Channel
 
 import encryption.x509 as x509
 
-from handlers import ServControl
+from handlers import ServCtrlHandler
 from lib.xfer.FileXfer import ServerOperations
+
+configs = utils.ConfigJSON()
 
 # Global vars
 
@@ -68,30 +70,30 @@ class Server(ChatIO, Channel):
             with lock:
                 # Testing if with lock should work so msgs don't get
                 #       separated from type prefix
-                prefix_length = 1
+                prefix_length = configs.system["prefixLength"]
                 data = sock.recv(prefix_length)
 
-                if not data:
-                    discon_msg = f'{sock_nick_dict[sock]} has been disconnected.'
-                    print(discon_msg)
-                    packed_msg = self.pack_message('S', discon_msg)
-                    self.broadcast(packed_msg, sockets, sock, 'other')
+                # if not data:
+                #     discon_msg = f'{sock_nick_dict[sock]} has been disconnected.'
+                #     print(discon_msg)
+                #     packed_msg = self.pack_message('S', discon_msg)
+                #     self.broadcast(packed_msg, sockets, sock, 'other')
 
-                    # Clean up user artifacts
-                    if user_key_dict[sock]:
-                        del user_key_dict[sock]
-                    if (nick_addy_dict[sock_nick_dict[sock]]):
-                        del (nick_addy_dict[sock_nick_dict[sock]])
-                    if sock_nick_dict[sock]:
-                        del (sock_nick_dict[sock])
-                    if sockets[sock]:
-                        del (sockets[sock])  # remove address
+                #     # Clean up user artifacts
+                #     if user_key_dict[sock]:
+                #         del user_key_dict[sock]
+                #     if (nick_addy_dict[sock_nick_dict[sock]]):
+                #         del (nick_addy_dict[sock_nick_dict[sock]])
+                #     if sock_nick_dict[sock]:
+                #         del (sock_nick_dict[sock])
+                #     if sockets[sock]:
+                #         del (sockets[sock])  # remove address
 
-                    sock.close()
-                    break
+                #     sock.close()
+                #     break
 
                 # self.data_router(sock, data)
-                ServControl.data_router(sock, data)
+                ServCtrlHandler.data_router(sock, data)
 
     def data_router(self, client_cnxn, data):
         """Handles incoming data based on its message type."""

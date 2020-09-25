@@ -9,6 +9,10 @@ from encryption.aes256 import AES256Cipher
 from encryption.salt import NaclCipher, Box
 from nacl.encoding import Base64Encoder
 
+from chatutils import utils
+
+configs = utils.ConfigJSON()
+
 
 class ChatIO(Chime, Colors):
     """Class for ChatIO"""
@@ -16,7 +20,7 @@ class ChatIO(Chime, Colors):
     def __init__(self, muted=False):
         super(ChatIO, self).__init__()
         self.aes = AES256Cipher()
-        self.LEN_PFX_LEN = 4
+        self.MAX_MSG_BYTES_LEN = configs.system["maxMsgBytesLen"]
         self.muted = muted
         # Get color dicts
         self.style = self.set_style()
@@ -82,7 +86,7 @@ class ChatIO(Chime, Colors):
             msg = msg.decode()
 
         len_pfx = len(msg)
-        len_pfx = str(len_pfx).rjust(self.LEN_PFX_LEN, '0')
+        len_pfx = str(len_pfx).rjust(self.MAX_MSG_BYTES_LEN, '0')
         packed_msg = f'{typ_pfx}{len_pfx}{msg}'
 
         return packed_msg
@@ -154,8 +158,8 @@ class ChatIO(Chime, Colors):
         if shed_byte:  # Removes type prefix
             sock.recv(1)
 
-        sz_pfx = sock.recv(self.LEN_PFX_LEN)
-        buffer = self._pfxtoint(sock, sz_pfx, n=self.LEN_PFX_LEN)
+        sz_pfx = sock.recv(self.MAX_MSG_BYTES_LEN)
+        buffer = self._pfxtoint(sock, sz_pfx, n=self.MAX_MSG_BYTES_LEN)
         trim_msg = sock.recv(buffer)
 
         return trim_msg  # As bytes

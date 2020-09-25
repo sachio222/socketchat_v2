@@ -1,13 +1,15 @@
 import config.filepaths
+
 from chatutils import utils
 from chatutils.chatio import ChatIO
 
 from lib.xfer.FileXfer import *
+from handlers import EncryptionHandler
 
 
 class Router:
     """Routes all default commands, excluding add-ons."""
-    configs = utils.ConfigJson()
+    configs = utils.ConfigJSON()
 
     def __init__(self):
         pass
@@ -23,7 +25,16 @@ class Router:
         utils.print_from_file(path)
 
     def encryption(self, *args, **kwargs):
-        print(f"-*- Encryption currently set to {self.configs.encryption}.")
+        msg = kwargs["msg"]
+        if len(msg) > 1:
+            if msg[-1] in EncryptionHandler.cipher_dict.keys():
+                self.configs.cipher = msg[-1]
+                self.configs.update()
+                self.configs.load()
+    
+        print(f"-*- Encryption currently set to {self.configs.cipher}.")
+
+
 
     def exit(self, *args, **kwargs):
         print('Disconnected.')
@@ -43,6 +54,7 @@ class Router:
         """Ask SERVER to broadcast who is online.
         Join and strip. Send over full string.
         """
+        print("workin on it...")
         msg = ' '.join(msg)
         msg = msg[1:]
         self.pack_n_send(sock, '/', msg)

@@ -41,7 +41,7 @@ def split_path_ext(path):
     return main, ext
 
 
-class ConfigJson():
+class ConfigJSON():
     """Loads and updates config.json file listed in config/filepaths.py"""
 
     def __init__(self):
