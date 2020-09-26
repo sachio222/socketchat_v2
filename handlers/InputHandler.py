@@ -1,10 +1,9 @@
 import json
 import socket
 from chatutils import utils
-from handlers.routers import DefaultCmds, AddonCmds
-from handlers import EncryptionHandler, MessageHandler
+from handlers import EncryptionHandler, ClientMsgHandler
 
-def input_router(sock: socket, msg: str) -> bytes:
+def router(sock: socket, msg: str) -> bytes:
     """Splits input data between commands and transmissions.
 
     Message type - (prefix)
@@ -16,7 +15,7 @@ def input_router(sock: socket, msg: str) -> bytes:
         # typ_pfx = 'C'
 
         # msg_bytes = None type
-        msg_bytes = MessageHandler.input_command_handler(sock=sock, msg=msg)
+        msg_bytes = ClientMsgHandler.input_command_handler(sock=sock, msg=msg)
 
     else:
 

@@ -3,7 +3,10 @@
     "introduced": false,
     "muted": true,
     "system": {
+        "defaultBufferLen": 4096,
+        "defaultHost": "127.0.0.1",
+        "defaultPort": 12222,
         "prefixLength": 1,
-        "maxMsgBytesLen": 10
+        "headerLen": 10
     }
 }

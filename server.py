@@ -11,7 +11,7 @@ from chatutils.channel import Channel
 
 import encryption.x509 as x509
 
-from handlers import ServCtrlHandler
+from handlers import ServMsgHandler
 from lib.xfer.FileXfer import ServerOperations
 
 configs = utils.ConfigJSON()
@@ -93,7 +93,7 @@ class Server(ChatIO, Channel):
                 #     break
 
                 # self.data_router(sock, data)
-                ServCtrlHandler.data_router(sock, data)
+                ServMsgHandler.data_router(sock, data)
 
     def data_router(self, client_cnxn, data):
         """Handles incoming data based on its message type."""

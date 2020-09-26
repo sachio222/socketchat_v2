@@ -6,6 +6,8 @@ import json
 # from pathlib2 import Path
 import config.filepaths as paths
 
+def get_file_size(path: str):
+    os.path.getsize(path)
 
 def countdown(secs=90, msg='-+- Try again in '):
     # util
@@ -60,3 +62,4 @@ class ConfigJSON():
     def dict(self):
         """Access class as dict."""
         self.__dict__
+

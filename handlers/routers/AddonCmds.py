@@ -1,52 +1,52 @@
-from addons import weather, urbandict, moon, mathfacts, map, globe, wikip
+from addons import weather, urbandict, moon, mathfacts, maps, globe, wikip
 
+"""Routes all add-on commands.
 
-class Router():
-    """Routes all add-on commands.
+**************************************************************************
+To add an Addon:
+    Step 1: Import <addon>.py file. 
+    Step 2: Define function (can pass in split msg_parts).
+    Step 3: Add command as Key, and function name as Value to cmd_dict
+    **********************************************************************
+"""
 
-    **************************************************************************
-    To add an Addon:
-        Step 1: Import <addon>.py file. 
-        Step 2: Define function (can pass in split msg_parts).
-        Step 3: Add command as Key, and function name as Value to cmd_dict
-        **********************************************************************
-    """
+def run_epic(*args, **kwargs):
+    globe.animate()
 
-    def __init__(self):
-        pass
+def run_mathfacts(*args, **kwargs):
+    msg_parts = kwargs["msg_parts"]
+    mathfacts.get_fact(msg_parts)
 
-    def epic(self, *args, **kwargs):
-        globe.animate()
+def run_maps(*args, **kwargs):
+    """Input location string"""
+    msg_parts = kwargs["msg_parts"]
+    maps.open_map(msg_parts)
 
-    def mathfacts(self, msg_parts: list, *args, **kwargs):
-        mathfacts.get_fact(msg_parts)
+def run_moon(*args, **kwargs):
+    moon.phase()
 
-    def map(self, msg_parts: list, *args, **kwargs):
-        """Input location string"""
-        map.open_map(msg_parts)
+def run_urband(*args, **kwargs):
+    """Input lookup string"""
+    msg_parts = kwargs["msg_parts"]
+    urbandict.urbandict(msg_parts)
 
-    def moon(self, *args, **kwargs):
-        moon.phase()
+def run_weather(*args, **kwargs):
+    """Input location string"""
+    msg_parts = kwargs["msg_parts"]
+    weather.report(msg_parts)
 
-    def urband(self, msg_parts: list, *args, **kwargs):
-        """Input lookup string"""
-        urbandict.urbandict(msg_parts)
+def run_wikipedia(*args, **kwargs):
+    """Input lookup string"""
+    msg_parts = kwargs["msg_parts"]
+    wikip.WikiArticle().run_from_cli(msg_parts)
 
-    def weather(self, msg_parts: list, *args, **kwargs):
-        """Input location string"""
-        weather.report(msg_parts)
-
-    def wikipedia(self, msg_parts: list, *args, **kwargs):
-        """Input lookup string"""
-        wikip.WikiArticle().run_from_cli(msg_parts)
-
-    dispatch_cmds = {
-        '/epic': epic,
-        '/map': map,
-        '/mathfacts': mathfacts,
-        '/moon': moon,
-        '/urband': urband,
-        '/weather': weather,
-        '/wikipedia': wikipedia,
-        '/wp': wikipedia
-    }
+dispatch_cmds = {
+    '/epic': run_epic,
+    '/map': run_maps,
+    '/mathfacts': run_mathfacts,
+    '/moon': run_moon,
+    '/urband': run_urband,
+    '/weather': run_weather,
+    '/wikipedia': run_wikipedia,
+    '/wp': run_wikipedia
+}
