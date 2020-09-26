@@ -1,10 +1,10 @@
 from chatutils import utils
 from handlers.routers import ServerCmds
 
-def data_router(sock, data):
-    """Sorts through incoming data, by looking at prefixes."""
+def data_router(sock, prefix):
+    """Sorts through incoming data by prefix."""
     
-    if data != "/".encode():
+    if prefix != "/".encode():
         data = sock.recv(1024)
         
     print(data)
