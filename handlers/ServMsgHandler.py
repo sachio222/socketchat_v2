@@ -10,7 +10,6 @@ def dispatch(sock: socket, msg_type: str):
     func = dispatch_cmds.get(msg_type.decode(), ServerCmds.error)
     func(sock=sock, msg_type=msg_type)
 
-
 dispatch_cmds = {
     "a": None,
     "b": None,
@@ -50,7 +49,7 @@ dispatch_cmds = {
     "J": None,
     "K": None,
     "L": None,
-    "M": ServerCmds._C_handler,
+    "M": ServerCmds._M_handler,
     "N": None,
     "O": None,
     "P": None,

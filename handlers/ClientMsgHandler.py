@@ -38,7 +38,6 @@ def input_command_handler(sock: socket, msg: str) -> None:
 
     for name_space in name_spaces:
         func = name_space.dispatch_cmds.get(msg_parts[0], False)
-        print(func)
         if func:
             break
     try:

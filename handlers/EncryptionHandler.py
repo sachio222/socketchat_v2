@@ -85,7 +85,7 @@ def argon(data):
 
 
 def goober(data) -> bytes:
-    print("Running naked dawg")
+    # print("Running naked dawg")
     return data.encode()
 
 

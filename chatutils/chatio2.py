@@ -29,18 +29,21 @@ class ChatIO:
 
         data = data + "\n"
 
-        if typ_pfx == "M":
-            size = len(data)
+        # if typ_pfx == "M":
+        size = len(data)
 
         header = f'{size:<{configs.system["headerLen"]}}'
         packed_data = f"{typ_pfx}{header}{data}"
         return packed_data.encode()
 
     @classmethod
-    def unpack_data(cls, sock:socket, packed_data:bytes):
+    def unpack_data(cls, sock:socket) -> bytes:
         """UNPACK DATA"""
         msg_len = sock.recv(HEADER_LEN)
         msg = sock.recv(int(msg_len))
         msg = msg.rstrip()
-        
         return msg 
+    
+    @classmethod
+    def broadcast():
+        pass
