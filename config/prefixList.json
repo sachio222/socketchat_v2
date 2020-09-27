@@ -1,0 +1,12 @@
+{
+    "client": {
+        "command": "C",
+        "message": "M",
+        "nick": "n",
+    },
+    "server": {
+        "command": "C",
+        "message": "M",
+        "nick": "n",
+    }
+}

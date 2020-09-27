@@ -7,7 +7,7 @@ from threading import Thread
 from chatutils import utils
 from chatutils.chatio2 import ChatIO
 
-from handlers import InputHandler
+from handlers import HandshakeHandler, InputHandler
 
 configs = utils.JSONLoader()
 
@@ -26,7 +26,10 @@ class Client(ChatIO):
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         try:
             sock.connect((TARGET_HOST, TARGET_PORT))
-            sock.send(b"Will")
+
+            HandshakeHandler.User()
+
+            self.pack_n_send(sock, "N", "name")
             self.start_threads(sock)
         except Exception as e:
             print(e)
