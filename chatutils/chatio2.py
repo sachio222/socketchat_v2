@@ -1,7 +1,6 @@
 import os
 import sys
 import socket
-
 from chatutils import utils
 
 configs = utils.ConfigJSON()
@@ -45,5 +44,5 @@ class ChatIO:
         return msg 
     
     @classmethod
-    def broadcast():
-        pass
+    def broadcast(cls, sock:socket, socket_dict: dict):
+        print(socket_dict)

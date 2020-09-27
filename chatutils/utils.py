@@ -71,7 +71,7 @@ class ConfigJSON():
 
 def store(sock: socket,
           addr: tuple,
-          nick: str = "steve",
+          nick: str,
           public_key: bytes = None,
           trusted: list = None) -> dict:
     user_dict = {
@@ -84,4 +84,4 @@ def store(sock: socket,
         }
     }
 
-    return (user_dict)
+    return user_dict
