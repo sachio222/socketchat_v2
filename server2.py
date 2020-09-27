@@ -40,17 +40,7 @@ def handle_client(client_socket):
     client_socket.close()
 
 
-def commands(client_socket):
-    while True:
-        client_socket.send(b"<cmd:#> ")
-        cmd_buffer = b""
 
-        while b"\n" not in cmd_buffer:
-            cmd_buffer += client_socket.recv(1024)
-
-        # response = run_command(client_socket, cmd_buffer)
-        # client_socket.send(response)
-        print(cmd_buffer)
 
 def write_file(path: str,
                client_socket: socket,

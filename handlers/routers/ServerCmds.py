@@ -1,5 +1,7 @@
 import socket
 from chatutils import utils
+from chatutils.chatio2 import ChatIO
+
 from handlers.routers import ServerCmds
 from lib.cmd import cmd
 
@@ -8,11 +10,9 @@ HEADER_LEN = configs.system["headerLen"]
 
 def _M_handler(sock: socket, *args, **kwargs) -> bytes:
     """DEFAULT MESSAGE HANDLER"""
-    msg_len = sock.recv(HEADER_LEN)
-    msg = sock.recv(int(msg_len))
-    msg = msg.rstrip()
-    print(msg.decode())
-    return msg
+    msg_bytes = ChatIO.unpack_data(sock)
+    print(msg_bytes.decode())
+    return msg_bytes
 
 def _X_handler(sock: socket, *args, **kwargs) -> bytes:
     """TRANSFER HANDLER"""
@@ -24,7 +24,7 @@ def _P_handler(sock: socket, *args, **kwargs):
 
 def _C_handler(sock: socket, *args, **kwargs):
     """COMMAND LINE CONTROL"""
-    cmd.run_cmd(sock)
+    cmd.commands(sock)
 
 
 def error(*args, **kwargs):

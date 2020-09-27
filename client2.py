@@ -37,11 +37,11 @@ class Client(ChatIO):
     def send(self, sock):
         while True:
             buffer = input("")
-            print("\x1B[F\x1B[2K", end="")
-            print("@Username: " + buffer)
+            # print("\x1B[F\x1B[2K", end="")
+            # print("@Username: " + buffer)
 
             output_bytes = InputHandler.dispatch(socket, buffer)
-            print(output_bytes)
+            # print(output_bytes)
 
             if output_bytes:
                 self.pack_n_send(sock, "M", output_bytes)
