@@ -1,14 +1,15 @@
 from chatutils import utils
 
-from encryption import XChaCha20Poly1305 
-from encryption.fernet import FernetCipher
-from encryption.salt import NaclCipher
-from encryption.aes256 import AES256Cipher
+from lib.encryption import XChaCha20Poly1305 
+from lib.encryption.fernet import FernetCipher
+from lib.encryption.salt import NaclCipher
+from lib.encryption.aes256 import AES256Cipher
 
 import nacl.utils
 from nacl.encoding import Base64Encoder
 from nacl.public import PublicKey, PrivateKey, Box
 
+import config.filepaths as paths
 configs = utils.JSONLoader()
 
 aes = AES256Cipher()
