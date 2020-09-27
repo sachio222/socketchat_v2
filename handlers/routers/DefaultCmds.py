@@ -18,10 +18,12 @@ def cli(*args, **kwargs):
     sock = kwargs["sock"]
     msg = kwargs["msg_parts"]
     cmd = " ".join(msg[1:])
-    while cmd not in ["quit", "exit", "q"]:
+    while True:
         cmd = input(">> ")
+        if cmd in ["quit", "exit"]:
+            break
         ChatIO().pack_n_send(sock, "C", cmd or " ")
-    print("-!- Return to chat.")
+    print("-!- Returning to chat.")
 
 def help(*args, **kwargs):
     """Read from file in config folder."""
