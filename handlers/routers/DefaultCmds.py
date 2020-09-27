@@ -9,10 +9,12 @@ from handlers import EncryptionHandler
 
 configs = utils.JSONLoader()
 
+
 def about(*args, **kwargs):
     """Read from file in config folder."""
     path = config.filepaths.about
     utils.print_from_file(path)
+
 
 def cli(*args, **kwargs):
     sock = kwargs["sock"]
@@ -24,6 +26,7 @@ def cli(*args, **kwargs):
             break
         ChatIO().pack_n_send(sock, "C", cmd or " ")
     print("-!- Returning to chat.")
+
 
 def help(*args, **kwargs):
     """Read from file in config folder."""

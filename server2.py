@@ -20,7 +20,7 @@ def accept_client(server):
     while True:
         client_socket, addr = server.accept()
 
-        onboard_client(client_socket, addr)
+        onboard_new_client(client_socket, addr)
 
         client_thread = Thread(target=handle_client,
                                args=(client_socket,),
@@ -42,7 +42,7 @@ def handle_client(client_socket):
     client_socket.close()
 
 
-def onboard_client(client_socket: socket, addr: tuple):
+def onboard_new_client(client_socket: socket, addr: tuple):
     socket_list.append(client_socket)
 
     nick = client_socket.recv(22).decode()

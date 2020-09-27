@@ -11,7 +11,6 @@ class ChatIO:
     def __init__(self):
         pass
 
-    
     def pack_n_send(self, sock: socket, typ_pfx: str, data: str) -> None:
         """Convenience function, packs data and sends data."""
         data = self.pack_data(typ_pfx, data)

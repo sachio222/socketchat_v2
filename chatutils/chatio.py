@@ -1,7 +1,6 @@
 import os
 import sys
 import socket
-from threading import Thread
 
 from .channel import Chime, Colors
 from encryption.fernet import FernetCipher
