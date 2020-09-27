@@ -3,7 +3,10 @@ import sys
 import socket
 from chatutils import utils
 
-configs = utils.ConfigJSON()
+
+configs = utils.JSONLoader()
+
+
 HEADER_LEN = configs.system["headerLen"]
 
 class ChatIO:

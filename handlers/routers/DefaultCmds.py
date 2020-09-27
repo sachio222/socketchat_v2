@@ -6,7 +6,7 @@ from chatutils.chatio import ChatIO
 from lib.xfer.FileXfer import *
 from handlers import EncryptionHandler
 
-configs = utils.ConfigJSON()
+configs = utils.JSONLoader()
 
 
 def about(*args, **kwargs):

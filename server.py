@@ -14,7 +14,7 @@ import encryption.x509 as x509
 from handlers import ServMsgHandler
 from lib.xfer.FileXfer import ServerOperations
 
-configs = utils.ConfigJSON()
+configs = utils.JSONLoader()
 
 # Global vars
 

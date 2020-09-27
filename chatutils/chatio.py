@@ -11,7 +11,7 @@ from nacl.encoding import Base64Encoder
 
 from chatutils import utils
 
-configs = utils.ConfigJSON()
+configs = utils.JSONLoader()
 
 
 class ChatIO(Chime, Colors):

@@ -4,7 +4,7 @@ from handlers import EncryptionHandler
 
 from handlers.routers import DefaultCmds, AddonCmds, MessageTypes
 
-configs = utils.ConfigJSON()
+configs = utils.JSONLoader()
 """
 1. send type in here.
 2. route it to the right place.
