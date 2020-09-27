@@ -4,6 +4,9 @@ prefix_path = "config/prefixList.json"
 about = "config/about.txt"
 help = "config/help.txt"
 
-
+## Key Paths
 key_path = "config/prv/keys/"
-nacl = key_path + "nacl/"
+nacl_keys = key_path + "nacl/"
+aes256_keys = key_path + "aes256/"
+fernet128_keys = key_path + "fernet128/"
+chacha20_keys = key_path + "chacha20/"

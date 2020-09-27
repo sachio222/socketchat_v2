@@ -1,6 +1,6 @@
 from chatutils import utils
 
-from lib.encryption import XChaCha20Poly1305 
+from lib.encryption import XChaCha20Poly1305, argon2kdf
 from lib.encryption.fernet import FernetCipher
 from lib.encryption.salt import NaclCipher
 from lib.encryption.aes256 import AES256Cipher
@@ -85,7 +85,6 @@ def nacl_public_box(data):
     return cipher_text64
 
 
-
 def nacl_secret_box(data):
     pass
 
@@ -95,8 +94,10 @@ def chacha20_poly1305(data):
     return cipher_dict
 
 
-def argon(data):
-    print("running argon dawg")
+def argon2(data):
+    hash, _ = argon2kdf.passwordHasher(data)
+    print("Argon2 hash (random salt):", hash)
+    return hash.encode()
 
 
 def goober(data) -> bytes:
@@ -116,7 +117,7 @@ cipher_dict = {
     'naclpub': nacl_public_box,
     'nacl-secret-box': nacl_secret_box,
     'chacha': chacha20_poly1305,
-    'argon': argon,
-    'goober': goober,
+    'argon2': argon2,
+    'goober (none)': goober,
     'test': test
 }

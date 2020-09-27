@@ -13,7 +13,7 @@ configs = utils.JSONLoader()
 """
 
 
-def input_command_handler(sock: socket, msg: str) -> None:
+def command_router(sock: socket, msg: str) -> None:
     """handles input command messages and calls controller funcs.
 
     All of the controller commands are routed through this function based
@@ -45,7 +45,7 @@ def input_command_handler(sock: socket, msg: str) -> None:
         func(sock=sock, msg_parts=msg_parts)
 
     except Exception as e:
-        print("Exception:", e)
+        # print("Exception:", e)
         print(f'-!- {msg_parts[0]} is not a valid command.')
 
     return None

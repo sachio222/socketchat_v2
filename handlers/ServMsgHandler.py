@@ -4,6 +4,7 @@ from handlers.routers import ServerCmds
 
 configs = utils.JSONLoader()
 
+
 def dispatch(sock: socket, msg_type: str):
     """Sorts through incoming data by prefix."""
     assert type(msg_type) == bytes, "Convert prefix to str"

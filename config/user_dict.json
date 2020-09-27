@@ -12,7 +12,16 @@
         "nick": "N5         name\n",
         "addr": [
             "127.0.0.1",
-            49899
+            63732
+        ],
+        "public_key": null,
+        "trusted": null
+    },
+    "": {
+        "nick": "",
+        "addr": [
+            "127.0.0.1",
+            50128
         ],
         "public_key": null,
         "trusted": null
