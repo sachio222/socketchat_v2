@@ -1,26 +1,27 @@
 import socket
-
 from chatutils import utils
 from handlers.routers import ServerCmds
 
 configs = utils.ConfigJSON()
+
 HEADER_LEN = configs.system["headerLen"]
 
-def router(sock: socket, msg_type: str):
+def dispatch(sock: socket, msg_type: str):
     """Sorts through incoming data by prefix."""
-    assert type(msg_type) == bytes, "Convert prefix to Bytes"
+    assert type(msg_type) == bytes, "Convert prefix to str"
     func = dispatch_cmds.get(msg_type.decode(), error)
-    func(sock=sock)
+    func(sock=sock, msg_type=msg_type)
 
-def _M_handler(sock: socket) -> bytes:
+def _M_handler(sock: socket, *args, **kwargs) -> bytes:
     """DEFAULT MESSAGE HANDLER"""
     msg_len = sock.recv(HEADER_LEN)
     msg = sock.recv(int(msg_len))
     msg = msg.rstrip()
+    print(msg.decode())
     return msg
 
-def error(sock, *args, **kwargs):
-    print('Message Type Error: Invalid message type')
+def error(*args, **kwargs):
+    print(f'Message Type Error: Invalid message type {kwargs["msg_type"]}')
 
 dispatch_cmds = {
     "a": None,

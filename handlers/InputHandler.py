@@ -10,7 +10,7 @@ def router(sock: socket, msg: str) -> bytes:
         1. Input command - ("/") for control, not messaging.
         2. Default - Sent as encrypted message.
     """
-
+    
     if msg[0] == '/': # Check for command
         # typ_pfx = 'C'
 
@@ -19,7 +19,7 @@ def router(sock: socket, msg: str) -> bytes:
 
     else:
 
-        msg_bytes = EncryptionHandler.Handler().encryption_handler(msg)
+        msg_bytes = EncryptionHandler.encrypt(msg)
 
     return msg_bytes
             

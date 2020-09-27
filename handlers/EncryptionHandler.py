@@ -17,17 +17,17 @@ Get Encryption selection (AES256, ChaCha20Poly1305)
 Handle any size by passing through here.
 returns message as bytes.
 """
-class Handler():
-    def __init__(self):
-        configs.load()
-        self.encryption_method = cipher_dict.get(configs.cipher, goober)
+# class Encrypt():
+#     def __init__(self, data):
+#         configs.load()
+#         self.encryption_method = cipher_dict.get(configs.cipher, goober)
 
-    def encryption_handler(self, data) -> bytes:
-        """Returns encrypted bytes of passed in string, based on encrypt config."""
+#     def encryption_method(self, data) -> bytes:
+#         """Returns encrypted bytes of passed in string, based on encrypt config."""
                 
-        data_bytes = self.encryption_method(data)
+#         data_bytes = self.encryption_method(data)
 
-        return data_bytes
+#         return data_bytes
     
     # if configs.introduced:
     #     if self.encrypt_traffic:
@@ -43,6 +43,11 @@ class Handler():
 
             # # self.msg = fernet.encrypt(self.msg)
 
+def encrypt(msg):
+    configs.load()
+    encryption_method = cipher_dict.get(configs.cipher, goober)
+    ciphertext = encryption_method(msg)
+    return ciphertext
 
 def encrypt_message(data):
     pass

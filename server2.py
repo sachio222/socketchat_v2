@@ -6,7 +6,7 @@ from handlers import ServMsgHandler
 
 from chatutils import utils
 
-sys.setrecursionlimit(20000)
+# sys.setrecursionlimit(20000)
 configs = utils.ConfigJSON()
 BUFFER_LEN = configs.system["defaultBufferLen"]
 HOST = configs.system["defaultHost"]
@@ -16,6 +16,7 @@ ADDR = (HOST, PORT)
 def accept_client(server):
     while True:
         client_socket, addr = server.accept()
+        utils.store(client_socket, addr)
         print(f"Connected to {addr}")
         welcome_msg = f"Welcome to {ADDR}"
         client_socket.send(welcome_msg.encode())
@@ -26,7 +27,13 @@ def handle_client(client_socket):
     PREFIX_LEN = configs.system["prefixLength"]
     while True:
         msg_type = client_socket.recv(PREFIX_LEN)
-        ServMsgHandler.router(client_socket, msg_type)
+
+        if not msg_type:
+            break
+
+        ServMsgHandler.dispatch(client_socket, msg_type)
+    
+    client_socket.close()
 
 
 def run_command(client_socket, command):

@@ -48,5 +48,3 @@ def input_command_handler(sock: socket, msg: str) -> None:
         print(f'-!- {msg_parts[0]} is not a valid command.')
 
     return None
-
-d

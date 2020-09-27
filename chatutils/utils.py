@@ -2,6 +2,9 @@ import os
 import sys
 import time
 import json
+import socket
+
+from pprint import pprint
 
 # from pathlib2 import Path
 import config.filepaths as paths
@@ -29,7 +32,7 @@ def print_from_file(path):
 
     with open(path, 'rb') as f:
         msg = f.read().decode()
-        print(msg)
+        pprint(msg)
 
 
 def split_path_ext(path):
@@ -62,4 +65,10 @@ class ConfigJSON():
     def dict(self):
         """Access class as dict."""
         self.__dict__
+
+def store(sock: socket, addr: tuple, nick: str = "steve"):
+    user_dict = {nick: {"socket": socket, "addr": addr}}
+
+    print(user_dict)
+    
 
