@@ -28,7 +28,7 @@ class Client(ChatIO):
         try:
             sock.connect((TARGET_HOST, TARGET_PORT))
 
-            # HandshakeHandler.User()
+            HandshakeHandler.User(sock)
 
             self.pack_n_send(sock, "N", "name")
             self.start_threads(sock)

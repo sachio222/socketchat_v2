@@ -22,7 +22,7 @@ def cli(*args, **kwargs):
     cmd = " ".join(msg[1:])
     while True:
         cmd = input(">> ")
-        if cmd in ["quit", "exit"]:
+        if cmd in ["quit", "exit", "q"]:
             break
         ChatIO().pack_n_send(sock, "C", cmd or " ")
     print("-!- Returning to chat.")
@@ -35,12 +35,35 @@ def help(*args, **kwargs):
 
 
 def encryption(*args, **kwargs):
-    msg = kwargs["msg_parts"]
-    if len(msg) > 1:
-        if msg[-1] in EncryptionHandler.cipher_dict.keys():
-            configs.cipher = msg[-1]
-            configs.update()
-            configs.load()
+    msg_parts = kwargs["msg_parts"]
+    print("running obviously")
+
+    def set_cipher(msg):
+        choices = {}
+        if msg not in ["list", "help", "h", "ls"]:
+            if msg in EncryptionHandler.cipher_dict.keys():
+                configs.cipher = msg
+                configs.update()
+                configs.load()
+        else:
+            while True:
+                print("[?] Choose a cipher:")
+                for i, key in enumerate(EncryptionHandler.cipher_dict.keys(), 1):
+                    choices[i] = key
+                    print(f'{i}. {key}')
+                choice = input(">> ")
+                try:
+                    set_cipher(choices[int(choice)])
+                    break
+                except:
+                    set_cipher(choice)
+                    break
+                
+                
+    if len(msg_parts) > 1:
+        set_cipher(msg=msg_parts[-1])
+                    
+
 
     print(f"-*- Encryption currently set to {configs.cipher}.")
 

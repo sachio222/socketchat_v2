@@ -14,6 +14,7 @@ from handlers import EncryptionHandler
 import config.filepaths as paths
 prefixes = utils.JSONLoader(paths.prefix_path)
 
+
 class User(ChatIO):
 
     def __init__(self, sock: socket):
@@ -27,11 +28,10 @@ class User(ChatIO):
         unique = False
         # name_dict
         return unique
-    
+
     def send_keys(self):
         CipherTools.gen_nacl_key()
-            
+
         # If keys don't exist, make them with encryption
         # Have keys
         # send keys as client["keys"]
-

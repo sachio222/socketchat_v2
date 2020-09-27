@@ -5,8 +5,8 @@ from nacl.public import PrivateKey, PublicKey, Box
 from nacl.encoding import Base64Encoder, HexEncoder, RawEncoder
 from nacl.signing import SigningKey, SignedMessage, VerifyKey
 
-
 PATH = 'encryption/keys/nacl/'
+
 
 class NaclCipher():
     """Based on the python fork of nacl's libsodium framework.
