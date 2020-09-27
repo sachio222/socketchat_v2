@@ -2,7 +2,7 @@ import socket
 from chatutils import utils
 from handlers import EncryptionHandler
 
-from handlers.routers import DefaultCmds, AddonCmds, MessageTypes
+from handlers.routers import DefaultCmds, AddonCmds, ClientCmds
 
 configs = utils.JSONLoader()
 """
