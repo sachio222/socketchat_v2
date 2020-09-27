@@ -28,6 +28,7 @@ def _P_handler(sock: socket, *args, **kwargs):
 
 def _C_handler(sock: socket, *args, **kwargs):
     """COMMAND LINE CONTROL"""
+    print("cli running")
     cmd.commands(sock)
 
 

@@ -38,7 +38,7 @@ class Client(ChatIO):
             print("\x1B[F\x1B[2K", end="")
             print("@Username: " + buffer)
 
-            output_bytes = InputHandler.dispatch(socket, buffer)
+            output_bytes = InputHandler.dispatch(sock, buffer)
             # print(output_bytes)
 
             if output_bytes:

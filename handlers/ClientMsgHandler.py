@@ -37,12 +37,14 @@ def input_command_handler(sock: socket, msg: str) -> None:
 
     for name_space in name_spaces:
         func = name_space.dispatch_cmds.get(msg_parts[0], False)
+
         if func:
             break
     try:
         func(sock=sock, msg_parts=msg_parts)
+
     except Exception as e:
-        print(e)
+        print("Exception:", e)
         print(f'-!- {msg_parts[0]} is not a valid command.')
 
     return None

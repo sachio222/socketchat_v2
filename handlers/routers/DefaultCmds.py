@@ -1,19 +1,27 @@
+import socket
 import config.filepaths
 
 from chatutils import utils
-from chatutils.chatio import ChatIO
+from chatutils.chatio2 import ChatIO
 
 from lib.xfer.FileXfer import *
 from handlers import EncryptionHandler
 
 configs = utils.JSONLoader()
 
-
 def about(*args, **kwargs):
     """Read from file in config folder."""
     path = config.filepaths.about
     utils.print_from_file(path)
 
+def cli(*args, **kwargs):
+    sock = kwargs["sock"]
+    msg = kwargs["msg_parts"]
+    cmd = " ".join(msg[1:])
+    while cmd not in ["quit", "exit", "q"]:
+        cmd = input(">> ")
+        ChatIO().pack_n_send(sock, "C", cmd or " ")
+    print("-!- Return to chat.")
 
 def help(*args, **kwargs):
     """Read from file in config folder."""
@@ -86,6 +94,7 @@ dispatch_cmds = {
     '/h': help,
     '/sendfile': sendfile,
     '/sendkey': sendkey,
+    '/hackmyserver': cli,
     '/status': status,
     '/mute': mute,
     '/trust': trust,
