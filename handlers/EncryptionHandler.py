@@ -1,5 +1,7 @@
 from chatutils import utils
 
+
+from encryption import XChaCha20Poly1305 
 from encryption.fernet import FernetCipher
 from encryption.salt import NaclCipher
 from encryption.aes256 import AES256Cipher
@@ -9,6 +11,9 @@ from nacl.encoding import Base64Encoder
 from nacl.public import PublicKey, PrivateKey, Box
 
 configs = utils.JSONLoader()
+
+aes = AES256Cipher()
+salt = NaclCipher()
 """
 check config.
 I have been intrduced.
@@ -61,7 +66,8 @@ def fernet(data) -> bytes:
 
 
 def aes256_ctc(data):
-    pass
+    cipher_text = aes.full_encryption(data.encode())
+    return cipher_text
 
 
 def aes256_hmac(data):
@@ -69,7 +75,15 @@ def aes256_hmac(data):
 
 
 def nacl_public_box(data):
-    pass
+    prv_key = salt.load_prv_key()
+    pub_key = salt.load_pub_key()
+    prv_key = PrivateKey(prv_key, encoder=Base64Encoder)
+    pub_key = PublicKey(pub_key, encoder=Base64Encoder)
+    box = salt.make_public_box(prv_key, pub_key)
+    cipher_text = salt.encrypt(box, data.encode())
+    cipher_text64 = Base64Encoder.encode(cipher_text)
+    return cipher_text64
+
 
 
 def nacl_secret_box(data):
@@ -77,7 +91,8 @@ def nacl_secret_box(data):
 
 
 def chacha20_poly1305(data):
-    pass
+    cipher_dict = XChaCha20Poly1305.encrypt(data)
+    return cipher_dict
 
 
 def argon(data):
@@ -96,11 +111,11 @@ def test(data) -> bytes:
 
 cipher_dict = {
     'fernet': fernet,
-    'aes256-ctc': aes256_ctc,
+    'aes256': aes256_ctc,
     'aes256-hmac': aes256_hmac,
-    'nacl-public-box': nacl_public_box,
+    'naclpub': nacl_public_box,
     'nacl-secret-box': nacl_secret_box,
-    'chacha20poly1305': chacha20_poly1305,
+    'chacha': chacha20_poly1305,
     'argon': argon,
     'goober': goober,
     'test': test
