@@ -1,5 +1,5 @@
 {
-    "cipher": "chacha",
+    "cipher": "fernet",
     "introduced": false,
     "muted": true,
     "system": {
