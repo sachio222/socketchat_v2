@@ -3,13 +3,14 @@
 import sys
 import socket
 from threading import Thread
-
+import config.filepaths as paths
 from chatutils import utils
 from chatutils.chatio2 import ChatIO
 
 from handlers import HandshakeHandler, InputHandler
 
 configs = utils.JSONLoader()
+prefixes = utils.JSONLoader(paths.prefix_path)
 
 BUFFER_LEN = configs.system["defaultBufferLen"]
 HEADER_LEN = configs.system["headerLen"]
@@ -27,7 +28,7 @@ class Client(ChatIO):
         try:
             sock.connect((TARGET_HOST, TARGET_PORT))
 
-            HandshakeHandler.User()
+            # HandshakeHandler.User()
 
             self.pack_n_send(sock, "N", "name")
             self.start_threads(sock)
@@ -45,7 +46,7 @@ class Client(ChatIO):
             # print(output_bytes)
 
             if output_bytes:
-                self.pack_n_send(sock, "M", output_bytes)
+                self.pack_n_send(sock, prefixes.client["msg"], output_bytes)
 
             # if buffer == "upload":
             #     self.upload(sock)

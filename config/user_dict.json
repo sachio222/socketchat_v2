@@ -7,5 +7,14 @@
         ],
         "public_key": null,
         "trusted": null
+    },
+    "N5         name\n": {
+        "nick": "N5         name\n",
+        "addr": [
+            "127.0.0.1",
+            61814
+        ],
+        "public_key": null,
+        "trusted": null
     }
 }

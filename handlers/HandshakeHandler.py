@@ -6,9 +6,9 @@ import socket
 from sys import prefix
 from chatutils import utils
 from chatutils.chatio2 import ChatIO
-from config import filepaths
 
-prefixes = utils.JSONLoader(filepaths.prefix_path)
+import config.filepaths as paths
+prefixes = utils.JSONLoader(paths.prefix_path)
 
 class User(ChatIO):
 

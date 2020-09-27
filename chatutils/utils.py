@@ -7,10 +7,8 @@ import socket
 from chatutils import utils
 import config.filepaths as paths
 
-
 def get_file_size(path: str):
     os.path.getsize(path)
-
 
 def countdown(secs=90, msg='-+- Try again in '):
     # util
