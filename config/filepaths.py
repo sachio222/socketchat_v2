@@ -5,6 +5,7 @@ about = "config/about.txt"
 help = "config/help.txt"
 
 ## Key Paths
+hashes = "config/prv/keys/hashes.json"
 key_path = "config/prv/keys/"
 nacl_keys = key_path + "nacl/"
 aes256_keys = key_path + "aes256/"

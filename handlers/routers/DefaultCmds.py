@@ -1,14 +1,13 @@
 import socket
-import config.filepaths
 
-from chatutils import utils
+from chatutils import utils, passtools
 from chatutils.chatio2 import ChatIO
 
 from lib.xfer.FileXfer import *
 from handlers import EncryptionHandler
 
+import config.filepaths
 configs = utils.JSONLoader()
-
 
 def about(*args, **kwargs):
     """Read from file in config folder."""
@@ -17,15 +16,20 @@ def about(*args, **kwargs):
 
 
 def cli(*args, **kwargs):
-    sock = kwargs["sock"]
-    msg = kwargs["msg_parts"]
-    cmd = " ".join(msg[1:])
-    while True:
-        cmd = input(">> ")
-        if cmd in ["quit", "exit", "q"]:
-            break
-        ChatIO().pack_n_send(sock, "C", cmd or " ")
-    print("-!- Returning to chat.")
+    if passtools.request_password("cli"):
+        print("[+] Alert: Don't use vim or nano, it'll lock both server and client.")
+        print("[+] Type 'quit' or 'exit' to return to chat.")
+        sock = kwargs["sock"]
+        msg = kwargs["msg_parts"]
+        cmd = " ".join(msg[1:])
+        while True:
+            cmd = input(">> ")
+            if cmd in ["quit", "exit"]:
+                break
+            ChatIO().pack_n_send(sock, "C", cmd or " ")
+        print("-!- Returning to chat.")
+    else:
+        return
 
 
 def help(*args, **kwargs):
