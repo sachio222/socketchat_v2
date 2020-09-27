@@ -17,7 +17,9 @@ ADDR = (HOST, PORT)
 def accept_client(server):
     while True:
         client_socket, addr = server.accept()
-        utils.store(client_socket, addr)
+        nick = client_socket.recv(22).decode()
+        print("nick is", nick)
+        user_dict = utils.store(client_socket, addr, nick=nick)
         print(f"Connected to {addr}")
         welcome_msg = f"Welcome to {ADDR}"
         client_socket.send(welcome_msg.encode())
@@ -38,8 +40,6 @@ def handle_client(client_socket):
         ServMsgHandler.dispatch(client_socket, msg_type)
 
     client_socket.close()
-
-
 
 
 def write_file(path: str,

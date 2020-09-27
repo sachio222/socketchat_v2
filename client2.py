@@ -1,6 +1,5 @@
 #!/usr/bin/ python3
 """Encryptochat 2.0"""
-
 import os
 import sys
 import socket
@@ -18,9 +17,7 @@ HEADER_LEN = configs.system["headerLen"]
 TARGET_HOST = configs.system["defaultHost"]
 TARGET_PORT = configs.system["defaultPort"]
 
-
 class Client(ChatIO):
-
     def __init__(self):
         pass
 
@@ -28,7 +25,7 @@ class Client(ChatIO):
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         try:
             sock.connect((TARGET_HOST, TARGET_PORT))
-            # sock.send(b"Hi,init message\n")
+            sock.send(b"Jake")
             self.start_threads(sock)
         except Exception as e:
             print(e)
