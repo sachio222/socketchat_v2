@@ -2,12 +2,14 @@
     "client": {
         "cmd": "C",
         "msg": "M",
+        "pubk": "k",
         "nick": "n"
     },
 
     "server": {
         "cmd": "C",
         "msg": "M",
+        "pubk": "k",
         "nick": "n"
     }
 }

@@ -6,6 +6,8 @@ from nacl.encoding import Base64Encoder, HexEncoder, RawEncoder
 from nacl.signing import SigningKey, SignedMessage, VerifyKey
 
 
+PATH = 'encryption/keys/nacl/'
+
 class NaclCipher():
     """Based on the python fork of nacl's libsodium framework.
     https://pynacl.readthedocs.io/
@@ -20,20 +22,21 @@ class NaclCipher():
         self.check_dir(self.path)
         self.prv_key, self.pub_key = self.generate_keys()
 
-    def generate_keys(self,
+    @staticmethod
+    def generate_keys(path: str = PATH,
                       prv_fn: str = 'private.key',
                       pub_fn: str = 'public.key') -> (PrivateKey, PublicKey):
         """Generate and save key pair. Use Base64Encoder to write to bytes."""
 
         # Generate a private key.
         prv_key = PrivateKey.generate()
-        with open(self.path + prv_fn, 'wb') as f:
+        with open(path + prv_fn, 'wb') as f:
             # Writes as base64 bytes.
             f.write(prv_key.encode(encoder=Base64Encoder))
 
         # Get public key from private.
         pub_key = prv_key.public_key
-        with open(self.path + pub_fn, 'wb') as f:
+        with open(path + pub_fn, 'wb') as f:
             # Writes as base64 bytes.
             f.write(pub_key.encode(encoder=Base64Encoder))
 
