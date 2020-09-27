@@ -3,11 +3,10 @@ import sys
 import socket
 from chatutils import utils
 
-
 configs = utils.JSONLoader()
 
-
 HEADER_LEN = configs.system["headerLen"]
+
 
 class ChatIO:
 
@@ -39,13 +38,13 @@ class ChatIO:
         return packed_data.encode()
 
     @classmethod
-    def unpack_data(cls, sock:socket) -> bytes:
+    def unpack_data(cls, sock: socket) -> bytes:
         """UNPACK DATA"""
         msg_len = sock.recv(HEADER_LEN)
         msg = sock.recv(int(msg_len))
         msg = msg.rstrip()
-        return msg 
-    
+        return msg
+
     @classmethod
-    def broadcast(cls, sock:socket, socket_dict: dict):
+    def broadcast(cls, sock: socket, socket_dict: dict):
         print(socket_dict)

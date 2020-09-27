@@ -222,7 +222,7 @@ class ChatIO(Chime, Colors):
         # Accepts bytes input, chops off prefix and returns plain message as bytes.
         return data[5:]
 
-    def split_to_str(self, raw_msg: bytes) -> (str, str):
+    def split_to_str(self, raw_msg: bytes) -> tuple:
         """UTILITY: Separates message from raw_msg from server.
 
         Returns:
@@ -248,7 +248,7 @@ class ChatIO(Chime, Colors):
                          raw_msg: bytes,
                          encrpyt_method: str = 'nacl-pub-box',
                          split: bool = True,
-                         box: Box = None) -> (str, str):
+                         box: Box = None) -> tuple:
 
         if split:
             handle, msg = self.split_to_str(raw_msg)

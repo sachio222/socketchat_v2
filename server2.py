@@ -15,23 +15,20 @@ BUFFER_LEN = configs.system["defaultBufferLen"]
 HOST = configs.system["defaultHost"]
 PORT = configs.system["defaultPort"]
 ADDR = (HOST, PORT)
+socket_list = []
+
 
 def accept_client(server):
     while True:
         client_socket, addr = server.accept()
-        nick = client_socket.recv(22).decode()
-        print("nick is", nick)
 
-        user_dict = utils.store_user(client_socket, addr, nick=nick)
+        onboard_client(client_socket, addr)
 
-        print(user_dict)
-        print(f"Connected to {addr}")
-        welcome_msg = f"Welcome to {ADDR}"
-        client_socket.send(welcome_msg.encode())
         client_thread = Thread(target=handle_client,
                                args=(client_socket,),
                                daemon=True)
         client_thread.start()
+        # utils.delete_user("Will")
 
 
 def handle_client(client_socket):
@@ -47,63 +44,17 @@ def handle_client(client_socket):
     client_socket.close()
 
 
-def write_file(path: str,
-               client_socket: socket,
-               recv_len: int = 1,
-               open_mode: str = "wb"):
+def onboard_client(client_socket: socket, addr: tuple):
+    socket_list.append(client_socket)
 
-    if recv_len:
-        data = client_socket.recv(BUFFER_LEN)
-        recv_len = len(data)
+    nick = client_socket.recv(22).decode()
 
-        with open(path, open_mode) as f:
-            f.write(data)
+    user_dict = utils.store_user(client_socket, addr, nick=nick)
 
-        if recv_len < BUFFER_LEN:
-            client_socket.send(b"File successfully transfered.")
-            return
-        else:
-            write_file(path, client_socket, recv_len, "ab")
+    print(f"Connected to {addr}")
+    welcome_msg = f"Welcome to {ADDR}"
 
-def download(client_socket):
-    path = 'Tamarindo-Concepts2.pdf'
-
-    while True:
-        file_buffer = b""
-        recv_len = 1
-
-        try:
-            while recv_len:
-                data = client_socket.recv(BUFFER_LEN)
-                recv_len = len(data)
-
-                # Overwrite file if exists.
-                with open(path, 'wb') as f:
-                    f.write(data)
-
-                if recv_len < BUFFER_LEN:
-                    break
-
-                else:
-                    with open(path, 'ab') as f:
-                        while True:
-                            data = client_socket.recv(BUFFER_LEN)
-                            recv_len = len(data)
-
-                            # Append rest of data chunks
-                            f.write(data)
-
-                            if recv_len < BUFFER_LEN:
-                                break
-                break
-
-            if not data:
-                break
-
-            client_socket.send(b"Successfully saved file.")
-
-        except:
-            client_socket.send(b"File transfer failed.")
+    client_socket.send(welcome_msg.encode())
 
 
 def main():
@@ -116,6 +67,7 @@ def main():
 
     accept_thread = Thread(target=accept_client, args=(server,))
     accept_thread.start()
+
 
 if __name__ == "__main__":
     main()
