@@ -9,6 +9,7 @@ from threading import Thread
 from chatutils import utils
 from chatutils.chatio2 import ChatIO
 
+
 from handlers import InputHandler
 
 configs = utils.ConfigJSON()
@@ -36,13 +37,20 @@ class Client(ChatIO):
     def send(self, sock):
         while True:
             buffer = input("")
-            InputHandler.router()
+            print("\x1B[F\x1B[2K", end="")
+            print("@Username: " + buffer)
+            
+            output_bytes = InputHandler.router(socket, buffer)
+            print(output_bytes)
 
-            if buffer == "upload":
-                self.upload(sock)
-            else:
-                buffer += "\n"
-                buffer = self.pack_n_send(sock, "M", buffer)
+            if output_bytes:
+                self.pack_n_send(sock, "M", output_bytes)
+
+            # if buffer == "upload":
+            #     self.upload(sock)
+            # else:
+            #     buffer += "\n"
+            #     buffer = self.pack_n_send(sock, "M", buffer)
 
     
     def upload(self, sock):

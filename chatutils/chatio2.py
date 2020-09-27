@@ -20,8 +20,16 @@ class ChatIO:
         Example packet:
             
         """
+        try:
+            data = data.decode()
+        except:
+            pass
+            
+        data = data + "\n"
+
         if typ_pfx == "M":
             size = len(data)
+        
         header = f'{size:<{configs.system["headerLen"]}}'
         packed_data = f"{typ_pfx}{header}{data}"
         return packed_data.encode()
