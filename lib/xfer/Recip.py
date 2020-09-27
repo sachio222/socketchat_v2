@@ -1,4 +1,5 @@
 class RecipOperations():
+
     def __init__(self):
         pass
 
@@ -8,7 +9,7 @@ class RecipOperations():
 
         print(string, end="")
         choice = input("(Y/N)? ")
-        
+
         if choice.lower() == "y":
             print("Send accepted.")
         elif choice.lower() == "n":
@@ -16,7 +17,7 @@ class RecipOperations():
         else:
             choice = input("Please enter a valid choice (Y or N): ")
             return
-        
+
         ### -------> Outbound to Server
         ServerOperations().deliver_accept_or_not_response(choice)
 

@@ -420,7 +420,7 @@ class Client(ChatIO):
 
     def start(self):
         self.t1 = Thread(target=self.receiver)
-        self.t2 = Thread(target=self.sender, args=(serv_sock, ))
+        self.t2 = Thread(target=self.sender, args=(serv_sock,))
         self.t1.start()
         self.t2.start()
 

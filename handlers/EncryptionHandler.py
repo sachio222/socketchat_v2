@@ -24,30 +24,32 @@ returns message as bytes.
 
 #     def encryption_method(self, data) -> bytes:
 #         """Returns encrypted bytes of passed in string, based on encrypt config."""
-                
+
 #         data_bytes = self.encryption_method(data)
 
 #         return data_bytes
-    
-    # if configs.introduced:
-    #     if self.encrypt_traffic:
-    #         self.msg = aes.full_encryption(self.msg.encode())
-    #         # print(self.msg)
-            # self.msg = aes.full_decryption(self.msg)
 
-            # print(self.msg)
+# if configs.introduced:
+#     if self.encrypt_traffic:
+#         self.msg = aes.full_encryption(self.msg.encode())
+#         # print(self.msg)
+# self.msg = aes.full_decryption(self.msg)
 
-            # self.msg = nacl.encrypt(self.pub_box,
-            #                         self.msg.encode())
-            # self.msg = Base64Encoder.encode(self.msg)
+# print(self.msg)
 
-            # # self.msg = fernet.encrypt(self.msg)
+# self.msg = nacl.encrypt(self.pub_box,
+#                         self.msg.encode())
+# self.msg = Base64Encoder.encode(self.msg)
+
+# # self.msg = fernet.encrypt(self.msg)
+
 
 def encrypt(msg):
     configs.load()
     encryption_method = cipher_dict.get(configs.cipher, goober)
     ciphertext = encryption_method(msg)
     return ciphertext
+
 
 def encrypt_message(data):
     pass
@@ -79,11 +81,13 @@ def chacha20_poly1305(data):
 
 
 def argon(data):
-     print("running argon dawg")
+    print("running argon dawg")
+
 
 def goober(data) -> bytes:
     print("Running naked dawg")
     return data.encode()
+
 
 def test(data) -> bytes:
     encrypted_msg = f'<<{data}>>'

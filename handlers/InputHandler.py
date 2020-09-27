@@ -3,15 +3,16 @@ import socket
 from chatutils import utils
 from handlers import EncryptionHandler, ClientMsgHandler
 
-def router(sock: socket, msg: str) -> bytes:
+
+def dispatch(sock: socket, msg: str) -> bytes:
     """Splits input data between commands and transmissions.
 
     Message type - (prefix)
         1. Input command - ("/") for control, not messaging.
         2. Default - Sent as encrypted message.
     """
-    
-    if msg[0] == '/': # Check for command
+
+    if msg[0] == '/':  # Check for command
         # typ_pfx = 'C'
 
         # msg_bytes = None type
@@ -22,4 +23,3 @@ def router(sock: socket, msg: str) -> bytes:
         msg_bytes = EncryptionHandler.encrypt(msg)
 
     return msg_bytes
-            

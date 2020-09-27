@@ -18,7 +18,6 @@
 #     win.getch()
 
 # curses.wrapper(main)
-
 ''' Print text in a scrolling region of the terminal above a fixed line for input
 
     Written by PM 2Ring 2016.05.29
@@ -41,7 +40,6 @@ else:
     input = raw_input
     stdout_write_bytes = sys.stdout.write
 
-
 # Some ANSI/VT100 Terminal Control Escape Sequences
 CSI = b'\x1b['
 CLEAR = CSI + b'2J'
@@ -51,11 +49,14 @@ UNSAVE_CURSOR = CSI + b'u'
 
 GOTO_INPUT = CSI + b'%d;0H' % (height + 1)
 
+
 def emit(*args):
     stdout_write_bytes(b''.join(args))
 
+
 def set_scroll(n):
     return CSI + b'0;%dr' % n
+
 
 emit(CLEAR, set_scroll(height))
 
@@ -76,4 +77,3 @@ try:
 except KeyboardInterrupt:
     #Disable scrolling, but leave cursor below the input row
     emit(set_scroll(0), GOTO_INPUT, b'\n')
-

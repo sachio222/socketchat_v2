@@ -1,9 +1,10 @@
 class SenderOperations():
+
     def __init__(self):
         """1. Show prompts. """
         # self.show_prompts()
         pass
-    
+
     def show_prompts(self):
         ### 0-------- Called by Sender
         fn, fs = self._what_is_filename()
@@ -45,7 +46,7 @@ class SenderOperations():
         if response == True:
             print(f"-=- Waiting for {sn} to accept file. Press A to abort.")
             return True
-            
+
         else:
             print(f"{sn} not found. Try again.")
             return False
@@ -73,6 +74,4 @@ class SenderOperations():
         input_txt = input(prompt)
         return input_txt
 
-    dispatch = {
-        'cancel': _did_cancel
-    }
+    dispatch = {'cancel': _did_cancel}
