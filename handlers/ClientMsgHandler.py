@@ -12,7 +12,6 @@ configs = utils.JSONLoader()
 
 """
 
-
 def input_command_handler(sock: socket, msg: str) -> None:
     """handles input command messages and calls controller funcs.
 

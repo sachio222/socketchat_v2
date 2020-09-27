@@ -79,6 +79,7 @@ def unmute(*args, **kwargs):
 dispatch_cmds = {
     '/about': about,
     '/close': exit,
+    '/cryp': encryption,
     '/encryption': encryption,
     '/exit': exit,
     '/help': help,
