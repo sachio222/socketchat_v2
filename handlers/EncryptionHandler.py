@@ -1,6 +1,6 @@
 from chatutils import utils
 
-from encryption import XChaCha20Poly1305
+from encryption import XChaCha20Poly1305 
 from encryption.fernet import FernetCipher
 from encryption.salt import NaclCipher
 from encryption.aes256 import AES256Cipher
@@ -82,6 +82,7 @@ def nacl_public_box(data):
     cipher_text = salt.encrypt(box, data.encode())
     cipher_text64 = Base64Encoder.encode(cipher_text)
     return cipher_text64
+
 
 
 def nacl_secret_box(data):
