@@ -5,13 +5,13 @@ from handlers import EncryptionHandler
 from handlers.routers import DefaultCmds, AddonCmds, MessageTypes
 
 configs = utils.ConfigJSON()
-
 """
 1. send type in here.
 2. route it to the right place.
 3. return the message
 
 """
+
 
 def input_command_handler(sock: socket, msg: str) -> None:
     """handles input command messages and calls controller funcs.
@@ -31,7 +31,7 @@ def input_command_handler(sock: socket, msg: str) -> None:
 
     # 2. Split msg into command and keywords
     msg_parts = msg.split(' ')
-    
+
     # 3. Search through commands for function, starting with default commands.
 
     name_spaces = [DefaultCmds, AddonCmds]

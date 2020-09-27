@@ -2,7 +2,6 @@ from __future__ import print_function
 import sys
 import readline
 from time import sleep
-
 """
 https://stackoverflow.com/questions/37498704/print-text-before-input-prompt-in-python/37501797#37501797
 """
@@ -39,11 +38,13 @@ SCROLL_DOWN = 'D'
 
 GOTO_INPUT = CSI + '%d;0H' % (height)
 
+
 def emit(*args):
     stdout_write_bytes(''.join(args))
+
 
 emit(CLEAR, SAVE_CURSOR)
 while True:
     buffer = input(">> ")
-    
+
     print("user: ", buffer, end='\n')

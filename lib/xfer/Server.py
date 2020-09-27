@@ -1,4 +1,5 @@
 class ServerOperations():
+
     def __init__(self):
         pass
 
@@ -10,10 +11,10 @@ class ServerOperations():
             return True
         else:
             return False
-    
+
     @server_logging
     def ask_recip_to_accept(self, sn, fn, fs):
-        
+
         print("//sending accept prompt to recip...")
         SENDER = "Sender"
         string = f"{SENDER} wants to send you {fn} ({fs}bytes). Do you wish to accept? "

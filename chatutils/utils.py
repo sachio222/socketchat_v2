@@ -9,8 +9,10 @@ from pprint import pprint
 # from pathlib2 import Path
 import config.filepaths as paths
 
+
 def get_file_size(path: str):
     os.path.getsize(path)
+
 
 def countdown(secs=90, msg='-+- Try again in '):
     # util
@@ -66,9 +68,20 @@ class ConfigJSON():
         """Access class as dict."""
         self.__dict__
 
-def store(sock: socket, addr: tuple, nick: str = "steve"):
-    user_dict = {nick: {"socket": socket, "addr": addr}}
 
-    print(user_dict)
-    
+def store(sock: socket,
+          addr: tuple,
+          nick: str = "steve",
+          public_key: bytes = None,
+          trusted: list = None) -> dict:
+    user_dict = {
+        nick: {
+            "nick": nick,
+            "socket": socket,
+            "addr": addr,
+            "public_key": public_key,
+            "trusted": trusted
+        }
+    }
 
+    return (user_dict)

@@ -9,7 +9,6 @@ from threading import Thread
 from chatutils import utils
 from chatutils.chatio2 import ChatIO
 
-
 from handlers import InputHandler
 
 configs = utils.ConfigJSON()
@@ -18,6 +17,7 @@ BUFFER_LEN = configs.system["defaultBufferLen"]
 HEADER_LEN = configs.system["headerLen"]
 TARGET_HOST = configs.system["defaultHost"]
 TARGET_PORT = configs.system["defaultPort"]
+
 
 class Client(ChatIO):
 
@@ -39,8 +39,8 @@ class Client(ChatIO):
             buffer = input("")
             print("\x1B[F\x1B[2K", end="")
             print("@Username: " + buffer)
-            
-            output_bytes = InputHandler.router(socket, buffer)
+
+            output_bytes = InputHandler.dispatch(socket, buffer)
             print(output_bytes)
 
             if output_bytes:
@@ -52,7 +52,6 @@ class Client(ChatIO):
             #     buffer += "\n"
             #     buffer = self.pack_n_send(sock, "M", buffer)
 
-    
     def upload(self, sock):
         path = "image.jpg"
         with open(path, 'rb') as f:
@@ -64,7 +63,7 @@ class Client(ChatIO):
         while True:
             response = b""
             recv_len = 1
-            
+
             while recv_len:
                 data = sock.recv(BUFFER_LEN)
                 recv_len = len(data)
@@ -78,12 +77,10 @@ class Client(ChatIO):
 
             print(response.decode())
 
-
         self.killit(sock)
-            
 
     def start_threads(self, sock):
-        listening_thread = Thread(target=self.listen, args=(sock, ))
+        listening_thread = Thread(target=self.listen, args=(sock,))
         listening_thread.start()
 
         # daemon=True terminates sending_thread when listening_thread is closed.
@@ -98,6 +95,7 @@ class Client(ChatIO):
 
 def main():
     client.connect()
+
 
 if __name__ == "__main__":
     client = Client()

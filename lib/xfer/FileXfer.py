@@ -30,42 +30,57 @@ Done."""
 
 #===========================================================#
 
+
 def sender_logging(func):
+
     def logging_wrapper(*args, **kwargs):
         print(f'SND: <{func.__name__}> ', end="")
         result = func(*args, **kwargs)
         return result
+
     return logging_wrapper
 
+
 def server_logging(func):
+
     def logging_wrapper(*args, **kwargs):
         print(f'SRV: <{func.__name__}> ', end="")
         result = func(*args, **kwargs)
         return result
+
     return logging_wrapper
 
+
 def recip_logging(func):
+
     def logging_wrapper(*args, **kwargs):
         print(f'RCP: <{func.__name__}> ', end="")
         result = func(*args, **kwargs)
         return result
+
     return logging_wrapper
 
+
 def local_logging(func):
+
     def logging_wrapper(*args, **kwargs):
         print(f'LCL: <{func.__name__}> ', end="")
         result = func(*args, **kwargs)
         return result
+
     return logging_wrapper
+
 
 #===========================================================#
 
+
 class SenderOperations():
+
     def __init__(self):
         """1. Show prompts. """
         # self.show_prompts()
         pass
-    
+
     def show_prompts(self, sock):
         ### 0-------- Called by Sender
         fn, fs = self._what_is_filename()
@@ -75,7 +90,7 @@ class SenderOperations():
             ### -------> Outbound to Server
             print(sock)
             # SOCK.send()
-            
+
             ServerOperations().ask_recip_to_accept(sn, fn, fs)
 
     @sender_logging
@@ -110,7 +125,7 @@ class SenderOperations():
         if response == True:
             print(f"-=- Waiting for {sn} to accept file. Press A to abort.")
             return True
-            
+
         else:
             print(f"{sn} not found. Try again.")
             return False
@@ -138,13 +153,14 @@ class SenderOperations():
         input_txt = input(prompt)
         return input_txt
 
-    dispatch = {
-        'cancel': _did_cancel
-    }
+    dispatch = {'cancel': _did_cancel}
+
 
 #===========================================================#
 
+
 class RecipOperations():
+
     def __init__(self):
         pass
 
@@ -154,7 +170,7 @@ class RecipOperations():
 
         print(string, end="")
         choice = input("(Y/N)? ")
-        
+
         if choice.lower() == "y":
             print("Send accepted.")
         elif choice.lower() == "n":
@@ -162,7 +178,7 @@ class RecipOperations():
         else:
             choice = input("Please enter a valid choice (Y or N): ")
             return
-        
+
         ### -------> Outbound to Server
         ServerOperations().deliver_accept_or_not_response(choice)
 
@@ -171,9 +187,12 @@ class RecipOperations():
         print("Saving payload.")
         print(payload)
 
+
 #===========================================================#
 
+
 class ServerOperations():
+
     def __init__(self):
         pass
 
@@ -185,10 +204,10 @@ class ServerOperations():
             return True
         else:
             return False
-    
+
     @server_logging
     def ask_recip_to_accept(self, sn, fn, fs):
-        
+
         print("//sending accept prompt to recip...")
         SENDER = "Sender"
         string = f"{SENDER} wants to send you {fn} ({fs}bytes). Do you wish to accept? "
@@ -210,15 +229,18 @@ class ServerOperations():
         ### ---------> Outbound to Recip
         RecipOperations().receiving_payload(payload)
 
+
 #===========================================================#
 
+
 class FileTools():
+
     def __init__(self):
         pass
-    
+
     @local_logging
     def does_file_exist(self, fn):
-        """3. Look for file to send. """        
+        """3. Look for file to send. """
         if True:
             print(f"-=- {fn} found.")
             return True
@@ -232,14 +254,15 @@ class FileTools():
         fs = 5000
         print(f"-=- {fs} bytes")
         return fs
-        
+
+
 #===========================================================#
 
 if __name__ == "__main__":
 
     while True:
         msg = input("prompt -> ")
-        
+
         if msg == '/sendfile':
 
             SenderOperations().show_prompts()
@@ -248,7 +271,4 @@ if __name__ == "__main__":
             print("Connection closed.")
             break
         else:
-            print( f">> {msg}")
-
-
-
+            print(f">> {msg}")

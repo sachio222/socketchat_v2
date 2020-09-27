@@ -24,6 +24,7 @@ sock_nick_dict = {}  # socket : nick
 nick_addy_dict = {}  # nick : ip
 user_key_dict = {}  # socket: key
 
+
 class Server(ChatIO, Channel):
     """Server class"""
 
@@ -49,7 +50,6 @@ class Server(ChatIO, Channel):
 
             # Spin off thread for each client.
             Thread(target=self.handle_clients, args=(client_cnxn,)).start()
-
 
     def handle_clients(self, sock: socket):
         """Continuous thread, runs for each client that joins.
