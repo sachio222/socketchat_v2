@@ -2,7 +2,7 @@ import socket
 from chatutils import utils
 from handlers.routers import ServerCmds
 
-configs = utils.ConfigJSON()
+configs = utils.JSONLoader()
 
 def dispatch(sock: socket, msg_type: str):
     """Sorts through incoming data by prefix."""

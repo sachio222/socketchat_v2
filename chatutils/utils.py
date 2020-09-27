@@ -4,11 +4,10 @@ import time
 import json
 import socket
 
-from pprint import pprint
+from chatutils import utils
 
-# from pathlib2 import Path
 import config.filepaths as paths
-
+user_dict = utils.JSONLoader(paths.user_dict_path)
 
 def get_file_size(path: str):
     os.path.getsize(path)
@@ -34,7 +33,7 @@ def print_from_file(path):
 
     with open(path, 'rb') as f:
         msg = f.read().decode()
-        pprint(msg)
+        print(msg)
 
 
 def split_path_ext(path):
@@ -48,11 +47,11 @@ def split_path_ext(path):
     return main, ext
 
 
-class ConfigJSON():
+class JSONLoader():
     """Loads and updates config.json file listed in config/filepaths.py"""
 
-    def __init__(self):
-        self.load(paths.json_path)
+    def __init__(self, path=paths.json_path):
+        self.load(path)
 
     def load(self, path=paths.json_path):
         with open(path) as f:
@@ -69,7 +68,7 @@ class ConfigJSON():
         self.__dict__
 
 
-def store(sock: socket,
+def store_user(sock: socket,
           addr: tuple,
           nick: str,
           public_key: bytes = None,
@@ -82,6 +81,7 @@ def store(sock: socket,
             "public_key": public_key,
             "trusted": trusted
         }
+
     }
 
     return user_dict

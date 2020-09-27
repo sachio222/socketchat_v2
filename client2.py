@@ -10,7 +10,7 @@ from chatutils.chatio2 import ChatIO
 
 from handlers import InputHandler
 
-configs = utils.ConfigJSON()
+configs = utils.JSONLoader()
 
 BUFFER_LEN = configs.system["defaultBufferLen"]
 HEADER_LEN = configs.system["headerLen"]

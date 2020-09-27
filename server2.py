@@ -1,26 +1,30 @@
 import sys
-import sqlite3
 import subprocess
 import socket
 from threading import Thread
 from handlers import ServMsgHandler
 
 from chatutils import utils
+import config.filepaths as paths
 
 # sys.setrecursionlimit(20000)
-configs = utils.ConfigJSON()
+
+configs = utils.JSONLoader()
+
 BUFFER_LEN = configs.system["defaultBufferLen"]
 HOST = configs.system["defaultHost"]
 PORT = configs.system["defaultPort"]
 ADDR = (HOST, PORT)
-
 
 def accept_client(server):
     while True:
         client_socket, addr = server.accept()
         nick = client_socket.recv(22).decode()
         print("nick is", nick)
-        user_dict = utils.store(client_socket, addr, nick=nick)
+
+        user_dict = utils.store_user(client_socket, addr, nick=nick)
+
+        print(user_dict)
         print(f"Connected to {addr}")
         welcome_msg = f"Welcome to {ADDR}"
         client_socket.send(welcome_msg.encode())
@@ -60,7 +64,6 @@ def write_file(path: str,
             return
         else:
             write_file(path, client_socket, recv_len, "ab")
-
 
 def download(client_socket):
     path = 'Tamarindo-Concepts2.pdf'
@@ -113,7 +116,6 @@ def main():
 
     accept_thread = Thread(target=accept_client, args=(server,))
     accept_thread.start()
-
 
 if __name__ == "__main__":
     main()

@@ -4,7 +4,7 @@ import subprocess
 from chatutils import utils
 from chatutils.chatio2 import ChatIO
 
-configs = utils.ConfigJSON()
+configs = utils.JSONLoader()
 HEADER_LEN = configs.system["headerLen"]
 
 def run_cmd(command) -> bytes:

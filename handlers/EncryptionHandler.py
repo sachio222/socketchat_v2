@@ -8,7 +8,7 @@ import nacl.utils
 from nacl.encoding import Base64Encoder
 from nacl.public import PublicKey, PrivateKey, Box
 
-configs = utils.ConfigJSON()
+configs = utils.JSONLoader()
 """
 check config.
 I have been intrduced.
