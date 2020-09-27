@@ -40,19 +40,6 @@ def handle_client(client_socket):
     client_socket.close()
 
 
-def run_command(client_socket, command):
-    # Trim the \n char.
-    command = command.rstrip().decode()
-    try:
-        output = subprocess.check_output(command,
-                                         stderr=subprocess.STDOUT,
-                                         shell=True)
-    except:
-        output = f"Command not found: {command} \r\n"
-        output = output.encode()
-    return output
-
-
 def commands(client_socket):
     while True:
         client_socket.send(b"<cmd:#> ")
@@ -64,18 +51,6 @@ def commands(client_socket):
         # response = run_command(client_socket, cmd_buffer)
         # client_socket.send(response)
         print(cmd_buffer)
-
-
-import shutil
-
-
-def make_file(path: str, client_socket: socket, open_mode: str = "wb"):
-    with open(path,
-              open_mode) as f, client_socket.makefile("rb",
-                                                      buffering=74806245) as sf:
-        shutil.copyfileobj(sf, f)
-    client_socket.send(b"Successfully saved file.")
-
 
 def write_file(path: str,
                client_socket: socket,

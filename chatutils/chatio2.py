@@ -5,7 +5,7 @@ import socket
 from chatutils import utils
 
 configs = utils.ConfigJSON()
-
+HEADER_LEN = configs.system["headerLen"]
 
 class ChatIO:
 
@@ -35,3 +35,12 @@ class ChatIO:
         header = f'{size:<{configs.system["headerLen"]}}'
         packed_data = f"{typ_pfx}{header}{data}"
         return packed_data.encode()
+
+    @classmethod
+    def unpack_data(cls, sock:socket, packed_data:bytes):
+        """UNPACK DATA"""
+        msg_len = sock.recv(HEADER_LEN)
+        msg = sock.recv(int(msg_len))
+        msg = msg.rstrip()
+        
+        return msg 
