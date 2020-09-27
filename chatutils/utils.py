@@ -1,3 +1,4 @@
+from json.encoder import JSONEncoder
 import os
 import sys
 import time
@@ -5,9 +6,8 @@ import json
 import socket
 
 from chatutils import utils
-
 import config.filepaths as paths
-user_dict = utils.JSONLoader(paths.user_dict_path)
+
 
 def get_file_size(path: str):
     os.path.getsize(path)
@@ -69,19 +69,26 @@ class JSONLoader():
 
 
 def store_user(sock: socket,
-          addr: tuple,
-          nick: str,
-          public_key: bytes = None,
-          trusted: list = None) -> dict:
-    user_dict = {
-        nick: {
-            "nick": nick,
-            "socket": socket,
-            "addr": addr,
-            "public_key": public_key,
-            "trusted": trusted
-        }
+               addr: tuple,
+               nick: str,
+               public_key: bytes = None,
+               trusted: list = None) -> dict:
 
+    user_dict = JSONLoader(paths.user_dict_path)
+    dict = {
+        "nick": nick,
+        "addr": addr,
+        "public_key": public_key,
+        "trusted": trusted
     }
+    user_dict.__dict__[nick] = dict
 
-    return user_dict
+    user_dict.update(paths.user_dict_path)
+
+    return user_dict.__dict__
+
+
+def delete_user(nick: str = "Will"):
+    user_dict = JSONLoader(paths.user_dict_path)
+    del user_dict.__dict__[nick]
+    user_dict.update(paths.user_dict_path)

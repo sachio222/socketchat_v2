@@ -1,1 +1,11 @@
-{}
+{
+    "Will": {
+        "nick": "Will",
+        "addr": [
+            "127.0.0.1",
+            64173
+        ],
+        "public_key": null,
+        "trusted": null
+    }
+}

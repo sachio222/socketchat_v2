@@ -7,6 +7,7 @@ from chatutils.chatio2 import ChatIO
 configs = utils.JSONLoader()
 HEADER_LEN = configs.system["headerLen"]
 
+
 def run_cmd(command) -> bytes:
     # Trim the \n char.
     command = command.rstrip().decode()
@@ -18,6 +19,7 @@ def run_cmd(command) -> bytes:
         output = f"Command not found: {command} \r\n"
         output = output.encode()
     return output
+
 
 def commands(client_socket):
     while True:

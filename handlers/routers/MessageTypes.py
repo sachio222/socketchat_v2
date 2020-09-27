@@ -7,7 +7,8 @@ class Router():
         pass
 
     def message_type():
-        EncryptionHandler.Handler().encryption_handler(msg)
+        # EncryptionHandler.Handler().encryption_handler(msg)
+        pass
 
     dispatch_cmds = {
         "a": None,

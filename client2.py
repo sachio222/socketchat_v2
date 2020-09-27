@@ -17,7 +17,9 @@ HEADER_LEN = configs.system["headerLen"]
 TARGET_HOST = configs.system["defaultHost"]
 TARGET_PORT = configs.system["defaultPort"]
 
+
 class Client(ChatIO):
+
     def __init__(self):
         pass
 
@@ -25,7 +27,7 @@ class Client(ChatIO):
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         try:
             sock.connect((TARGET_HOST, TARGET_PORT))
-            sock.send(b"Jake")
+            sock.send(b"Will")
             self.start_threads(sock)
         except Exception as e:
             print(e)
