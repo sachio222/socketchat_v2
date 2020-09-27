@@ -1,4 +1,3 @@
-from json.encoder import JSONEncoder
 import os
 import sys
 import time
@@ -88,7 +87,7 @@ def store_user(sock: socket,
     return user_dict.__dict__
 
 
-def delete_user(nick: str = "Will"):
+def delete_user(nick: str):
     user_dict = JSONLoader(paths.user_dict_path)
     del user_dict.__dict__[nick]
     user_dict.update(paths.user_dict_path)

@@ -1,5 +1,3 @@
-import sys
-import subprocess
 import socket
 from threading import Thread
 from handlers import ServMsgHandler

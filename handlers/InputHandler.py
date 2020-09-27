@@ -18,6 +18,6 @@ def dispatch(sock: socket, msg: str) -> bytes:
         else:
             msg_bytes = EncryptionHandler.encrypt(msg)
     else:
-        msg_bytes = msg
+        msg_bytes = "\n"
 
     return msg_bytes

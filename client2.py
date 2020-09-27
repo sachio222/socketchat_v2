@@ -1,6 +1,5 @@
 #!/usr/bin/ python3
 """Encryptochat 2.0"""
-import os
 import sys
 import socket
 from threading import Thread
