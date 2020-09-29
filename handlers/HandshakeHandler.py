@@ -4,7 +4,7 @@
 ## SEND PUBLIC KEYS
 from enum import unique
 import json
-from server2 import onboard_new_client
+# from server2 import onboard_new_client
 import socket
 from sys import path
 

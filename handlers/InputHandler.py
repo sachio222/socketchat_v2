@@ -16,6 +16,7 @@ def dispatch(sock: socket, msg: str) -> bytes:
         else:
             msg_bytes = EncryptionHandler.encrypt(msg)
     else:
+        # Send new line on enter press.
         msg_bytes = "\n"
 
     return msg_bytes
