@@ -27,7 +27,7 @@ def cli(*args, **kwargs):
             if cmd in ["quit", "exit"]:
                 break
             ChatIO().pack_n_send(sock, "C", cmd or " ")
-        print("-!- Returning to chat.")
+        print("[!] Resume le chat.")
     else:
         return
 

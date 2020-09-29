@@ -1,11 +1,83 @@
 {
-    "jaek": {
-        "nick": "jaek",
+    "Pete": {
+        "nick": "Pete",
         "addr": [
             "127.0.0.1",
-            52681
+            56216
         ],
-        "public_key": null,
+        "public_key": "FruYhtHNvUFF/1DQKh/kdDTCnfR97+8cpGlLJDfM6y4=",
+        "trusted": null
+    },
+    "Jake": {
+        "nick": "Jake",
+        "addr": [
+            "127.0.0.1",
+            56247
+        ],
+        "public_key": "RjUnOJa4ZR8pc9X0UBbJMM6otsBclzBazwlUk5NH4FM=",
+        "trusted": null
+    },
+    "Cargo": {
+        "nick": "Cargo",
+        "addr": [
+            "127.0.0.1",
+            57289
+        ],
+        "public_key": "MuU0AHbk3y5q6dgRSfhtY7alDKyOvhKqNwz3YuFzyXU=",
+        "trusted": null
+    },
+    "Spellbound": {
+        "nick": "Spellbound",
+        "addr": [
+            "127.0.0.1",
+            57373
+        ],
+        "public_key": "kxazOX+0e2941rymU8hgTTWzAKbvPZCHo9oNGfzTJ3E=",
+        "trusted": null
+    },
+    "Peter": {
+        "nick": "Peter",
+        "addr": [
+            "127.0.0.1",
+            57459
+        ],
+        "public_key": "upmwAZLaqi7stcFj6IKS/i5S4X2Nd46rSdFROVbDOX0=",
+        "trusted": null
+    },
+    "Krake": {
+        "nick": "Krake",
+        "addr": [
+            "127.0.0.1",
+            58352
+        ],
+        "public_key": "8q1rmOJ4w+OtgACVi9p5f5opmyuMM8ckQ+QDqyeteyY=",
+        "trusted": null
+    },
+    "jakers": {
+        "nick": "jakers",
+        "addr": [
+            "127.0.0.1",
+            58404
+        ],
+        "public_key": "O+TrUhYi9iRp7GPMBKI2myPGxvsTgcK7Z2fnXfhG9jg=",
+        "trusted": null
+    },
+    "stevo": {
+        "nick": "stevo",
+        "addr": [
+            "127.0.0.1",
+            58421
+        ],
+        "public_key": "RbWb1gJ0iuXP6CDnk/BFXvSI1rrorSPc05sA2CRUAk4=",
+        "trusted": null
+    },
+    "Lopo": {
+        "nick": "Lopo",
+        "addr": [
+            "127.0.0.1",
+            58477
+        ],
+        "public_key": "Fyir2vux8qCHvG/w0I/wG1glF5lPwYZMIxeqL+GHm3Y=",
         "trusted": null
     }
 }

@@ -11,7 +11,6 @@ import config.filepaths as paths
 def get_file_size(path: str):
     os.path.getsize(path)
 
-
 def countdown(secs=90, msg='-+- Try again in '):
     # util
     ERASE_LINE = '\x1b[2K'
@@ -69,22 +68,32 @@ class JSONLoader():
 
 def store_user(sock: socket,
                addr: tuple,
-               nick: str,
+               new_user: dict,
+               nick: str = None,
                public_key: bytes = None,
                trusted: list = None) -> dict:
+    """SERVERSIDE USER DICT"""
+    try:
+        users = JSONLoader(paths.user_dict_path)
+    except Exception as e:
+        print(f"ERROR: Problem with JSON file at {paths.user_dict_path}. "\
+              "Check for hanging comma or brackets and stuff.")
+        exit()
 
-    user_dict = JSONLoader(paths.user_dict_path)
-    dict = {
-        "nick": nick,
-        "addr": addr,
-        "public_key": public_key,
-        "trusted": trusted
+    new_user_dict = json.loads(new_user)
+
+    # Fill structure with overrides or defaults.
+    new_user_dict = {
+        "nick": new_user_dict.get("nick", None) or nick,
+        "addr": new_user_dict.get("addr", None) or addr,
+        "public_key": new_user_dict.get("public_key", None) or public_key,
+        "trusted": new_user_dict.get("trusted", None) or trusted
     }
-    user_dict.__dict__[nick] = dict
+    
+    users.__dict__[new_user_dict["nick"]] = new_user_dict
+    users.update(paths.user_dict_path)
 
-    user_dict.update(paths.user_dict_path)
-
-    return user_dict.__dict__
+    return users.__dict__
 
 
 def delete_user(nick: str):

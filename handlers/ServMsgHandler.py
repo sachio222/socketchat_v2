@@ -4,69 +4,12 @@ from handlers.routers import ServerCmds
 
 configs = utils.JSONLoader()
 
-
 def dispatch(sock: socket, msg_type: str) -> bytes:
     """Sorts through incoming data by prefix."""
     assert type(msg_type) == bytes, "Convert prefix to str"
-    print("msg_type:", msg_type)
-    func = dispatch_cmds.get(msg_type.decode(), ServerCmds.error)
+    func = ServerCmds.dispatch.get(msg_type.decode(), ServerCmds.error)
     bytes_data = func(sock=sock, msg_type=msg_type)
 
     return bytes_data
 
 
-dispatch_cmds = {
-    "a": None,
-    "b": None,
-    "c": None,
-    "d": None,
-    "e": None,
-    "f": None,
-    "g": None,
-    "h": None,
-    "i": None,
-    "j": None,
-    "k": None,
-    "l": None,
-    "m": None,
-    "n": ServerCmds._n_handler,
-    "o": None,
-    "p": None,
-    "q": None,
-    "r": None,
-    "s": None,
-    "t": None,
-    "u": None,
-    "v": None,
-    "w": None,
-    "x": None,
-    "y": None,
-    "z": None,
-    "A": None,
-    "B": None,
-    "C": ServerCmds._C_handler,
-    "D": ServerCmds._D_handler,
-    "E": None,
-    "F": None,
-    "G": None,
-    "H": None,
-    "I": None,
-    "J": None,
-    "K": None,
-    "L": None,
-    "M": ServerCmds._M_handler,
-    "N": None,
-    "O": None,
-    "P": None,
-    "Q": None,
-    "R": None,
-    "S": None,
-    "T": None,
-    "U": None,
-    "V": None,
-    "W": None,
-    "X": None,
-    "Y": None,
-    "Z": None,
-    "/": None
-}
