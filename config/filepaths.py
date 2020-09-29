@@ -1,8 +1,8 @@
 json_path = "config/config.json"
 user_dict_path = "config/user_dict.json"
 prefix_path = "config/prefixList.json"
-about = "config/about.txt"
-help = "config/help.txt"
+about = "config/pub/about.txt"
+help = "config/pub/help.txt"
 
 ## Key Paths
 hashes = "config/prv/keys/hashes.json"

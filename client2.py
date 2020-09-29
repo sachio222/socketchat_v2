@@ -70,27 +70,29 @@ class Client(ChatIO):
 
     def listen(self, sock):
         while True:
-            try:
-                # msg_type = sock.recv(PREFIX_LEN)
-                # if not msg_type:
-                #     break
-                ClientMsgHandler.dispatch(sock, msg_type)
-            except:
-                response = b""
-                recv_len = 1
+            # try:
+            msg_type = sock.recv(PREFIX_LEN)
 
-                while recv_len:
-                    data = sock.recv(BUFFER_LEN)
-                    recv_len = len(data)
-                    response += data
+            if not msg_type:
+                break
 
-                    if recv_len < BUFFER_LEN:
-                        break
+            ClientMsgHandler.dispatch(sock, msg_type)
+            # except:
+            #     response = b""
+            #     recv_len = 1
 
-                    if not data:
-                        break
+            #     while recv_len:
+            #         data = sock.recv(BUFFER_LEN)
+            #         recv_len = len(data)
+            #         response += data
 
-                print(response.decode())
+            #         if recv_len < BUFFER_LEN:
+            #             break
+
+            #         if not data:
+            #             break
+
+                # print(response.decode())
 
         self.killit(sock)
 

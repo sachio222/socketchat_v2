@@ -2,6 +2,7 @@
     "client": {
         "cmd": "C",
         "data": "D",
+        "default": "M",
         "handshake": "H",
         "msg": "M",
         "pubk": "k",
@@ -11,9 +12,11 @@
     "server": {
         "cmd": "C",
         "data": "D",
+        "default": "M",
         "handshake": "H",
         "msg": "M",
         "pubk": "k",
-        "nick": "n"
+        "nick": "n",
+        "welcome": "W"
     }
 }

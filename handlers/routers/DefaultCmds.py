@@ -1,3 +1,4 @@
+import sys
 import socket
 
 from chatutils import utils, passtools
@@ -66,11 +67,10 @@ def encryption(*args, **kwargs):
     print(f"-*- Encryption currently set to {configs.cipher}.")
 
 
-def exit(*args, **kwargs):
-    # print('Disconnected.')
-    # sock.shutdown(socket.SHUT_RDWR)
-    # sock.close()
-    pass
+def exit(sock: socket, *args, **kwargs):
+    sock.close()
+    print("Server Disconnected.")
+    sys.exit()
 
 
 def help(*args, **kwargs):
@@ -121,7 +121,7 @@ def unmute(*args, **kwargs):
     ChatIO().print_message("@YO: B00P! Type /mute to turn off sound.")
 
 
-dispatch_cmds = {
+dispatch = {
     '/about': about,
     '/close': exit,
     '/cryp': encryption,

@@ -1,5 +1,5 @@
 {
-    "cipher": "aes256",
+    "cipher": "chacha",
     "introduced": false,
     "muted": true,
     "system": {
@@ -8,5 +8,9 @@
         "defaultPort": 12222,
         "prefixLength": 1,
         "headerLen": 10
+    },
+    "msgs": {
+        "welcome2": "f'Welcome to {ADDR}'",
+        "welcome": "You're in. Welcome to the underground."
     }
 }
