@@ -1,6 +1,6 @@
 import socket
 from threading import Thread
-from handlers import ServMsgHandler
+from handlers import HandshakeHandler, ServMsgHandler
 
 from chatutils import utils
 import config.filepaths as paths
@@ -8,6 +8,7 @@ import config.filepaths as paths
 # sys.setrecursionlimit(20000)
 
 configs = utils.JSONLoader()
+users = utils.JSONLoader(paths.user_dict_path)
 
 BUFFER_LEN = configs.system["defaultBufferLen"]
 PREFIX_LEN = configs.system["prefixLength"]
@@ -20,8 +21,8 @@ socket_list = []
 def accept_client(server):
     while True:
         client_socket, addr = server.accept()
-
-        onboard_new_client(client_socket, addr)
+        socket_list.append(client_socket)
+        HandshakeHandler.ServerHand(client_socket, addr)
 
         client_thread = Thread(target=handle_client,
                                args=(client_socket,),
@@ -42,16 +43,10 @@ def handle_client(client_socket):
 
 
 def onboard_new_client(client_socket: socket, addr: tuple):
-    print("Client trying to connect...")
-
-    socket_list.append(client_socket)
-
-    msg_type = client_socket.recv(PREFIX_LEN)
-
-    user_dict = ServMsgHandler.dispatch(client_socket, msg_type)
     
-    print("user_dict: ", user_dict)
-    # user_dict = utils.store_user(client_socket, addr, nick=user_dict)
+    msg_type = client_socket.recv(PREFIX_LEN)
+    new_user = ServMsgHandler.dispatch(client_socket, msg_type)
+    new_user = utils.store_user(client_socket, addr, new_user=new_user)
 
     print(f"Connected to {addr}")
     welcome_msg = f"Welcome to {ADDR}"

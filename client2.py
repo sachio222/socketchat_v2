@@ -1,5 +1,6 @@
 #!/usr/bin/ python3
 """Encryptochat 2.0"""
+from handlers import ClientMsgHandler
 import sys
 import socket
 from threading import Thread
@@ -12,11 +13,13 @@ from handlers import HandshakeHandler, InputHandler
 configs = utils.JSONLoader()
 prefixes = utils.JSONLoader(paths.prefix_path)
 
+PREFIX_LEN = configs.system["prefixLength"]
 BUFFER_LEN = configs.system["defaultBufferLen"]
 HEADER_LEN = configs.system["headerLen"]
 TARGET_HOST = configs.system["defaultHost"]
 TARGET_PORT = configs.system["defaultPort"]
 
+USER_ID = ""
 
 class Client(ChatIO):
 
@@ -24,13 +27,16 @@ class Client(ChatIO):
         pass
 
     def connect(self):
+        global USER_ID
+
         try:
             sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             sock.connect((TARGET_HOST, TARGET_PORT))
 
-            HandshakeHandler.UserHandshake(sock)
+            USER_ID = HandshakeHandler.ClientHand(sock).nick
 
             self.start_threads(sock)
+
         except Exception as e:
             print(e)
             print("[x] Connection failed. Check server address or port.")
@@ -40,7 +46,7 @@ class Client(ChatIO):
         while True:
             buffer = input("")
             print("\x1B[F\x1B[2K", end="")
-            print("@Username: " + buffer)
+            print(f"@{USER_ID}: " + buffer)
 
             output_bytes = InputHandler.dispatch(sock, buffer)
             # print(output_bytes)
@@ -63,21 +69,27 @@ class Client(ChatIO):
 
     def listen(self, sock):
         while True:
-            response = b""
-            recv_len = 1
+            try:
+                # msg_type = sock.recv(PREFIX_LEN)
+                # if not msg_type:
+                #     break
+                ClientMsgHandler.dispatch(sock, msg_type)
+            except:
+                response = b""
+                recv_len = 1
 
-            while recv_len:
-                data = sock.recv(BUFFER_LEN)
-                recv_len = len(data)
-                response += data
+                while recv_len:
+                    data = sock.recv(BUFFER_LEN)
+                    recv_len = len(data)
+                    response += data
 
-                if recv_len < BUFFER_LEN:
-                    break
+                    if recv_len < BUFFER_LEN:
+                        break
 
-            if not data:
-                break
+                    if not data:
+                        break
 
-            print(response.decode())
+                print(response.decode())
 
         self.killit(sock)
 

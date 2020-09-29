@@ -26,7 +26,7 @@ class ChatIO:
         except:
             pass
 
-        data = data + "\n"
+        # data = data + "\n"
 
         # if typ_pfx == "M":
         size = len(data)

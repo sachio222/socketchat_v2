@@ -1,5 +1,5 @@
 {
-    "cipher": "naclpub",
+    "cipher": "fernet",
     "introduced": false,
     "muted": true,
     "system": {
