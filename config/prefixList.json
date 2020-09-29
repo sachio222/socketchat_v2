@@ -1,6 +1,7 @@
 {
     "client": {
         "cmd": "C",
+        "data": "D",
         "msg": "M",
         "pubk": "k",
         "nick": "n"
@@ -8,6 +9,7 @@
 
     "server": {
         "cmd": "C",
+        "data": "D",
         "msg": "M",
         "pubk": "k",
         "nick": "n"

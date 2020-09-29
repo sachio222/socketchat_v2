@@ -12,6 +12,8 @@ from nacl.public import PublicKey, PrivateKey, Box
 import config.filepaths as paths
 configs = utils.JSONLoader()
 
+
+
 aes = AES256Cipher()
 salt = NaclCipher()
 """

@@ -12,26 +12,43 @@ from lib.encryption import CipherTools
 from handlers import EncryptionHandler
 
 import config.filepaths as paths
+
 prefixes = utils.JSONLoader(paths.prefix_path)
 
 
-class User(ChatIO):
+class UserHandshake(ChatIO):
 
     def __init__(self, sock: socket):
-        self.send_keys()
+        self.handshake_payload = {}
+        self.handshake_payload["nick"] = self.request_nick()
+        self.handshake_payload["pubk"] = self.create_public_key().decode()
+        self.send_payload(sock)
 
-    def request_nick(self, sock: socket) -> str:
+    def request_nick(self) -> str:
+        print("prefix is:", prefixes.client)
         nick = input("[+] What is your name? ")
-        self.pack_n_send(sock, prefixes.client["nick"], nick)
+        return nick
 
     def check_uniqueness(self, nick: str, namedict: dict):
         unique = False
         # name_dict
         return unique
 
-    def send_keys(self):
-        CipherTools.gen_nacl_key()
+    def create_public_key(self) -> bytes:
+        _, pubk = CipherTools.gen_nacl_key()
+        return pubk
+
+    def send_payload(self, sock: socket):
+        self.pack_n_send(sock, prefixes.client["hshk"], self.handshake_payload.encode())
 
         # If keys don't exist, make them with encryption
         # Have keys
         # send keys as client["keys"]
+
+
+class Server(ChatIO):
+    def __init__(self):
+        pass
+
+    def receive_nick(self):
+        pass

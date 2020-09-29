@@ -1,27 +1,9 @@
 {
-    "Will": {
-        "nick": "Will",
+    "jaek": {
+        "nick": "jaek",
         "addr": [
             "127.0.0.1",
-            57506
-        ],
-        "public_key": null,
-        "trusted": null
-    },
-    "N5         name\n": {
-        "nick": "N5         name\n",
-        "addr": [
-            "127.0.0.1",
-            60602
-        ],
-        "public_key": null,
-        "trusted": null
-    },
-    "": {
-        "nick": "",
-        "addr": [
-            "127.0.0.1",
-            50128
+            52681
         ],
         "public_key": null,
         "trusted": null

@@ -10,6 +10,7 @@ import config.filepaths as paths
 configs = utils.JSONLoader()
 
 BUFFER_LEN = configs.system["defaultBufferLen"]
+PREFIX_LEN = configs.system["prefixLength"]
 HOST = configs.system["defaultHost"]
 PORT = configs.system["defaultPort"]
 ADDR = (HOST, PORT)
@@ -30,24 +31,27 @@ def accept_client(server):
 
 
 def handle_client(client_socket):
-    PREFIX_LEN = configs.system["prefixLength"]
+
     while True:
         msg_type = client_socket.recv(PREFIX_LEN)
-
         if not msg_type:
             break
-
         ServMsgHandler.dispatch(client_socket, msg_type)
 
     client_socket.close()
 
 
 def onboard_new_client(client_socket: socket, addr: tuple):
+    print("Client trying to connect...")
+
     socket_list.append(client_socket)
 
-    nick = client_socket.recv(22).decode()
+    msg_type = client_socket.recv(PREFIX_LEN)
 
-    user_dict = utils.store_user(client_socket, addr, nick=nick)
+    user_dict = ServMsgHandler.dispatch(client_socket, msg_type)
+    
+    print("user_dict: ", user_dict)
+    # user_dict = utils.store_user(client_socket, addr, nick=user_dict)
 
     print(f"Connected to {addr}")
     welcome_msg = f"Welcome to {ADDR}"

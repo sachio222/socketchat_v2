@@ -24,16 +24,16 @@ class Client(ChatIO):
         pass
 
     def connect(self):
-        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         try:
+            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             sock.connect((TARGET_HOST, TARGET_PORT))
 
-            HandshakeHandler.User(sock)
+            HandshakeHandler.UserHandshake(sock)
 
-            self.pack_n_send(sock, "N", "name")
             self.start_threads(sock)
         except Exception as e:
             print(e)
+            print("[x] Connection failed. Check server address or port.")
             sock.close()
 
     def send(self, sock):

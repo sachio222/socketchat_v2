@@ -32,15 +32,8 @@ def cli(*args, **kwargs):
         return
 
 
-def help(*args, **kwargs):
-    """Read from file in config folder."""
-    path = config.filepaths.help
-    utils.print_from_file(path)
-
-
 def encryption(*args, **kwargs):
     msg_parts = kwargs["msg_parts"]
-    print("running obviously")
 
     def set_cipher(msg):
         choices = {}
@@ -72,12 +65,22 @@ def encryption(*args, **kwargs):
     print(f"-*- Encryption currently set to {configs.cipher}.")
 
 
+
 def exit(*args, **kwargs):
     # print('Disconnected.')
     # sock.shutdown(socket.SHUT_RDWR)
     # sock.close()
     pass
 
+
+def help(*args, **kwargs):
+    """Read from file in config folder."""
+    path = config.filepaths.help
+    utils.print_from_file(path)
+
+def keys(*args, **kwargs):
+    # Show what keys I have.
+    pass
 
 def sendfile(*args, **kwargs):
     """Initiates Send File (SF) sequence."""
@@ -124,6 +127,7 @@ dispatch_cmds = {
     '/exit': exit,
     '/help': help,
     '/h': help,
+    'keys': keys,
     '/sendfile': sendfile,
     '/sendkey': sendkey,
     '/hackmyserver': cli,
