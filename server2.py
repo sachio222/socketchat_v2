@@ -23,6 +23,10 @@ def accept_client(server):
         client_socket, addr = server.accept()
         socket_list.append(client_socket)
         HandshakeHandler.ServerHand(client_socket, addr)
+        print(f"Connected to {addr}")
+        welcome_msg = f"Welcome to {ADDR}"
+
+        client_socket.send(welcome_msg.encode())
 
         client_thread = Thread(target=handle_client,
                                args=(client_socket,),
@@ -42,16 +46,16 @@ def handle_client(client_socket):
     client_socket.close()
 
 
-def onboard_new_client(client_socket: socket, addr: tuple):
+# def onboard_new_client(client_socket: socket, addr: tuple):
 
-    msg_type = client_socket.recv(PREFIX_LEN)
-    new_user = ServMsgHandler.dispatch(client_socket, msg_type)
-    new_user = utils.store_user(client_socket, addr, new_user=new_user)
+#     msg_type = client_socket.recv(PREFIX_LEN)
+#     new_user = ServMsgHandler.dispatch(client_socket, msg_type)
+#     new_user = utils.store_user(client_socket, addr, new_user=new_user)
 
-    print(f"Connected to {addr}")
-    welcome_msg = f"Welcome to {ADDR}"
+#     print(f"Connected to {addr}")
+#     welcome_msg = f"Welcome to {ADDR}"
 
-    client_socket.send(welcome_msg.encode())
+#     client_socket.send(welcome_msg.encode())
 
 
 def main():

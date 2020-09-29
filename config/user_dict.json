@@ -79,5 +79,32 @@
         ],
         "public_key": "Fyir2vux8qCHvG/w0I/wG1glF5lPwYZMIxeqL+GHm3Y=",
         "trusted": null
+    },
+    "that was endless": {
+        "nick": "that was endless",
+        "addr": [
+            "127.0.0.1",
+            61520
+        ],
+        "public_key": "iFyhAREcX5HbffT5ua20s5X/fzIvXfdZwLIm3+GFnW4=",
+        "trusted": null
+    },
+    "Newuser": {
+        "nick": "Newuser",
+        "addr": [
+            "127.0.0.1",
+            61576
+        ],
+        "public_key": "j+IEQjnhrOzMfhFDh8XDkNjhBVWEWIUmqzfvfP8ycm8=",
+        "trusted": null
+    },
+    "Ican": {
+        "nick": "Ican",
+        "addr": [
+            "127.0.0.1",
+            61769
+        ],
+        "public_key": "Cx49DAuRpjq0yOiKJzw8VeshtiqpXPLi0JFG/PfLhw4=",
+        "trusted": null
     }
 }
