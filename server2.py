@@ -1,3 +1,4 @@
+import json
 import socket
 from threading import Thread
 from handlers import HandshakeHandler, ServMsgHandler
@@ -22,11 +23,11 @@ def accept_client(server):
     while True:
         client_socket, addr = server.accept()
         socket_list.append(client_socket)
-        HandshakeHandler.ServerHand(client_socket, addr)
         print(f"Connected to {addr}")
-        welcome_msg = f"Welcome to {ADDR}"
-
-        client_socket.send(welcome_msg.encode())
+        HandshakeHandler.ServerHand(client_socket, addr)
+        #TODO: Move inside handshake.
+        # welcome_msg = f"Welcome to {ADDR}"
+        # client_socket.send(welcome_msg.encode())
 
         client_thread = Thread(target=handle_client,
                                args=(client_socket,),

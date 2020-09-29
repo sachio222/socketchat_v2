@@ -71,10 +71,12 @@ class ServerHand(ChatIO):
         new_user = ServMsgHandler.dispatch(sock, msg_type)
         new_user = json.loads(new_user)
 
-        if self.unique_user(new_user):
-            self.store_user(addr, new_user)
-        else:
+        if not self.unique_user(new_user):
             self.resend_prompt(sock)
+        else:
+            self.store_user(addr, new_user)
+        self.send_welcome(sock)
+
 
     def unique_user(self, new_user: dict) -> bool:
         if new_user["nick"] not in users.__dict__.keys():
@@ -114,3 +116,7 @@ class ServerHand(ChatIO):
     def resend_prompt(self, sock: socket):
         msg_bytes = b"[x] User already exists. Try something else: "
         self.pack_n_send(sock, prefixes.server["handshake"], msg_bytes)
+
+    def send_welcome(self, sock: socket):
+        self.pack_n_send(sock, prefixes.server["msg"],
+                         configs.msgs["welcome"])

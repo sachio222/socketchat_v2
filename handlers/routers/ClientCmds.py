@@ -1,27 +1,32 @@
+import json
 import socket
 from chatutils import utils
+from chatutils.chatio2 import ChatIO
 
 configs = utils.JSONLoader()
 
 BUFFER_LEN = configs.system["defaultBufferLen"]
 
 
-def _M_handler(sock: socket, *args, **kwargs):
-    response = b""
-    recv_len = 1
+def _M_handler(sock: socket, *args, **kwargs) -> bytes:
+    bytes_data = ChatIO.unpack_data(sock)
+    print(bytes_data)
+    
+    return bytes_data
+    # response = b""
+    # recv_len = 1
 
-    while recv_len:
-        data = sock.recv(BUFFER_LEN)
-        recv_len = len(data)
-        response += data
+    # while recv_len:
+    #     data = sock.recv(BUFFER_LEN)
+    #     recv_len = len(data)
+    #     response += data
 
-        if recv_len < BUFFER_LEN:
-            break
+    #     if recv_len < BUFFER_LEN:
+    #         break
 
-        if not data:
-            break
-
-    print(response.decode())
+    #     if not data:
+    #         break
+    # print(response.decode())
 
 
 def error(sock: socket, *args, **kwargs):

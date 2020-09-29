@@ -45,7 +45,7 @@ def user_command_router(sock: socket, msg: str) -> None:
     name_spaces = [DefaultCmds, AddonCmds]
 
     for name_space in name_spaces:
-        func = name_space.dispatch_cmds.get(msg_parts[0], False)
+        func = name_space.dispatch.get(msg_parts[0], False)
 
         if func:
             break
