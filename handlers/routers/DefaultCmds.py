@@ -9,6 +9,7 @@ from handlers import EncryptionHandler
 import config.filepaths
 configs = utils.JSONLoader()
 
+
 def about(*args, **kwargs):
     """Read from file in config folder."""
     path = config.filepaths.about
@@ -17,7 +18,9 @@ def about(*args, **kwargs):
 
 def cli(*args, **kwargs):
     if passtools.request_password("cli"):
-        print("[+] Alert: Don't use vim or nano, it'll lock both server and client.")
+        print(
+            "[+] Alert: Don't use vim or nano, it'll lock both server and client."
+        )
         print("[+] Type 'quit' or 'exit' to return to chat.")
         sock = kwargs["sock"]
         msg = kwargs["msg_parts"]
@@ -45,7 +48,8 @@ def encryption(*args, **kwargs):
         else:
             while True:
                 print("[?] Choose a cipher:")
-                for i, key in enumerate(EncryptionHandler.cipher_dict.keys(), 1):
+                for i, key in enumerate(EncryptionHandler.cipher_dict.keys(),
+                                        1):
                     choices[i] = key
                     print(f'{i}. {key}')
                 choice = input(">> ")
@@ -55,15 +59,11 @@ def encryption(*args, **kwargs):
                 except:
                     set_cipher(choice)
                     break
-                
-                
+
     if len(msg_parts) > 1:
         set_cipher(msg=msg_parts[-1])
-                    
-
 
     print(f"-*- Encryption currently set to {configs.cipher}.")
-
 
 
 def exit(*args, **kwargs):
@@ -78,9 +78,11 @@ def help(*args, **kwargs):
     path = config.filepaths.help
     utils.print_from_file(path)
 
+
 def keys(*args, **kwargs):
     # Show what keys I have.
     pass
+
 
 def sendfile(*args, **kwargs):
     """Initiates Send File (SF) sequence."""

@@ -43,7 +43,7 @@ def handle_client(client_socket):
 
 
 def onboard_new_client(client_socket: socket, addr: tuple):
-    
+
     msg_type = client_socket.recv(PREFIX_LEN)
     new_user = ServMsgHandler.dispatch(client_socket, msg_type)
     new_user = utils.store_user(client_socket, addr, new_user=new_user)

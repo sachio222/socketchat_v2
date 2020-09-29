@@ -7,7 +7,6 @@ from lib.encryption.aes256 import AES256Cipher
 
 from nacl.encoding import Base64Encoder, HexEncoder, RawEncoder
 
-
 import config.filepaths as paths
 
 

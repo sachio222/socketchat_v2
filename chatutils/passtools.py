@@ -5,13 +5,14 @@ import config.filepaths as paths
 
 hash_json = utils.JSONLoader(paths.hashes)
 
-def password_verify(which_hash:str, password: str) -> bool:
+
+def password_verify(which_hash: str, password: str) -> bool:
     hash = getattr(hash_json, which_hash)
     ph = argon2.PasswordHasher(time_cost=16,
-                                        memory_cost=2**15,
-                                        parallelism=2,
-                                        hash_len=32,
-                                        salt_len=16)
+                               memory_cost=2**15,
+                               parallelism=2,
+                               hash_len=32,
+                               salt_len=16)
     try:
         verification = ph.verify(hash, password)
     except Exception as e:
@@ -29,10 +30,10 @@ def request_password(which_hash):
 
 def set_password(which_hash):
     ph = argon2.PasswordHasher(time_cost=16,
-                                        memory_cost=2**15,
-                                        parallelism=2,
-                                        hash_len=32,
-                                        salt_len=16)
+                               memory_cost=2**15,
+                               parallelism=2,
+                               hash_len=32,
+                               salt_len=16)
 
     new_pw = input("[+] Input new password: ")
     new_pw2 = input("[+] Confirm new password: ")

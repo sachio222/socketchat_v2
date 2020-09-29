@@ -12,8 +12,7 @@ def dispatch(sock: socket, msg: str) -> bytes:
     """
     if len(msg):
         if msg[0] == '/':  # Check for command
-            msg_bytes = ClientMsgHandler.user_command_router(sock=sock,
-                                                               msg=msg)
+            msg_bytes = ClientMsgHandler.user_command_router(sock=sock, msg=msg)
         else:
             msg_bytes = EncryptionHandler.encrypt(msg)
     else:

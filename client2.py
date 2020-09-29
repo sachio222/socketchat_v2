@@ -21,6 +21,7 @@ TARGET_PORT = configs.system["defaultPort"]
 
 USER_ID = ""
 
+
 class Client(ChatIO):
 
     def __init__(self):
