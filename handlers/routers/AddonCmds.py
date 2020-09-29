@@ -3,9 +3,10 @@ from addons import weather, urbandict, moon, mathfacts, maps, globe, wikip
 
 **************************************************************************
 To add an Addon:
-    Step 1: Import <addon>.py file. 
-    Step 2: Define function (can pass in split msg_parts).
-    Step 3: Add command as Key, and function name as Value to cmd_dict
+    Step 1: Create <addon>.py file in addons folder.
+    Step 2: Import <addon>.py file above.
+    Step 3: Define function (can pass in split msg_parts) (eg ["/cmd", "arg"])
+    Step 4: Add command to dispatch dict as key, and function name as value.
     **********************************************************************
 """
 
@@ -47,7 +48,7 @@ def run_wikipedia(*args, **kwargs):
     wikip.WikiArticle().run_from_cli(msg_parts)
 
 
-dispatch_cmds = {
+dispatch = {
     '/epic': run_epic,
     '/map': run_maps,
     '/mathfacts': run_mathfacts,
