@@ -25,7 +25,7 @@ class NaclCipher():
     @staticmethod
     def generate_keys(path: str = PATH,
                       prv_fn: str = 'private.key',
-                      pub_fn: str = 'public.key') -> (PrivateKey, PublicKey):
+                      pub_fn: str = 'public.key') -> tuple:
         """Generate and save key pair. Use Base64Encoder to write to bytes."""
 
         # Generate a private key.
@@ -45,7 +45,7 @@ class NaclCipher():
     def make_shared_key_from_new_box(self,
                                      pubk: PublicKey,
                                      prvk: PrivateKey = None,
-                                     box: Box = None) -> (bytes, Box):
+                                     box: Box = None) -> tuple:
         prvk = prvk or self.load_prv_key()
         prvk = self.decode_b64(prvk, 'private')
 
@@ -168,7 +168,7 @@ class NaclCipher():
     #=== Signing ===#
     def generate_signing_keys(self,
                               fn: str = 'signing.key'
-                             ) -> (SigningKey, VerifyKey):
+                             ) -> tuple:
         """Generates key for signing and authenticating.
         
         A valid digital signature gives a recipient reason to believe that the

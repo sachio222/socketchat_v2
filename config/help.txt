@@ -4,9 +4,9 @@
 -?- -----------------------------
 
 Accepted commands:
-=================
-
+==================
 /about - Encryptochat details.
+/encryption - Shows current <list>: shows all
 /exit or /close - Shuts down socket connectionn.
 /help - Shows this info (duhdoy!) 
 /ping or ping - Sends ping to server and get's response.
@@ -15,10 +15,8 @@ Accepted commands:
 /sendfile - Send file to chosen recipient by nickname.
 /status - Server status. Shows who is currently online.
 
-
 Add-ons:
-=======
-
+========
 /weather - Get weather from wttr.in. Usage: /weather <location> <command>
                 Location can be a city, coords, or an airport. If no location
                 is provided, it uses your ip location. Use 1line command to
