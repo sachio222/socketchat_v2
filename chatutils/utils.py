@@ -8,8 +8,10 @@ import socket
 import argon2
 import config.filepaths as paths
 
+
 def get_file_size(path: str):
     os.path.getsize(path)
+
 
 def countdown(secs=90, msg='-+- Try again in '):
     # util
@@ -89,7 +91,7 @@ def store_user(sock: socket,
         "public_key": new_user_dict.get("public_key", None) or public_key,
         "trusted": new_user_dict.get("trusted", None) or trusted
     }
-    
+
     users.__dict__[new_user_dict["nick"]] = new_user_dict
     users.update(paths.user_dict_path)
 

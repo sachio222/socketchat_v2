@@ -59,6 +59,7 @@ class ClientHand(ChatIO):
 
 
 class ServerHand(ChatIO):
+
     def __init__(self, sock, addr):
         self.onboard_new_client(sock, addr)
         # self.addr = addr
@@ -75,7 +76,6 @@ class ServerHand(ChatIO):
         else:
             self.resend_prompt(sock)
 
-
     def unique_user(self, new_user: dict) -> bool:
         if new_user["nick"] not in users.__dict__.keys():
             return True
@@ -83,12 +83,11 @@ class ServerHand(ChatIO):
             return False
 
     def store_user(self,
-                addr: tuple,
-                new_user: dict,
-                nick: str = None,
-                public_key: bytes = None,
-                trusted: list = None) -> dict:
-
+                   addr: tuple,
+                   new_user: dict,
+                   nick: str = None,
+                   public_key: bytes = None,
+                   trusted: list = None) -> dict:
         """SERVERSIDE USER DICT"""
         # try:
         #     users = utils.JSONLoader(paths.user_dict_path)
@@ -100,19 +99,18 @@ class ServerHand(ChatIO):
         # new_user = json.loads(new_user)
 
         # Fill structure with overrides or defaults.
-        new_user= {
+        new_user = {
             "nick": new_user.get("nick", None) or nick,
             "addr": new_user.get("addr", None) or addr,
             "public_key": new_user.get("public_key", None) or public_key,
             "trusted": new_user.get("trusted", None) or trusted
         }
-        
+
         users.__dict__[new_user["nick"]] = new_user
         users.update(paths.user_dict_path)
 
         return users.__dict__
 
-    
     def resend_prompt(self, sock: socket):
         msg_bytes = b"[x] User already exists. Try something else: "
         self.pack_n_send(sock, prefixes.server["handshake"], msg_bytes)

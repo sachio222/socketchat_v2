@@ -11,12 +11,13 @@ configs = utils.JSONLoader()
 3. return the message
 """
 
+
 def dispatch(sock: socket, msg_type: str) -> bytes:
     """Sorts through incoming data by prefix."""
     assert type(msg_type) == bytes, "Convert prefix to str"
     func = ClientCmds.dispatch.get(msg_type.decode(), ClientCmds.error)
     bytes_data = func(sock=sock, msg_type=msg_type)
-    
+
     return bytes_data
 
 

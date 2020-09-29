@@ -23,8 +23,10 @@ def _M_handler(sock: socket, *args, **kwargs):
 
     print(response.decode())
 
+
 def error(sock: socket, *args, **kwargs):
     print("Whoops. You did wrong, Sucka!")
+
 
 dispatch = {
     "a": None,

@@ -27,6 +27,7 @@ When to use:
 
 import argon2, binascii
 
+
 def raw_hash_with_salt(password: str = 'pw1234', salt: str = 'custom salt'):
     password = password.encode()
     salt = salt.encode()
@@ -40,12 +41,13 @@ def raw_hash_with_salt(password: str = 'pw1234', salt: str = 'custom salt'):
 
     print('Argon2 raw hash:', binascii.hexlify(hash))
 
-def passwordHasher(password:str = "pw1234", write = False):
+
+def passwordHasher(password: str = "pw1234", write=False):
     argon2Hasher = argon2.PasswordHasher(time_cost=16,
-                                        memory_cost=2**15,
-                                        parallelism=2,
-                                        hash_len=32,
-                                        salt_len=16)
+                                         memory_cost=2**15,
+                                         parallelism=2,
+                                         hash_len=32,
+                                         salt_len=16)
     hash = argon2Hasher.hash(password)
     # print("Argon2 hash (random salt):", hash)
 
@@ -58,5 +60,5 @@ def passwordHasher(password:str = "pw1234", write = False):
     #     argon2Hasher.verify(hash, 'wrong123')
     # except:
     #     print("Argon2 verify (incorrect password):", False)
-    
+
     return hash, argon2Hasher
