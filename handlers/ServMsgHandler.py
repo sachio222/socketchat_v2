@@ -5,11 +5,14 @@ from handlers.routers import ServerCmds
 configs = utils.JSONLoader()
 
 
-def dispatch(sock: socket, msg_type: str):
+def dispatch(sock: socket, msg_type: str) -> bytes:
     """Sorts through incoming data by prefix."""
     assert type(msg_type) == bytes, "Convert prefix to str"
+    print("msg_type:", msg_type)
     func = dispatch_cmds.get(msg_type.decode(), ServerCmds.error)
-    func(sock=sock, msg_type=msg_type)
+    bytes_data = func(sock=sock, msg_type=msg_type)
+
+    return bytes_data
 
 
 dispatch_cmds = {
@@ -26,7 +29,7 @@ dispatch_cmds = {
     "k": None,
     "l": None,
     "m": None,
-    "n": None,
+    "n": ServerCmds._n_handler,
     "o": None,
     "p": None,
     "q": None,
@@ -42,7 +45,7 @@ dispatch_cmds = {
     "A": None,
     "B": None,
     "C": ServerCmds._C_handler,
-    "D": None,
+    "D": ServerCmds._D_handler,
     "E": None,
     "F": None,
     "G": None,
