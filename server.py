@@ -70,7 +70,7 @@ class Server(ChatIO, Channel):
             with lock:
                 # Testing if with lock should work so msgs don't get
                 #       separated from type prefix
-                prefix_length = configs.system["prefixLength"]
+                prefix_length = configs.system["prefixLen"]
                 data = sock.recv(prefix_length)
 
                 # if not data:

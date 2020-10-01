@@ -14,7 +14,7 @@ from handlers import HandshakeHandler, InputHandler
 configs = utils.JSONLoader()
 prefixes = utils.JSONLoader(paths.prefix_path)
 
-PREFIX_LEN = configs.system["prefixLength"]
+PREFIX_LEN = configs.system["prefixLen"]
 BUFFER_LEN = configs.system["defaultBufferLen"]
 HEADER_LEN = configs.system["headerLen"]
 TARGET_HOST = configs.system["defaultHost"]

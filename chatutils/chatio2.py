@@ -5,6 +5,8 @@ from chatutils import utils
 configs = utils.JSONLoader()
 
 HEADER_LEN = configs.system["headerLen"]
+PREFIX_LEN = configs.system["prefixLen"]
+
 
 
 class ChatIO:
@@ -36,6 +38,15 @@ class ChatIO:
     def _make_header(self, size:int, header_len: int = HEADER_LEN):
         header = f'{size:<{header_len}}'
         return header
+
+
+    def revc_n_unpack(self, sock:socket, shed_pfx_len: int = 0) -> bytes:
+        if shed_pfx_len:
+            # Dump bytes into the ether.
+            sock.recv(shed_pfx_len)
+        data = self.unpack_data(sock)
+        return data
+        
 
     @classmethod
     def unpack_data(cls, sock: socket) -> bytes:
