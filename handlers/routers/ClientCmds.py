@@ -9,10 +9,15 @@ configs = utils.JSONLoader()
 
 BUFFER_LEN = configs.system["defaultBufferLen"]
 
+def _n_handler(sock: socket, *args, **kwargs):
+    # print("running nhandler")
+    bytes_data = ChatIO.unpack_data(sock)
+    return bytes_data
+
 def _H_handler(sock: socket, *args, **kwargs):
     bytes_data = ChatIO.unpack_data(sock)
-    configs.session["isUniqueId"] = False
-    configs.update()
+    # configs.session["isUniqueId"] = False
+    # configs.update()
     print(bytes_data)
     return bytes_data
 
@@ -63,7 +68,7 @@ dispatch = {
     "k": None,
     "l": None,
     "m": None,
-    "n": None,
+    "n": _n_handler,
     "o": None,
     "p": None,
     "q": None,

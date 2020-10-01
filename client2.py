@@ -38,7 +38,7 @@ class Client(ChatIO):
 
             configs = utils.JSONLoader()
             print(configs.session["isUniqueId"])
-            USER_ID = HandshakeHandler.ClientHand(sock).nick
+            # USER_ID = HandshakeHandler.ClientHand(sock).nick
             
             self.start_threads(sock)
 
@@ -57,7 +57,7 @@ class Client(ChatIO):
             # print(output_bytes)
 
             if output_bytes:
-                self.pack_n_send(sock, prefixes.client["msg"], output_bytes)
+                self.pack_n_send(sock, prefixes.client["chat"]["msg"], output_bytes)
 
             # if buffer == "upload":
             #     self.upload(sock)
@@ -120,4 +120,5 @@ def main():
 
 if __name__ == "__main__":
     client = Client()
+    print(prefixes.client["chat"]["cmd"])
     main()
