@@ -1,15 +1,15 @@
-from addons import weather, urbandict, moon, mathfacts, maps, globe, wikip
 """Routes all add-on commands.
 
 **************************************************************************
 To add an Addon:
     Step 1: Create <addon>.py file in addons folder.
-    Step 2: Import <addon>.py file above.
+    Step 2: Import <addon>.py file.
     Step 3: Define function (can pass in split msg_parts) (eg ["/cmd", "arg"])
     Step 4: Add command to dispatch dict as key, and function name as value.
     **********************************************************************
 """
 
+from addons import weather, urbandict, moon, mathfacts, maps, globe, wikip
 
 def run_epic(*args, **kwargs):
     globe.animate()

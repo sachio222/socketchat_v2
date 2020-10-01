@@ -1,5 +1,6 @@
 #!/usr/bin/ python3
 """Encryptochat 2.0"""
+from enum import unique
 from handlers import ClientMsgHandler
 import sys
 import socket
@@ -25,7 +26,8 @@ USER_ID = ""
 class Client(ChatIO):
 
     def __init__(self):
-        pass
+        configs.session["isUniqueId"] = False
+        configs.update()
 
     def connect(self):
         global USER_ID
@@ -34,8 +36,10 @@ class Client(ChatIO):
             sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             sock.connect((TARGET_HOST, TARGET_PORT))
 
+            configs = utils.JSONLoader()
+            print(configs.session["isUniqueId"])
             USER_ID = HandshakeHandler.ClientHand(sock).nick
-
+            
             self.start_threads(sock)
 
         except Exception as e:

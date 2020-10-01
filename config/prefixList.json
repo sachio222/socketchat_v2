@@ -6,7 +6,8 @@
         "handshake": "H",
         "msg": "M",
         "pubk": "k",
-        "nick": "n"
+        "nick": "n",
+        "welcome": "W"
     },
 
     "server": {

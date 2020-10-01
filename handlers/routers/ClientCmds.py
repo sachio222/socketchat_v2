@@ -3,9 +3,25 @@ import socket
 from chatutils import utils
 from chatutils.chatio2 import ChatIO
 
+from handlers import HandshakeHandler
+
 configs = utils.JSONLoader()
 
 BUFFER_LEN = configs.system["defaultBufferLen"]
+
+def _H_handler(sock: socket, *args, **kwargs):
+    bytes_data = ChatIO.unpack_data(sock)
+    configs.session["isUniqueId"] = False
+    configs.update()
+    print(bytes_data)
+    return bytes_data
+
+def _W_handler(sock: socket, *args, **kwargs):
+    bytes_data = ChatIO.unpack_data(sock)
+    configs.session["isUniqueId"] = True
+    configs.update()
+    print(bytes_data)
+    return bytes_data
 
 
 def _M_handler(sock: socket, *args, **kwargs) -> bytes:
@@ -67,7 +83,7 @@ dispatch = {
     "E": None,
     "F": None,
     "G": None,
-    "H": _M_handler,
+    "H": _H_handler,
     "I": None,
     "J": None,
     "K": None,
@@ -82,7 +98,7 @@ dispatch = {
     "T": None,
     "U": None,
     "V": None,
-    "W": None,
+    "W": _W_handler,
     "X": None,
     "Y": None,
     "Z": None,
