@@ -6,7 +6,7 @@
         "defaultBufferLen": 4096,
         "defaultHost": "127.0.0.1",
         "defaultPort": 12222,
-        "prefixLength": 1,
+        "prefixLen": 1,
         "headerLen": 10
     }
 }

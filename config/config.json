@@ -3,16 +3,18 @@
     "introduced": false,
     "muted": true,
     "session": {
-        "isUniqueId": true
+        "isUniqueId": false
     },
     "system": {
         "defaultBufferLen": 4096,
         "defaultHost": "127.0.0.1",
         "defaultPort": 12222,
-        "prefixLength": 1,
+        "prefixLen": 1,
         "headerLen": 10
     },
     "msgs": {
+        "getNick": "What's your handle: @",
+        "getNickErr": "Handle needs at least one character. Try again.",
         "welcome": "You're in. Welcome to the underground."
     }
 }

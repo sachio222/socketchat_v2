@@ -12,7 +12,7 @@ configs = utils.JSONLoader()
 users = utils.JSONLoader(paths.user_dict_path)
 
 BUFFER_LEN = configs.system["defaultBufferLen"]
-PREFIX_LEN = configs.system["prefixLength"]
+PREFIX_LEN = configs.system["prefixLen"]
 HOST = configs.system["defaultHost"]
 PORT = configs.system["defaultPort"]
 ADDR = (HOST, PORT)
@@ -24,14 +24,16 @@ def accept_client(server):
         client_socket, addr = server.accept()
         socket_list.append(client_socket)
         print(f"Connected to {addr}")
+
         HandshakeHandler.ServerHand(client_socket, addr)
+        
         #TODO: Move inside handshake.
         # welcome_msg = f"Welcome to {ADDR}"
         # client_socket.send(welcome_msg.encode())
 
         client_thread = Thread(target=handle_client,
-                               args=(client_socket,),
-                               daemon=True)
+                            args=(client_socket,),
+                            daemon=True)
         client_thread.start()
         # utils.delete_user("Will")
 
