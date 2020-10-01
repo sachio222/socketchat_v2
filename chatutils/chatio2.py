@@ -40,10 +40,10 @@ class ChatIO:
         return header
 
 
-    def revc_n_unpack(self, sock:socket, shed_pfx_len: int = 0) -> bytes:
-        if shed_pfx_len:
+    def revc_n_unpack(self, sock:socket, shed_pfx: bool = False) -> bytes:
+        if shed_pfx:
             # Dump bytes into the ether.
-            sock.recv(shed_pfx_len)
+            sock.recv(PREFIX_LEN)
         data = self.unpack_data(sock)
         return data
         

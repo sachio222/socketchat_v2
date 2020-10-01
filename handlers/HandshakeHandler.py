@@ -2,6 +2,9 @@
 ## CHECK IF NAME UNIQUE, ACCEPT / REASK
 ## GENERATE PUBLIC KEYS
 ## SEND PUBLIC KEYS
+
+
+
 from enum import unique
 import json
 # from server2 import onboard_new_client
@@ -28,11 +31,14 @@ PREFIX_LEN = configs.system["prefixLen"]
 class ClientHand(ChatIO):
 
     def __init__(self, sock: socket):
-        self.nick = self.onboard_to_server(sock)
+        self.sock = sock
+        self.nick = self.onboard_to_server()
 
-    def onboard_to_server(self, sock: socket):
+    def onboard_to_server(self):
         handshake_payload = {}
-        nick = "Jake"
+        data = self.revc_n_unpack(self.sock, shed_pfx=True)
+
+        print(data)
         
 
 
@@ -53,7 +59,7 @@ class ClientHand(ChatIO):
         return pubk
 
     def send_payload(self, sock: socket, payload: bytes):
-        self.pack_n_send(sock, prefixes.client["data"], payload)
+        self.pack_n_send(sock, prefixes.client["chat"]["data"], payload)
 
         # If keys don't exist, make them with encryption
         # Have keys
@@ -84,8 +90,8 @@ class ServerHand(ChatIO):
 
     def set_client_data(self):
         unique = False
-        self.pack_n_send(self.sock, prefixes.server["nick"], configs.msgs["getNick"])
-
+        self.send_nick_prompt()
+        
         while not unique:
             user_name = self.revc_n_unpack(self.sock, shed_pfx_len=PREFIX_LEN)
             print(user_name)
@@ -98,9 +104,13 @@ class ServerHand(ChatIO):
         else:
             return False
 
+    def send_nick_prompt(self):
+        self.pack_n_send(self.sock, prefixes.server["handshake"]["nick"], configs.msgs["getNick"])
+        
+
     def resend_prompt(self):
         msg_bytes = b"[x] User already exists. Try something else: "
-        self.pack_n_send(self.sock, prefixes.server["handshake"], msg_bytes)
+        self.pack_n_send(self.sock, prefixes.server["chat"]["handshake"], msg_bytes)
     
     
     def store_user(self,
@@ -134,5 +144,5 @@ class ServerHand(ChatIO):
 
 
     def send_welcome(self):
-        self.pack_n_send(self.sock, prefixes.server["welcome"],
+        self.pack_n_send(self.sock, prefixes.server["handshake"]["welcome"],
                          configs.msgs["welcome"])

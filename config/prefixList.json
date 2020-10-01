@@ -1,23 +1,33 @@
 {
     "client": {
-        "cmd": "C",
-        "data": "D",
-        "default": "M",
-        "handshake": "H",
-        "msg": "M",
-        "pubk": "k",
-        "nick": "n",
-        "welcome": "W"
+        "chat" :{
+            "cmd": "C",
+            "data": "D",
+            "default": "M",
+            "handshake": "H",
+            "msg": "M",
+            "pubk": "k"
+        },
+        "handshake" :{
+            "nick": "N",
+            "welcome": "W"
+        }
+
     },
 
     "server": {
-        "cmd": "C",
-        "data": "D",
-        "default": "M",
-        "handshake": "H",
-        "msg": "M",
-        "pubk": "k",
-        "nick": "n",
-        "welcome": "W"
+        "chat": {
+            "cmd": "C",
+            "data": "D",
+            "default": "M",
+            "handshake": "H",
+            "msg": "M",
+            "pubk": "k"
+        },
+        "handshake": {
+            "nick": "n",
+            "welcome": "W"
+        }
+        
     }
 }
