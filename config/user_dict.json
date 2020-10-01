@@ -367,5 +367,41 @@
         ],
         "public_key": "C034Z2v4h+DctqY45O56Aqcw91qyUD6XuvFkUgYLuRU=",
         "trusted": null
+    },
+    "oko": {
+        "nick": "oko",
+        "addr": [
+            "127.0.0.1",
+            57532
+        ],
+        "public_key": "mQxKw5FnTklnbK6oE+r0SHLVBxAZGhNTB/t8IuMj21o=",
+        "trusted": null
+    },
+    "Jake342": {
+        "nick": "Jake342",
+        "addr": [
+            "127.0.0.1",
+            62656
+        ],
+        "public_key": "Cb/ofOCVPrEqnoQZ2vuadKOuhsbEnQ4rfDKMV4UIDxE=",
+        "trusted": null
+    },
+    "asdfas": {
+        "nick": "asdfas",
+        "addr": [
+            "127.0.0.1",
+            63080
+        ],
+        "public_key": "vKXhzOJeOXoYy+uhtStef3Rvgo6tb2cEXyqXkfG/U2w=",
+        "trusted": null
+    },
+    "sfasdfasdf": {
+        "nick": "sfasdfasdf",
+        "addr": [
+            "127.0.0.1",
+            63153
+        ],
+        "public_key": "OvZDTHzrQpSPBM5DmrYfsBFibDLXEe5A0HpFWJfg0Dk=",
+        "trusted": null
     }
 }

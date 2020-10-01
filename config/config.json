@@ -1,7 +1,10 @@
 {
-    "cipher": "chacha",
+    "cipher": "fernet",
     "introduced": false,
     "muted": true,
+    "session": {
+        "isUniqueId": true
+    },
     "system": {
         "defaultBufferLen": 4096,
         "defaultHost": "127.0.0.1",
@@ -10,7 +13,6 @@
         "headerLen": 10
     },
     "msgs": {
-        "welcome2": "f'Welcome to {ADDR}'",
         "welcome": "You're in. Welcome to the underground."
     }
 }

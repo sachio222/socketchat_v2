@@ -29,12 +29,10 @@ class ClientHand(ChatIO):
 
     def __init__(self, sock: socket):
         self.nick = self.onboard_to_server(sock)
-        self.UNIQUE_FLAG = False
 
     def onboard_to_server(self, sock: socket):
         handshake_payload = {}
 
-        # while not self.UNIQUE_FLAG:
         nick = handshake_payload["nick"] = self.request_nick()
         handshake_payload["public_key"] = self.create_public_key().decode()
         handshake_payload = json.dumps(handshake_payload)
@@ -118,5 +116,5 @@ class ServerHand(ChatIO):
         self.pack_n_send(sock, prefixes.server["handshake"], msg_bytes)
 
     def send_welcome(self, sock: socket):
-        self.pack_n_send(sock, prefixes.server["msg"],
+        self.pack_n_send(sock, prefixes.server["welcome"],
                          configs.msgs["welcome"])

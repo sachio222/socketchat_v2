@@ -1,3 +1,4 @@
+import json
 import socket
 from chatutils import utils
 
@@ -27,13 +28,14 @@ class ChatIO:
             pass
 
         # data = data + "\n"
-
-        # if typ_pfx == "M":
         size = len(data)
-
-        header = f'{size:<{configs.system["headerLen"]}}'
+        header = self._make_header(size)
         packed_data = f"{typ_pfx}{header}{data}"
         return packed_data.encode()
+
+    def _make_header(self, size:int, header_len: int = HEADER_LEN):
+        header = f'{size:<{header_len}}'
+        return header
 
     @classmethod
     def unpack_data(cls, sock: socket) -> bytes:
