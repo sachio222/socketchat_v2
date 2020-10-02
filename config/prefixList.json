@@ -26,6 +26,7 @@
         },
         "handshake": {
             "nick": "n",
+            "unique": "u",
             "welcome": "W"
         }
         

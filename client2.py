@@ -6,7 +6,7 @@ import sys
 import socket
 from threading import Thread
 import config.filepaths as paths
-from chatutils import utils
+from chatutils import utils, channel2
 from chatutils.chatio2 import ChatIO
 
 from handlers import HandshakeHandler, InputHandler
@@ -36,9 +36,10 @@ class Client(ChatIO):
             sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             sock.connect((TARGET_HOST, TARGET_PORT))
 
-            configs = utils.JSONLoader()
-            print(configs.session["isUniqueId"])
-            # USER_ID = HandshakeHandler.ClientHand(sock).nick
+            configs.reload()
+            # print(configs.session["isUniqueId"])
+
+            USER_ID = HandshakeHandler.ClientSide(sock).nick
             
             self.start_threads(sock)
 
@@ -98,7 +99,7 @@ class Client(ChatIO):
 
                 # print(response.decode())
 
-        self.killit(sock)
+        channel2.killit(sock)
 
     def start_threads(self, sock):
         listening_thread = Thread(target=self.listen, args=(sock,))
@@ -108,11 +109,6 @@ class Client(ChatIO):
         sending_thread = Thread(target=self.send, args=(sock,), daemon=True)
         sending_thread.start()
 
-    def killit(self, sock):
-        sock.close()
-        print("Server Disconnected.")
-        sys.exit()
-
 
 def main():
     client.connect()
@@ -120,5 +116,4 @@ def main():
 
 if __name__ == "__main__":
     client = Client()
-    print(prefixes.client["chat"]["cmd"])
     main()

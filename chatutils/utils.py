@@ -62,6 +62,8 @@ class JSONLoader():
         with open(path, 'w') as f:
             json.dump(self.__dict__, f, indent=4)
 
+    reload = load
+
     @property
     def dict(self):
         """Access class as dict."""
