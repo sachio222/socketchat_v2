@@ -33,9 +33,10 @@ def _H_handler(sock: socket, *args, **kwargs) -> bytes:
 
 def _M_handler(sock: socket, *args, **kwargs) -> bytes:
     """DEFAULT MESSAGE HANDLER"""
+    client_list = kwargs["client_list"]
     msg_bytes = ChatIO.unpack_data(sock)
     print(msg_bytes.decode())
-    # ChatIO.broadcast(sock, user_dict)
+    ChatIO().broadcast(sock, client_list, msg_bytes)
     return msg_bytes
 
 

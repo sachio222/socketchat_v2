@@ -1,12 +1,11 @@
 import socket, json
-from chatutils import utils, channel2
+from chatutils import utils
 from chatutils.chatio2 import ChatIO
 from lib.encryption import CipherTools
 
 from handlers.routers import HandshakeCmds
 
 import config.filepaths as paths
-
 configs = utils.JSONLoader()
 prefixes = utils.JSONLoader(paths.prefix_path)
 users = utils.JSONLoader(paths.user_dict_path)
