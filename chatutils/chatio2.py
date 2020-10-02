@@ -2,8 +2,11 @@ import json
 import socket
 from types import ModuleType
 from chatutils import utils
+import config.filepaths as paths
 
 configs = utils.JSONLoader()
+prefixes = utils.JSONLoader(paths.prefix_path)
+users = utils.JSONLoader(paths.user_dict_path)
 
 HEADER_LEN = configs.dict["system"]["headerLen"]
 PREFIX_LEN = configs.dict["system"]["prefixLen"]
@@ -73,6 +76,7 @@ class ChatIO:
         # msg = msg.rstrip()
         return msg
 
-    @classmethod
-    def broadcast(cls, sock: socket, socket_dict: dict):
-        print(socket_dict)
+    def broadcast(self, send_sock: socket, client_list: dict, msg_bytes: bytes):
+        for client in client_list:
+            if client != send_sock:
+                self.pack_n_send(client, prefixes.dict["server"]["chat"]["default"], msg_bytes)

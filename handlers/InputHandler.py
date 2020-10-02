@@ -1,5 +1,4 @@
 import socket
-from chatutils import utils
 from handlers import EncryptionHandler, ClientMsgHandler
 
 

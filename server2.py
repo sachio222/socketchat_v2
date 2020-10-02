@@ -19,7 +19,7 @@ PREFIX_LEN = configs.dict["system"]["prefixLen"]
 HOST = configs.dict["system"]["defaultHost"]
 PORT = configs.dict["system"]["defaultPort"]
 ADDR = (HOST, PORT)
-socket_list = []
+client_list = []
 
 
 def accept_client(server):
@@ -27,16 +27,22 @@ def accept_client(server):
 
     while True:
         client_socket, addr = server.accept()
-        socket_list.append(client_socket)
+        client_list.append(client_socket)
         print(f"Connected to {addr}")
-        
         user, users = HandshakeHandler.ServerSide(client_socket, addr).user
+        
+        # handshake_thread = Thread(target=handshake, args=(client_socket, addr, ), daemon=True)
+        # handshake_thread.start()
 
         client_thread = Thread(target=handle_client,
                                args=(client_socket,),
                                daemon=True)
         client_thread.start()
         # utils.delete_user("Will")
+
+def handshake(client_socket, addr):
+    user, users = HandshakeHandler.ServerSide(client_socket, addr).user
+    return user, users
 
 
 def handle_client(client_socket):
@@ -46,7 +52,7 @@ def handle_client(client_socket):
             print(user["nick"])
             utils.delete_user(user["nick"])
             break
-        ServMsgHandler.dispatch(client_socket, msg_type)
+        ServMsgHandler.dispatch(client_socket, msg_type, client_list=client_list)
 
     client_socket.close()
 
