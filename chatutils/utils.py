@@ -47,27 +47,63 @@ def split_path_ext(path):
     return main, ext
 
 
+# class JSONLoader():
+#     """Loads and updates config.json file listed in config/filepaths.py"""
+
+#     def __init__(self, path=paths.json_path):
+#         self.load(path)
+
+#     def load(self, path=paths.json_path):
+#         with open(path) as f:
+#             json_file = json.load(f)
+#             self.__dict__.update(json_file)
+
+#     def update(self, path=paths.json_path):
+#         with open(path, 'w') as f:
+#             json.dump(self.__dict__, f, indent=4)
+
+#     def empty(self, path=paths.json_path):
+#         with open(path, 'w') as f:
+#             json.dump(self.__dict__.setdefault("", ""), f, indent=4)
+
+#     def reset(self, path=paths.default_json):
+#         with open(path) as f:
+#             default = json.load(f)
+#             self.__dict__.update(default)
+
+    # @property
+    # def dict(self):
+    #     """Access class as dict."""
+    #     self.__dict__
+
 class JSONLoader():
-    """Loads and updates config.json file listed in config/filepaths.py"""
+    def __init__(self, path=paths.config_path):
+        self.dict = {}
+        self.path = path
+        try:
+            self.dict = self.load()
+        except:
+            self.dict = {}
+            self.dict = self.update()
 
-    def __init__(self, path=paths.json_path):
-        self.load(path)
+    def load(self):
+        with open(self.path) as f:
+            json_file = json.load(f)
+        return json_file
 
-    def load(self, path=paths.json_path):
-        with open(path) as f:
-            configs = json.load(f)
-            self.__dict__.update(configs)
+    def reload(self):
+            self.dict = self.load()
 
-    def update(self, path=paths.json_path):
-        with open(path, 'w') as f:
-            json.dump(self.__dict__, f, indent=4)
+    def update(self):
+        with open(self.path, "w") as f:
+            json.dump(self.dict, f, indent=4)
+        self.reload()
+    
+    def clear(self):
+        self.dict = {}
+        with open(self.path, "w") as f:
+            json.dump(self.dict, f)
 
-    reload = load
-
-    @property
-    def dict(self):
-        """Access class as dict."""
-        self.__dict__
 
 
 def store_user(sock: socket,
@@ -94,13 +130,13 @@ def store_user(sock: socket,
         "trusted": new_user_dict.get("trusted", None) or trusted
     }
 
-    users.__dict__[new_user_dict["nick"]] = new_user_dict
-    users.update(paths.user_dict_path)
+    users.dict[new_user_dict["nick"]] = new_user_dict
+    users.update()
 
-    return users.__dict__
+    return users.dict
 
 
 def delete_user(nick: str):
     user_dict = JSONLoader(paths.user_dict_path)
-    del user_dict.__dict__[nick]
-    user_dict.update(paths.user_dict_path)
+    del user_dict.dict[nick]
+    user_dict.update()

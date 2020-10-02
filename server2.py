@@ -10,24 +10,27 @@ import config.filepaths as paths
 
 configs = utils.JSONLoader()
 users = utils.JSONLoader(paths.user_dict_path)
+users.clear()
+users.reload()
 
-BUFFER_LEN = configs.system["defaultBufferLen"]
-PREFIX_LEN = configs.system["prefixLen"]
-HOST = configs.system["defaultHost"]
-PORT = configs.system["defaultPort"]
+
+BUFFER_LEN = configs.dict["system"]["defaultBufferLen"]
+PREFIX_LEN = configs.dict["system"]["prefixLen"]
+HOST = configs.dict["system"]["defaultHost"]
+PORT = configs.dict["system"]["defaultPort"]
 ADDR = (HOST, PORT)
 socket_list = []
 
 
 def accept_client(server):
-    global users
+    global user, users
 
     while True:
         client_socket, addr = server.accept()
         socket_list.append(client_socket)
         print(f"Connected to {addr}")
-
-        users = HandshakeHandler.ServerSide(client_socket, addr).user
+        
+        user, users = HandshakeHandler.ServerSide(client_socket, addr).user
 
         client_thread = Thread(target=handle_client,
                                args=(client_socket,),
@@ -40,6 +43,8 @@ def handle_client(client_socket):
     while True:
         msg_type = client_socket.recv(PREFIX_LEN)
         if not msg_type:
+            print(user["nick"])
+            utils.delete_user(user["nick"])
             break
         ServMsgHandler.dispatch(client_socket, msg_type)
 
@@ -47,6 +52,7 @@ def handle_client(client_socket):
 
 
 def main():
+    
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     server.bind(ADDR)

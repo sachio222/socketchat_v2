@@ -14,11 +14,11 @@ from handlers import HandshakeHandler, InputHandler
 configs = utils.JSONLoader()
 prefixes = utils.JSONLoader(paths.prefix_path)
 
-PREFIX_LEN = configs.system["prefixLen"]
-BUFFER_LEN = configs.system["defaultBufferLen"]
-HEADER_LEN = configs.system["headerLen"]
-TARGET_HOST = configs.system["defaultHost"]
-TARGET_PORT = configs.system["defaultPort"]
+PREFIX_LEN = configs.dict["system"]["prefixLen"]
+BUFFER_LEN = configs.dict["system"]["defaultBufferLen"]
+HEADER_LEN = configs.dict["system"]["headerLen"]
+TARGET_HOST = configs.dict["system"]["defaultHost"]
+TARGET_PORT = configs.dict["system"]["defaultPort"]
 
 USER_ID = ""
 
@@ -26,8 +26,7 @@ USER_ID = ""
 class Client(ChatIO):
 
     def __init__(self):
-        configs.session["isUniqueId"] = False
-        configs.update()
+        pass
 
     def connect(self):
         global USER_ID
@@ -37,8 +36,6 @@ class Client(ChatIO):
             sock.connect((TARGET_HOST, TARGET_PORT))
 
             configs.reload()
-            # print(configs.session["isUniqueId"])
-
             USER_ID = HandshakeHandler.ClientSide(sock).nick
 
             self.start_threads(sock)
@@ -58,7 +55,7 @@ class Client(ChatIO):
             # print(output_bytes)
 
             if output_bytes:
-                self.pack_n_send(sock, prefixes.client["chat"]["msg"],
+                self.pack_n_send(sock, prefixes.dict["client"]["chat"]["msg"],
                                  output_bytes)
 
             # if buffer == "upload":

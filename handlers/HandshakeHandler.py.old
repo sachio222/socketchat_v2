@@ -23,8 +23,8 @@ configs = utils.JSONLoader()
 prefixes = utils.JSONLoader(paths.prefix_path)
 users = utils.JSONLoader(paths.user_dict_path)
 
-BUFFER_LEN = configs.system["defaultBufferLen"]
-PREFIX_LEN = configs.system["prefixLen"]
+BUFFER_LEN = configs.dict["system"]["defaultBufferLen"]
+PREFIX_LEN = configs.dict["system"]["prefixLen"]
 
 def dispatch()
 
@@ -59,7 +59,7 @@ class ClientHand(ChatIO):
         return pubk
 
     def send_payload(self, sock: socket, payload: bytes):
-        self.pack_n_send(sock, prefixes.client["chat"]["data"], payload)
+        self.pack_n_send(sock, prefixes.dict["client"]["chat"]["data"], payload)
 
         # If keys don't exist, make them with encryption
         # Have keys
@@ -105,12 +105,12 @@ class ServerHand(ChatIO):
             return False
 
     def send_nick_prompt(self):
-        self.pack_n_send(self.sock, prefixes.server["handshake"]["nick"], configs.msg["getNick"])
+        self.pack_n_send(self.sock, prefixes.dict["server"]["handshake"]["nick"], configs.dict["msg"]["getNick"])
         
 
     def resend_prompt(self):
         msg_bytes = b"[x] User already exists. Try something else: "
-        self.pack_n_send(self.sock, prefixes.server["chat"]["handshake"], msg_bytes)
+        self.pack_n_send(self.sock, prefixes.dict["server"]["chat"]["handshake"], msg_bytes)
     
     
     def store_user(self,
@@ -144,5 +144,5 @@ class ServerHand(ChatIO):
 
 
     def send_welcome(self):
-        self.pack_n_send(self.sock, prefixes.server["handshake"]["welcome"],
-                         configs.msg["welcome"])
+        self.pack_n_send(self.sock, prefixes.dict["server"]["handshake"]["welcome"],
+                         configs.dict["msg"]["welcome"])

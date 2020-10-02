@@ -6,7 +6,7 @@ import socket
 from chatutils import utils
 configs = utils.JSONLoader()
 
-BUFFER_LEN = configs.system["defaultBufferLen"]
+BUFFER_LEN = configs.dict["system"]["defaultBufferLen"]
 
 
 def download(client_socket):

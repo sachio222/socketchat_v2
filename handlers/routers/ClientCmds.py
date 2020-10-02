@@ -7,7 +7,7 @@ from handlers import HandshakeHandler
 
 configs = utils.JSONLoader()
 
-BUFFER_LEN = configs.system["defaultBufferLen"]
+BUFFER_LEN = configs.dict["system"]["defaultBufferLen"]
 
 
 def _n_handler(sock: socket, *args, **kwargs):
@@ -18,8 +18,6 @@ def _n_handler(sock: socket, *args, **kwargs):
 
 def _H_handler(sock: socket, *args, **kwargs):
     bytes_data = ChatIO.unpack_data(sock)
-    # configs.session["isUniqueId"] = False
-    # configs.update()
     print(bytes_data)
     return bytes_data
 

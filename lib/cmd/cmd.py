@@ -5,7 +5,7 @@ from chatutils import utils
 from chatutils.chatio2 import ChatIO
 
 configs = utils.JSONLoader()
-HEADER_LEN = configs.system["headerLen"]
+HEADER_LEN = configs.dict["system"]["headerLen"]
 
 
 def commands(client_socket):

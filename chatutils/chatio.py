@@ -19,7 +19,7 @@ class ChatIO(Chime, Colors):
     def __init__(self, muted=False):
         super(ChatIO, self).__init__()
         self.aes = AES256Cipher()
-        self.MAX_MSG_BYTES_LEN = configs.system["maxMsgBytesLen"]
+        self.MAX_MSG_BYTES_LEN = configs.dict["system"]["maxMsgBytesLen"]
         self.muted = muted
         # Get color dicts
         self.style = self.set_style()

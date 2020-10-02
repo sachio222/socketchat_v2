@@ -5,8 +5,8 @@ from chatutils import utils
 
 configs = utils.JSONLoader()
 
-HEADER_LEN = configs.system["headerLen"]
-PREFIX_LEN = configs.system["prefixLen"]
+HEADER_LEN = configs.dict["system"]["headerLen"]
+PREFIX_LEN = configs.dict["system"]["prefixLen"]
 
 
 class ChatIO:
@@ -65,7 +65,11 @@ class ChatIO:
     def unpack_data(cls, sock: socket) -> bytes:
         """UNPACK DATA"""
         msg_len = sock.recv(HEADER_LEN)
-        msg = sock.recv(int(msg_len))
+        try:
+            msg = sock.recv(int(msg_len))
+        except:
+            msg = ""
+
         # msg = msg.rstrip()
         return msg
 

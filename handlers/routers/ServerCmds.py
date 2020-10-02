@@ -5,7 +5,7 @@ from handlers import HandshakeHandler
 from lib.cmd import cmd
 
 configs = utils.JSONLoader()
-HEADER_LEN = configs.system["headerLen"]
+HEADER_LEN = configs.dict["system"]["headerLen"]
 
 
 def _n_handler(sock: socket, *args, **kwargs) -> bytes:

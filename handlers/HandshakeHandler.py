@@ -11,8 +11,8 @@ configs = utils.JSONLoader()
 prefixes = utils.JSONLoader(paths.prefix_path)
 users = utils.JSONLoader(paths.user_dict_path)
 
-BUFFER_LEN = configs.system["defaultBufferLen"]
-PREFIX_LEN = configs.system["prefixLen"]
+BUFFER_LEN = configs.dict["system"]["defaultBufferLen"]
+PREFIX_LEN = configs.dict["system"]["prefixLen"]
 
 
 class ClientSide(ChatIO):
@@ -26,18 +26,20 @@ class ClientSide(ChatIO):
         unique = "False"  # Can't send bool over socket.
 
         while unique == "False":
-            # 1. Receive server prompt
-            prompt = self.recv_n_unpack(self.sock, shed_pfx=True).decode()
+            try:
+                # 1. Receive server prompt
+                prompt = self.recv_n_unpack(self.sock, shed_pfx=True).decode()
 
-            # 2. Pack payload (user, keys, etc)
-            payload, nick = self._create_payload(prompt)
+                # 2. Pack payload (user, keys, etc)
+                payload, nick = self._create_payload(prompt)
 
-            # 3. Send Payload.
-            self.send_payload(self.sock, payload)
+                # 3. Send Payload.
+                self.send_payload(self.sock, payload)
 
-            # 4. Receive uniqueness.
-            unique = self.recv_n_unpack(self.sock, HandshakeCmds).decode()
-
+                # 4. Receive uniqueness.
+                unique = self.recv_n_unpack(self.sock, HandshakeCmds).decode()
+            except:
+                pass
         return nick
 
     def show_nick_request(self, prompt: str) -> str:
@@ -54,7 +56,7 @@ class ClientSide(ChatIO):
         if nick != "":
             return True
         else:
-            print(configs.msg["getNickErr"])
+            print(configs.dict["msg"]["getNickErr"])
             return False
 
     def _create_payload(self, prompt: str) -> tuple:
@@ -70,10 +72,12 @@ class ClientSide(ChatIO):
         return pubk
 
     def send_payload(self, sock: socket, payload: bytes):
-        self.pack_n_send(sock, prefixes.client["chat"]["data"], payload)
+        self.pack_n_send(sock, prefixes.dict["client"]["chat"]["data"], payload)
 
 
 class ServerSide(ChatIO):
+
+    users.reload()
 
     def __init__(self, sock: socket, addr: tuple):
         self.sock = sock
@@ -92,7 +96,7 @@ class ServerSide(ChatIO):
             # 1. Get nick
             if first_request:
                 user = self.send_nick_request()
-                first_request = False
+                first_request = False   
             else:
                 user = self.resend_nick_request()
             user = json.loads(user)
@@ -101,35 +105,40 @@ class ServerSide(ChatIO):
             unique = self.is_unique(user)
 
         self.send_welcome_msg()
-        user = self.store_user(self.addr, user)
-        return user
+        users = self.store_user(self.addr, user)
+        return user, users
 
     def send_nick_request(self) -> bytes:
         # Goes to handler
-        self.pack_n_send(self.sock, prefixes.server["handshake"]["nick"],
-                         configs.msg["getNick"])
+        self.pack_n_send(self.sock, prefixes.dict["server"]["handshake"]["nick"],
+                         configs.dict["msg"]["getNick"])
         user_json = self.recv_n_unpack(self.sock, shed_pfx=True)
         return user_json
 
     def resend_nick_request(self):
-        self.pack_n_send(self.sock, prefixes.server["handshake"]["nick"],
-                         configs.msg["getNickAgain"])
+        self.pack_n_send(self.sock, prefixes.dict["server"]["handshake"]["nick"],
+                         configs.dict["msg"]["getNickAgain"])
         user_json = self.recv_n_unpack(self.sock, shed_pfx=True)
         return user_json
 
     def is_unique(self, new_user: dict) -> bool:
-        print(new_user)
-        if new_user["nick"] not in users.__dict__.keys():
+        users.reload()
+
+        try:
+            if new_user["nick"] not in users.dict.keys():
+                unique = "True"
+            else:
+                unique = "False"
+        except:
             unique = "True"
-        else:
-            unique = "False"
-        self.pack_n_send(self.sock, prefixes.server["handshake"]["unique"],
+
+        self.pack_n_send(self.sock, prefixes.dict["server"]["handshake"]["unique"],
                          unique.encode())
         return unique
 
     def send_welcome_msg(self):
-        self.pack_n_send(self.sock, prefixes.server["handshake"]["welcome"],
-                         configs.msg["welcome"])
+        self.pack_n_send(self.sock, prefixes.dict["server"]["handshake"]["welcome"],
+                         configs.dict["msg"]["welcome"])
 
     def store_user(self,
                    addr: tuple,
@@ -141,12 +150,12 @@ class ServerSide(ChatIO):
 
         new_user = {
             "nick": new_user.get("nick", None) or nick,
-            "addr": new_user.get("addr", None) or self.addr,
+            "addr": new_user.get("addr", None) or addr,
             "public_key": new_user.get("public_key", None) or public_key,
             "trusted": new_user.get("trusted", None) or trusted
         }
 
-        users.__dict__[new_user["nick"]] = new_user
-        users.update(paths.user_dict_path)
+        users.dict[new_user["nick"]] = new_user
+        users.update()
 
-        return users.__dict__
+        return users.dict
