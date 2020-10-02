@@ -11,6 +11,7 @@ To add an Addon:
 
 from addons import weather, urbandict, moon, mathfacts, maps, globe, wikip
 
+
 def run_epic(*args, **kwargs):
     globe.animate()
 

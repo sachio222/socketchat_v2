@@ -9,7 +9,6 @@ HEADER_LEN = configs.system["headerLen"]
 PREFIX_LEN = configs.system["prefixLen"]
 
 
-
 class ChatIO:
 
     def __init__(self):
@@ -36,12 +35,11 @@ class ChatIO:
         packed_data = f"{typ_pfx}{header}{data}"
         return packed_data.encode()
 
-    def _make_header(self, size:int, header_len: int = HEADER_LEN):
+    def _make_header(self, size: int, header_len: int = HEADER_LEN):
         header = f'{size:<{header_len}}'
         return header
 
-
-    def recv_n_unpack(self, sock: socket, shed_pfx: bool=False) -> bytes:
+    def recv_n_unpack(self, sock: socket, shed_pfx: bool = False) -> bytes:
         if shed_pfx:
             # Dump bytes into the ether.
             sock.recv(PREFIX_LEN)
@@ -54,14 +52,14 @@ class ChatIO:
         bytes_data = self.dispatch(sock, msg_type, cmd_module)
         return bytes_data
 
-    def dispatch(self, sock: socket, msg_type: str, cmd_module: ModuleType) -> bytes:
+    def dispatch(self, sock: socket, msg_type: str,
+                 cmd_module: ModuleType) -> bytes:
         """Sorts through incoming data by prefix."""
         assert type(msg_type) == bytes, "Convert prefix to str"
         func = cmd_module.dispatch.get(msg_type.decode(), cmd_module.error)
         bytes_data = func(sock=sock, msg_type=msg_type)
 
         return bytes_data
-        
 
     @classmethod
     def unpack_data(cls, sock: socket) -> bytes:

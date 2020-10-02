@@ -40,7 +40,7 @@ class Client(ChatIO):
             # print(configs.session["isUniqueId"])
 
             USER_ID = HandshakeHandler.ClientSide(sock).nick
-            
+
             self.start_threads(sock)
 
         except Exception as e:
@@ -58,7 +58,8 @@ class Client(ChatIO):
             # print(output_bytes)
 
             if output_bytes:
-                self.pack_n_send(sock, prefixes.client["chat"]["msg"], output_bytes)
+                self.pack_n_send(sock, prefixes.client["chat"]["msg"],
+                                 output_bytes)
 
             # if buffer == "upload":
             #     self.upload(sock)
@@ -97,7 +98,7 @@ class Client(ChatIO):
             #         if not data:
             #             break
 
-                # print(response.decode())
+            # print(response.decode())
 
         channel2.killit(sock)
 

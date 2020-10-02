@@ -7,23 +7,30 @@ from handlers import HandshakeHandler
 import config.filepaths as paths
 prefixes = utils.JSONLoader(paths.prefix_path)
 
+
 def _n_handler(sock: socket, *args, **kwargs):
     """REQUEST NICK"""
     bytes_data = ChatIO.unpack_data(sock).decode()
-    nick = HandshakeHandler.ClientSide.show_nick_request(sock, prompt=bytes_data)
-    ChatIO().pack_n_send(sock, prefixes.client["handshake"]["nick"], nick.encode())
+    nick = HandshakeHandler.ClientSide.show_nick_request(sock,
+                                                         prompt=bytes_data)
+    ChatIO().pack_n_send(sock, prefixes.client["handshake"]["nick"],
+                         nick.encode())
     return nick
+
 
 def _u_handler(sock: socket, *args, **kwargs):
     """User was Unique"""
     data = ChatIO.unpack_data(sock)
     return data
 
+
 def _N_handler(sock: socket, *args, **kwargs):
     pass
 
+
 def error(*args, **kwarfs):
     print("nope nope")
+
 
 dispatch = {
     "a": None,
