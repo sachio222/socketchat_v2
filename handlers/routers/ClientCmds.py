@@ -9,10 +9,12 @@ configs = utils.JSONLoader()
 
 BUFFER_LEN = configs.system["defaultBufferLen"]
 
+
 def _n_handler(sock: socket, *args, **kwargs):
     # print("running nhandler")
     bytes_data = ChatIO.unpack_data(sock)
     return bytes_data
+
 
 def _H_handler(sock: socket, *args, **kwargs):
     bytes_data = ChatIO.unpack_data(sock)
@@ -20,6 +22,7 @@ def _H_handler(sock: socket, *args, **kwargs):
     # configs.update()
     print(bytes_data)
     return bytes_data
+
 
 def _W_handler(sock: socket, *args, **kwargs):
     bytes_data = ChatIO.unpack_data(sock)
@@ -32,7 +35,7 @@ def _W_handler(sock: socket, *args, **kwargs):
 def _M_handler(sock: socket, *args, **kwargs) -> bytes:
     bytes_data = ChatIO.unpack_data(sock)
     print(bytes_data)
-    
+
     return bytes_data
     # response = b""
     # recv_len = 1

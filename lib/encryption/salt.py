@@ -166,9 +166,7 @@ class NaclCipher():
         return shr_key
 
     #=== Signing ===#
-    def generate_signing_keys(self,
-                              fn: str = 'signing.key'
-                             ) -> tuple:
+    def generate_signing_keys(self, fn: str = 'signing.key') -> tuple:
         """Generates key for signing and authenticating.
         
         A valid digital signature gives a recipient reason to believe that the

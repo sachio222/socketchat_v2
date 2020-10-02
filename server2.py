@@ -28,14 +28,10 @@ def accept_client(server):
         print(f"Connected to {addr}")
 
         users = HandshakeHandler.ServerSide(client_socket, addr).user
-        
-        #TODO: Move inside handshake.
-        # welcome_msg = f"Welcome to {ADDR}"
-        # client_socket.send(welcome_msg.encode())
 
         client_thread = Thread(target=handle_client,
-                            args=(client_socket,),
-                            daemon=True)
+                               args=(client_socket,),
+                               daemon=True)
         client_thread.start()
         # utils.delete_user("Will")
 

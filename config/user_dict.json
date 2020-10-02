@@ -421,5 +421,23 @@
         ],
         "public_key": "P8AfuVKszOlviV5NcwZe9Xa4V5J5q7Oin80VEbDi0m0=",
         "trusted": null
+    },
+    "peepers": {
+        "nick": "peepers",
+        "addr": [
+            "127.0.0.1",
+            53082
+        ],
+        "public_key": "gg7e12Vac+chBGooz49sTNAAzJ8DZpbE098Rn4PiaHY=",
+        "trusted": null
+    },
+    "krakes": {
+        "nick": "krakes",
+        "addr": [
+            "127.0.0.1",
+            53206
+        ],
+        "public_key": "yVxqeyXCvKSmP27TS2sjfanXwgOtsIUEth4aU5Lh1WE=",
+        "trusted": null
     }
 }

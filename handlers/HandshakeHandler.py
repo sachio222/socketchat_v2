@@ -16,24 +16,25 @@ PREFIX_LEN = configs.system["prefixLen"]
 
 
 class ClientSide(ChatIO):
+
     def __init__(self, sock: socket):
         self.sock = sock
         self.nick = self.onboard_to_server()
 
     def onboard_to_server(self) -> str:
         nick = ""
-        unique = "False" # Can't send bool over socket. 
+        unique = "False"  # Can't send bool over socket.
 
         while unique == "False":
             # 1. Receive server prompt
             prompt = self.recv_n_unpack(self.sock, shed_pfx=True).decode()
-            
+
             # 2. Pack payload (user, keys, etc)
             payload, nick = self._create_payload(prompt)
-            
+
             # 3. Send Payload.
             self.send_payload(self.sock, payload)
-            
+
             # 4. Receive uniqueness.
             unique = self.recv_n_unpack(self.sock, HandshakeCmds).decode()
 
@@ -46,7 +47,7 @@ class ClientSide(ChatIO):
         while not valid_nick:
             nick = input(prompt)
             valid_nick = self.is_valid(nick)
-            
+
         return nick
 
     def is_valid(self, nick: str) -> bool:
@@ -71,14 +72,14 @@ class ClientSide(ChatIO):
     def send_payload(self, sock: socket, payload: bytes):
         self.pack_n_send(sock, prefixes.client["chat"]["data"], payload)
 
-    
 
 class ServerSide(ChatIO):
+
     def __init__(self, sock: socket, addr: tuple):
         self.sock = sock
         self.addr = addr
         self.user = self.onboard_new_client()
-    
+
     def onboard_new_client(self):
         user = ""
         first_request = True
@@ -99,18 +100,20 @@ class ServerSide(ChatIO):
             # 2. Check if Unique
             unique = self.is_unique(user)
 
+        self.send_welcome_msg()
         user = self.store_user(self.addr, user)
         return user
 
-        
     def send_nick_request(self) -> bytes:
         # Goes to handler
-        self.pack_n_send(self.sock, prefixes.server["handshake"]["nick"], configs.msg["getNick"])
+        self.pack_n_send(self.sock, prefixes.server["handshake"]["nick"],
+                         configs.msg["getNick"])
         user_json = self.recv_n_unpack(self.sock, shed_pfx=True)
         return user_json
-    
+
     def resend_nick_request(self):
-        self.pack_n_send(self.sock, prefixes.server["chat"]["handshake"], configs.msg["getNickAgain"])
+        self.pack_n_send(self.sock, prefixes.server["chat"]["handshake"],
+                         configs.msg["getNickAgain"])
         user_json = self.recv_n_unpack(self.sock, shed_pfx=True)
         return user_json
 
@@ -120,8 +123,13 @@ class ServerSide(ChatIO):
             unique = "True"
         else:
             unique = "False"
-        self.pack_n_send(self.sock, prefixes.server["handshake"]["unique"], unique.encode())
+        self.pack_n_send(self.sock, prefixes.server["handshake"]["unique"],
+                         unique.encode())
         return unique
+
+    def send_welcome_msg(self):
+        self.pack_n_send(self.sock, prefixes.server["handshake"]["welcome"],
+                         configs.msg["welcome"])
 
     def store_user(self,
                    addr: tuple,

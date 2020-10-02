@@ -2,7 +2,6 @@ import argon2
 
 from chatutils import utils
 import config.filepaths as paths
-
 """VERY LOW SECURITY, currently only set for local hash matching.
 User can change hash to match their desired password. Only keeps
 noobs out. TODO: create remote pass repo for actual security.
