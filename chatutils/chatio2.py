@@ -1,5 +1,6 @@
 import json
 import socket
+from types import ModuleType
 from chatutils import utils
 
 configs = utils.JSONLoader()
@@ -40,12 +41,26 @@ class ChatIO:
         return header
 
 
-    def revc_n_unpack(self, sock:socket, shed_pfx: bool = False) -> bytes:
+    def recv_n_unpack(self, sock: socket, shed_pfx: bool=False) -> bytes:
         if shed_pfx:
             # Dump bytes into the ether.
             sock.recv(PREFIX_LEN)
         data = self.unpack_data(sock)
         return data
+
+    def recv_n_dispatch(self, sock: socket, cmd_module: ModuleType) -> bytes:
+        """Gets type and dispatches to proper command module"""
+        msg_type = sock.recv(PREFIX_LEN)
+        bytes_data = self.dispatch(sock, msg_type, cmd_module)
+        return bytes_data
+
+    def dispatch(self, sock: socket, msg_type: str, cmd_module: ModuleType) -> bytes:
+        """Sorts through incoming data by prefix."""
+        assert type(msg_type) == bytes, "Convert prefix to str"
+        func = cmd_module.dispatch.get(msg_type.decode(), cmd_module.error)
+        bytes_data = func(sock=sock, msg_type=msg_type)
+
+        return bytes_data
         
 
     @classmethod
@@ -53,7 +68,7 @@ class ChatIO:
         """UNPACK DATA"""
         msg_len = sock.recv(HEADER_LEN)
         msg = sock.recv(int(msg_len))
-        msg = msg.rstrip()
+        # msg = msg.rstrip()
         return msg
 
     @classmethod

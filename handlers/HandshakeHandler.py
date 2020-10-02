@@ -1,22 +1,9 @@
-## GET NAME
-## CHECK IF NAME UNIQUE, ACCEPT / REASK
-## GENERATE PUBLIC KEYS
-## SEND PUBLIC KEYS
-
-
-
-from enum import unique
-import json
-# from server2 import onboard_new_client
-import socket
-from sys import path
-
-from chatutils import utils
+import socket, json
+from chatutils import utils, channel2
 from chatutils.chatio2 import ChatIO
-
 from lib.encryption import CipherTools
 
-from handlers import ServMsgHandler, EncryptionHandler
+from handlers.routers import HandshakeCmds
 
 import config.filepaths as paths
 
@@ -28,31 +15,54 @@ BUFFER_LEN = configs.system["defaultBufferLen"]
 PREFIX_LEN = configs.system["prefixLen"]
 
 
-class ClientHand(ChatIO):
-
+class ClientSide(ChatIO):
     def __init__(self, sock: socket):
         self.sock = sock
         self.nick = self.onboard_to_server()
 
-    def onboard_to_server(self):
-        handshake_payload = {}
-        data = self.revc_n_unpack(self.sock, shed_pfx=True)
+    def onboard_to_server(self) -> str:
+        nick = ""
+        unique = "False" # Can't send bool over socket. 
 
-        print(data)
-        
+        while unique == "False":
+            # 1. Receive server prompt
+            prompt = self.recv_n_unpack(self.sock, shed_pfx=True).decode()
+            
+            # 2. Pack payload (user, keys, etc)
+            payload, nick = self._create_payload(prompt)
+            
+            # 3. Send Payload.
+            self.send_payload(self.sock, payload)
+            
+            # 4. Receive uniqueness.
+            unique = self.recv_n_unpack(self.sock, HandshakeCmds).decode()
 
-
-        # nick = handshake_payload["nick"] = self.request_nick()
-        # handshake_payload["public_key"] = self.create_public_key().decode()
-        # handshake_payload = json.dumps(handshake_payload)
-        # handshake_payload = handshake_payload.encode()
-        # self.send_payload(sock, handshake_payload)
         return nick
 
-    def request_nick(self) -> str:
-        # nick = input("[+] What is your name? ")
-        # return nick
-        pass
+    def show_nick_request(self, prompt: str) -> str:
+        nick = ""
+        valid_nick = False
+
+        while not valid_nick:
+            nick = input(prompt)
+            valid_nick = self.is_valid(nick)
+            
+        return nick
+
+    def is_valid(self, nick: str) -> bool:
+        if nick != "":
+            return True
+        else:
+            print(configs.msg["getNickErr"])
+            return False
+
+    def _create_payload(self, prompt: str) -> tuple:
+        handshake_payload = {}
+        nick = handshake_payload["nick"] = self.show_nick_request(prompt)
+        handshake_payload["public_key"] = self.create_public_key().decode()
+        handshake_payload = json.dumps(handshake_payload)
+        handshake_payload = handshake_payload.encode()
+        return handshake_payload, nick
 
     def create_public_key(self) -> bytes:
         _, pubk = CipherTools.gen_nacl_key()
@@ -61,58 +71,58 @@ class ClientHand(ChatIO):
     def send_payload(self, sock: socket, payload: bytes):
         self.pack_n_send(sock, prefixes.client["chat"]["data"], payload)
 
-        # If keys don't exist, make them with encryption
-        # Have keys
-        # send keys as client["keys"]
+    
 
-
-class ServerHand(ChatIO):
-
-    def __init__(self, sock, addr):
+class ServerSide(ChatIO):
+    def __init__(self, sock: socket, addr: tuple):
         self.sock = sock
-        self.onboard_new_client(addr)
-        # self.addr = addr
+        self.addr = addr
+        self.user = self.onboard_new_client()
+    
+    def onboard_new_client(self):
+        user = ""
+        first_request = True
+        unique = "False"
 
-    def onboard_new_client(self, addr: tuple):
         print("Client trying to connect...")
-        self.set_client_data()
 
+        while unique == "False":
 
-        # msg_type = self.sock.recv(PREFIX_LEN)
-        # new_user = ServMsgHandler.dispatch(self.sock, msg_type)
-        # new_user = json.loads(new_user)
+            # 1. Get nick
+            if first_request:
+                user = self.send_nick_request()
+                first_request = False
+            else:
+                user = self.resend_nick_request()
+            user = json.loads(user)
 
-        # if not self.unique_user(new_user):
-        #     self.resend_prompt(self.sock)
-        # else:
-        #     self.store_user(addr, new_user)
-        # self.send_welcome(self.sock)
+            # 2. Check if Unique
+            unique = self.is_unique(user)
 
-    def set_client_data(self):
-        unique = False
-        self.send_nick_prompt()
+        user = self.store_user(self.addr, user)
+        return user
+
         
-        while not unique:
-            user_name = self.revc_n_unpack(self.sock, shed_pfx_len=PREFIX_LEN)
-            print(user_name)
+    def send_nick_request(self) -> bytes:
+        # Goes to handler
+        self.pack_n_send(self.sock, prefixes.server["handshake"]["nick"], configs.msg["getNick"])
+        user_json = self.recv_n_unpack(self.sock, shed_pfx=True)
+        return user_json
+    
+    def resend_nick_request(self):
+        self.pack_n_send(self.sock, prefixes.server["chat"]["handshake"], configs.msg["getNickAgain"])
+        user_json = self.recv_n_unpack(self.sock, shed_pfx=True)
+        return user_json
 
-
-
-    def unique_user(self, new_user: dict) -> bool:
+    def is_unique(self, new_user: dict) -> bool:
+        print(new_user)
         if new_user["nick"] not in users.__dict__.keys():
-            return True
+            unique = "True"
         else:
-            return False
+            unique = "False"
+        self.pack_n_send(self.sock, prefixes.server["handshake"]["unique"], unique.encode())
+        return unique
 
-    def send_nick_prompt(self):
-        self.pack_n_send(self.sock, prefixes.server["handshake"]["nick"], configs.msgs["getNick"])
-        
-
-    def resend_prompt(self):
-        msg_bytes = b"[x] User already exists. Try something else: "
-        self.pack_n_send(self.sock, prefixes.server["chat"]["handshake"], msg_bytes)
-    
-    
     def store_user(self,
                    addr: tuple,
                    new_user: dict,
@@ -120,19 +130,10 @@ class ServerHand(ChatIO):
                    public_key: bytes = None,
                    trusted: list = None) -> dict:
         """SERVERSIDE USER DICT"""
-        # try:
-        #     users = utils.JSONLoader(paths.user_dict_path)
-        # except Exception as e:
-        #     print(f"ERROR: Problem with JSON file at {paths.user_dict_path}. "\
-        #         "Check for hanging comma or brackets and stuff.")
-        #     exit()
 
-        # new_user = json.loads(new_user)
-
-        # Fill structure with overrides or defaults.
         new_user = {
             "nick": new_user.get("nick", None) or nick,
-            "addr": new_user.get("addr", None) or addr,
+            "addr": new_user.get("addr", None) or self.addr,
             "public_key": new_user.get("public_key", None) or public_key,
             "trusted": new_user.get("trusted", None) or trusted
         }
@@ -141,8 +142,3 @@ class ServerHand(ChatIO):
         users.update(paths.user_dict_path)
 
         return users.__dict__
-
-
-    def send_welcome(self):
-        self.pack_n_send(self.sock, prefixes.server["handshake"]["welcome"],
-                         configs.msgs["welcome"])

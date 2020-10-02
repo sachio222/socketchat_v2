@@ -20,12 +20,14 @@ socket_list = []
 
 
 def accept_client(server):
+    global users
+
     while True:
         client_socket, addr = server.accept()
         socket_list.append(client_socket)
         print(f"Connected to {addr}")
 
-        HandshakeHandler.ServerHand(client_socket, addr)
+        users = HandshakeHandler.ServerSide(client_socket, addr).user
         
         #TODO: Move inside handshake.
         # welcome_msg = f"Welcome to {ADDR}"
@@ -39,7 +41,6 @@ def accept_client(server):
 
 
 def handle_client(client_socket):
-
     while True:
         msg_type = client_socket.recv(PREFIX_LEN)
         if not msg_type:
@@ -47,18 +48,6 @@ def handle_client(client_socket):
         ServMsgHandler.dispatch(client_socket, msg_type)
 
     client_socket.close()
-
-
-# def onboard_new_client(client_socket: socket, addr: tuple):
-
-#     msg_type = client_socket.recv(PREFIX_LEN)
-#     new_user = ServMsgHandler.dispatch(client_socket, msg_type)
-#     new_user = utils.store_user(client_socket, addr, new_user=new_user)
-
-#     print(f"Connected to {addr}")
-#     welcome_msg = f"Welcome to {ADDR}"
-
-#     client_socket.send(welcome_msg.encode())
 
 
 def main():

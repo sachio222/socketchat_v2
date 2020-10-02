@@ -403,5 +403,23 @@
         ],
         "public_key": "OvZDTHzrQpSPBM5DmrYfsBFibDLXEe5A0HpFWJfg0Dk=",
         "trusted": null
+    },
+    "mepers": {
+        "nick": "mepers",
+        "addr": [
+            "127.0.0.1",
+            52489
+        ],
+        "public_key": "NlCAacMgZwSqctSGO6+nv7WZOyyAis39a3VrSMotghM=",
+        "trusted": null
+    },
+    "meepers": {
+        "nick": "meepers",
+        "addr": [
+            "127.0.0.1",
+            52551
+        ],
+        "public_key": "P8AfuVKszOlviV5NcwZe9Xa4V5J5q7Oin80VEbDi0m0=",
+        "trusted": null
     }
 }
