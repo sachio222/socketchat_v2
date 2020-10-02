@@ -1,17 +1,15 @@
 #!/usr/bin/ python3
 """Encryptochat 2.0"""
-print("start")
 import socket
 from threading import Thread
-import config.filepaths as paths
 from chatutils import utils, channel2
 from chatutils.chatio2 import ChatIO
 from handlers import HandshakeHandler, InputHandler, ClientMsgHandler
-print("done")
 
+
+import config.filepaths as paths
 configs = utils.JSONLoader()
 prefixes = utils.JSONLoader(paths.prefix_path)
-
 
 PREFIX_LEN = configs.dict["system"]["prefixLen"]
 BUFFER_LEN = configs.dict["system"]["defaultBufferLen"]
@@ -35,6 +33,7 @@ class Client(ChatIO):
             sock.connect((TARGET_HOST, TARGET_PORT))
 
             configs.reload()
+            
             USER_ID = HandshakeHandler.ClientSide(sock).nick
 
             self.start_threads(sock)
@@ -42,7 +41,6 @@ class Client(ChatIO):
         except Exception as e:
             print(e)
             print("[x] Connection failed. Check server address or port.")
-            sock.close()
             
 
     def send(self, sock):

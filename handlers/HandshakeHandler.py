@@ -1,5 +1,5 @@
 import socket, json
-from chatutils import utils
+from chatutils import utils, channel2
 from chatutils.chatio2 import ChatIO
 from lib.encryption import CipherTools
 
@@ -37,6 +37,9 @@ class ClientSide(ChatIO):
 
                 # 4. Receive uniqueness.
                 unique = self.recv_n_unpack(self.sock, HandshakeCmds).decode()
+                if not unique:
+                    channel2.killit()
+                    break
             except:
                 pass
         return nick
