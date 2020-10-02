@@ -20,7 +20,6 @@
             "cmd": "C",
             "data": "D",
             "default": "M",
-            "handshake": "H",
             "msg": "M",
             "pubk": "k"
         },

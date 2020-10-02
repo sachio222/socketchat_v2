@@ -52,7 +52,7 @@ class Client(ChatIO):
         while True:
             buffer = input("")
             print("\x1B[F\x1B[2K", end="")
-            print(f"@{USER_ID}: " + buffer)
+            print(f"<@{USER_ID}> " + buffer)
 
             output_bytes = InputHandler.dispatch(sock, buffer)
             # print(output_bytes)

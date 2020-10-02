@@ -26,15 +26,14 @@ def _H_handler(sock: socket, *args, **kwargs):
 
 def _W_handler(sock: socket, *args, **kwargs):
     bytes_data = ChatIO.unpack_data(sock)
-    configs.session["isUniqueId"] = True
-    configs.update()
-    print(bytes_data)
+    print(bytes_data.decode())
     return bytes_data
 
 
 def _M_handler(sock: socket, *args, **kwargs) -> bytes:
+    """DEFAULT MESSAGE"""
     bytes_data = ChatIO.unpack_data(sock)
-    print(bytes_data)
+    print(bytes_data.decode())
 
     return bytes_data
     # response = b""
