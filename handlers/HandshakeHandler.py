@@ -112,7 +112,7 @@ class ServerSide(ChatIO):
         return user_json
 
     def resend_nick_request(self):
-        self.pack_n_send(self.sock, prefixes.server["chat"]["handshake"],
+        self.pack_n_send(self.sock, prefixes.server["handshake"]["nick"],
                          configs.msg["getNickAgain"])
         user_json = self.recv_n_unpack(self.sock, shed_pfx=True)
         return user_json

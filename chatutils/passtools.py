@@ -44,7 +44,7 @@ def set_password(which_hash):
     if new_pw == new_pw2:
         hash = ph.hash(new_pw)
         setattr(hash_json, which_hash, hash)
-        hash_json.update(paths.hashes)
+        hash_json.update()
         print("[+] Password updated!")
     else:
         print("[!] Passwords don't match. Try again.")

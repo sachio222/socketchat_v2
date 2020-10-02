@@ -138,7 +138,7 @@ class ServerHand(ChatIO):
         }
 
         users.__dict__[new_user["nick"]] = new_user
-        users.update(paths.user_dict_path)
+        users.update()
 
         return users.__dict__
 
