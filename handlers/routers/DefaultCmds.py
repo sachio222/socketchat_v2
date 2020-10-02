@@ -43,9 +43,9 @@ def encryption(*args, **kwargs):
         choices = {}
         if msg not in ["list", "help", "h", "ls"]:
             if msg in EncryptionHandler.cipher_dict.keys():
-                configs.cipher = msg
+                configs.dict["cipher"] = msg
                 configs.update()
-                configs.load()
+                configs.reload()
         else:
             while True:
                 print("[?] Choose a cipher:")
@@ -54,6 +54,7 @@ def encryption(*args, **kwargs):
                     choices[i] = key
                     print(f'{i}. {key}')
                 choice = input(">> ")
+                # print(choices[int(choice)])
                 try:
                     set_cipher(choices[int(choice)])
                     break
@@ -64,7 +65,7 @@ def encryption(*args, **kwargs):
     if len(msg_parts) > 1:
         set_cipher(msg=msg_parts[-1])
 
-    print(f"-*- Encryption currently set to {configs.cipher}.")
+    print(f"-*- Encryption currently set to {configs.dict['cipher']}.")
 
 
 def exit(sock: socket, *args, **kwargs):
@@ -105,7 +106,7 @@ def status(*args, **kwargs):
 
 
 def mute(*args, **kwargs):
-    configs.muted = True
+    configs.dict["muted"] = True
     configs.update()
     ChatIO().print_message("@YO: Muted. Type /unmute to restore sound.")
 
@@ -116,7 +117,7 @@ def trust(*args, **kwargs):
 
 
 def unmute(*args, **kwargs):
-    configs.muted = False
+    configs.dict["muted"] = False
     configs.update()
     ChatIO().print_message("@YO: B00P! Type /mute to turn off sound.")
 

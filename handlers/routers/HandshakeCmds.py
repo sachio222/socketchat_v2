@@ -13,7 +13,7 @@ def _n_handler(sock: socket, *args, **kwargs):
     bytes_data = ChatIO.unpack_data(sock).decode()
     nick = HandshakeHandler.ClientSide.show_nick_request(sock,
                                                          prompt=bytes_data)
-    ChatIO().pack_n_send(sock, prefixes.client["handshake"]["nick"],
+    ChatIO().pack_n_send(sock, prefixes.dict["client"]["handshake"]["nick"],
                          nick.encode())
     return nick
 

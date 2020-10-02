@@ -50,8 +50,9 @@ returns message as bytes.
 
 
 def encrypt(msg):
-    configs.load()
-    encryption_method = cipher_dict.get(configs.cipher, goober)
+    # configs = utils.JSONLoader()
+    configs.reload()
+    encryption_method = cipher_dict.get(configs.dict["cipher"], goober)
     ciphertext = encryption_method(msg)
     return ciphertext
 
