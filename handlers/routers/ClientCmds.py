@@ -1,5 +1,4 @@
-import json
-import socket
+import json, socket
 from chatutils import utils
 from chatutils.chatio2 import ChatIO
 
@@ -9,6 +8,10 @@ configs = utils.JSONLoader()
 
 BUFFER_LEN = configs.dict["system"]["defaultBufferLen"]
 
+def _i_handler(sock: socket, *args, **kwargs):
+    """IDLE PING LISTENER"""
+    print("Ping from server!")
+    sock.send(b"i")
 
 def _n_handler(sock: socket, *args, **kwargs):
     # print("running nhandler")
@@ -31,7 +34,7 @@ def _W_handler(sock: socket, *args, **kwargs):
 def _M_handler(sock: socket, *args, **kwargs) -> bytes:
     """DEFAULT MESSAGE"""
     bytes_data = ChatIO.unpack_data(sock)
-    print(bytes_data.decode())
+    print(bytes_data)
 
     return bytes_data
     # response = b""
@@ -63,7 +66,7 @@ dispatch = {
     "f": None,
     "g": None,
     "h": None,
-    "i": None,
+    "i": _i_handler,
     "j": None,
     "k": None,
     "l": None,

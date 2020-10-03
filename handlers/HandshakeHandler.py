@@ -51,11 +51,11 @@ class ClientSide(ChatIO):
         while not valid_nick:
             nick = input(prompt)
             valid_nick = self.is_valid(nick)
-
+    
         return nick
 
     def is_valid(self, nick: str) -> bool:
-        if nick != "":
+        if nick not in [""]:
             return True
         else:
             print(configs.dict["msg"]["getNickErr"])
@@ -91,7 +91,7 @@ class ServerSide(ChatIO):
         first_request = True
         unique = "False"
 
-        print("Client trying to connect...")
+        print("[/] Client trying to connect...")
 
         while unique == "False":
 
@@ -106,9 +106,9 @@ class ServerSide(ChatIO):
             # 2. Check if Unique
             unique = self.is_unique(user)
 
+        self.store_user(self.addr, user)
         self.send_welcome_msg()
-        users = self.store_user(self.addr, user)
-        return user, users
+        return user
 
     def send_nick_request(self) -> bytes:
         # Goes to handler

@@ -8,6 +8,9 @@ configs = utils.JSONLoader()
 HEADER_LEN = configs.dict["system"]["headerLen"]
 
 
+def _i_handler(sock: socket, *args, **kwargs):
+    print("pinged back")
+
 def _n_handler(sock: socket, *args, **kwargs) -> bytes:
     "RETURNS NICK FROM CLIENT"
     msg_bytes = ChatIO.unpack_data(sock)
@@ -31,12 +34,10 @@ def _H_handler(sock: socket, *args, **kwargs) -> bytes:
     return bytes_data
 
 
-def _M_handler(sock: socket, *args, **kwargs) -> bytes:
+def _M_handler(sock: socket, buffer: dict, *args, **kwargs) -> bytes:
     """DEFAULT MESSAGE HANDLER"""
-    client_list = kwargs["client_list"]
-    msg_bytes = ChatIO.unpack_data(sock)
-    print(msg_bytes.decode())
-    ChatIO().broadcast(sock, client_list, msg_bytes)
+    msg_bytes = buffer["msg_bytes"] = ChatIO.unpack_data(sock)
+    ChatIO().broadcast(sock, buffer)
     return msg_bytes
 
 
@@ -63,7 +64,7 @@ dispatch = {
     "f": None,
     "g": None,
     "h": None,
-    "i": None,
+    "i": _i_handler,
     "j": None,
     "k": None,
     "l": None,
