@@ -25,9 +25,9 @@ def accept_client(server):
     while True:
         client_socket, addr = server.accept()
         
-        # ******** SSL WRAPPER ********#
+        # ******** SSL WRAPPER ******** #
         client_socket = server_ctxt.wrap_socket(client_socket, server_side=True)
-        # ******** SSL WRAPPER ********#
+        # ******** SSL WRAPPER ******** #
 
         active_sockets.append(client_socket)
         idle_thread = Thread(target=das_boot, daemon=True)
@@ -94,7 +94,8 @@ def main():
 
 
 if __name__ == "__main__":
-    # ******** SSL CONTEXT ********#
+    
+    # ******** SSL CONTEXT ******** #
     x509.X509()
     rsa_key_path = paths.x509_path + 'rsa_key.pem'
     cert_path = paths.x509_path + 'certificate.pem'
@@ -108,6 +109,6 @@ if __name__ == "__main__":
     server_ctxt.options |= ssl.OP_SINGLE_ECDH_USE
     server_ctxt.options |= ssl.OP_CIPHER_SERVER_PREFERENCE
     server_ctxt.load_cert_chain(cert_path, rsa_key_path)
-    # ******** SSL CONTEXT ********#
+    # ******** SSL CONTEXT ******** #
 
     main()
