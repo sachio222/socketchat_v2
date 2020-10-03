@@ -1,5 +1,5 @@
 {
-    "cipher": "goober (none)",
+    "cipher": "fernet",
     "introduced": false,
     "muted": true,
     "session": {

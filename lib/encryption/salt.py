@@ -5,7 +5,9 @@ from nacl.public import PrivateKey, PublicKey, Box
 from nacl.encoding import Base64Encoder, HexEncoder, RawEncoder
 from nacl.signing import SigningKey, SignedMessage, VerifyKey
 
-PATH = 'encryption/keys/nacl/'
+import config.filepaths as paths
+
+PATH = paths.nacl_keys
 
 
 class NaclCipher():
@@ -17,7 +19,7 @@ class NaclCipher():
     creation of a shared secret. Also allows for signing/verification.
     """
 
-    def __init__(self, path: str = 'encryption/keys/nacl/'):
+    def __init__(self, path: str = PATH):
         self.path = path
         self.check_dir(self.path)
         self.prv_key, self.pub_key = self.generate_keys()

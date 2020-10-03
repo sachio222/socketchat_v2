@@ -8,11 +8,13 @@ import secrets
 import codecs
 import time
 
+import config.filepaths as paths
+
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 from cryptography.hazmat.primitives import padding
 from cryptography.hazmat.backends import default_backend
 
-key_path = 'encryption/keys/aes256/aes256.key'
+key_path = paths.aes256_keys + 'aes256.key'
 
 
 class AES256Cipher():
