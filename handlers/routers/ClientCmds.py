@@ -10,7 +10,7 @@ BUFFER_LEN = configs.dict["system"]["defaultBufferLen"]
 
 def _i_handler(sock: socket, *args, **kwargs):
     """IDLE PING LISTENER"""
-    print("Ping from server!")
+    print("@Yo: Ping from server!")
     sock.send(b"i")
 
 def _n_handler(sock: socket, *args, **kwargs):
