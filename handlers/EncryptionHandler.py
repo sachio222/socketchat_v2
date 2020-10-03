@@ -49,9 +49,8 @@ returns message as bytes.
 # # self.msg = fernet.encrypt(self.msg)
 
 
-def encrypt(msg):
-    # configs = utils.JSONLoader()
-    configs.reload()
+def encrypt(msg:str) -> str:
+    configs.reload() 
     encryption_method = cipher_dict.get(configs.dict["cipher"], goober)
     ciphertext = encryption_method(msg)
     return ciphertext
@@ -119,6 +118,6 @@ cipher_dict = {
     'nacl-secret-box': nacl_secret_box,
     'chacha': chacha20_poly1305,
     'argon2': argon2,
-    'goober (none)': goober,
+    'goober': goober,
     'test': test
 }

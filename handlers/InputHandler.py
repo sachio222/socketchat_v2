@@ -11,11 +11,11 @@ def dispatch(sock: socket, msg: str) -> bytes:
     """
     if len(msg):
         if msg[0] == '/':  # Check for command
-            msg_bytes = ClientMsgHandler.user_command_router(sock=sock, msg=msg)
+            msg = ClientMsgHandler.user_command_router(sock=sock, msg=msg)
         else:
-            msg_bytes = EncryptionHandler.encrypt(msg)
+            msg = EncryptionHandler.encrypt(msg)
     else:
         # Send new line on enter press.
-        msg_bytes = "\n"
+        msg = "\n"
 
-    return msg_bytes
+    return msg

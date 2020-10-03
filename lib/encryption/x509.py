@@ -22,6 +22,8 @@ from cryptography.hazmat.primitives.asymmetric import rsa
 from cryptography.x509.oid import NameOID
 from cryptography.hazmat.primitives import hashes
 
+import config.filepaths as paths
+
 
 class X509():
     """x.509 is the standard for TLS security layers.
@@ -30,8 +32,8 @@ class X509():
     """
 
     def __init__(self):
-        self.rsa_key_path = 'encryption/keys/TLS/rsa_key.pem'
-        self.cert_path = 'encryption/keys/TLS/certificate.pem'
+        self.rsa_key_path = paths.x509_path + 'rsa_key.pem'
+        self.cert_path = paths.x509_path + 'certificate.pem'
 
         key = self.generate_private_rsa_key(self.rsa_key_path)
 
@@ -54,7 +56,7 @@ class X509():
                     encoding=serialization.Encoding.PEM,
                     format=serialization.PrivateFormat.TraditionalOpenSSL,
                     encryption_algorithm=serialization.BestAvailableEncryption(
-                        b'pw')))
+                        b' ')))
         return key
 
     def load_private_rsa_key(self, path):

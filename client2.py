@@ -1,11 +1,11 @@
 #!/usr/bin/ python3
 """Encryptochat 2.0"""
-import socket
+import socket, ssl
 from threading import Thread
 from chatutils import utils, channel2
 from chatutils.chatio2 import ChatIO
 from handlers import HandshakeHandler, InputHandler, ClientMsgHandler
-
+from lib.encryption import x509
 
 import config.filepaths as paths
 configs = utils.JSONLoader()
@@ -31,6 +31,11 @@ class Client(ChatIO):
         try:
             sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             sock.connect((TARGET_HOST, TARGET_PORT))
+            
+            # ******** SSL WRAPPER ********#
+            sock = client_ctxt.wrap_socket(sock, server_hostname=TARGET_HOST)
+            print(f'-+- SSL Established. {sock.version()}')
+            # ******** SSL WRAPPER ********#
 
             configs.reload()
             
@@ -46,11 +51,11 @@ class Client(ChatIO):
     def send(self, sock):
         while True:
             buffer = input("")
+
             print("\x1B[F\x1B[2K", end="")
             print(f"@{USER_ID}: " + buffer)
 
             output_bytes = InputHandler.dispatch(sock, buffer)
-            # print(output_bytes)
 
             if output_bytes:
                 self.pack_n_send(sock, prefixes.dict["client"]["chat"]["msg"],
@@ -112,4 +117,20 @@ def main():
 
 
 if __name__ == "__main__":
+    
+
+    # ******** SSL CONTEXT ********#
+    x509.X509()
+    rsa_key_path = paths.x509_path + 'rsa_key.pem'
+    cert_path = paths.x509_path + 'certificate.pem'
+
+
+    client_ctxt = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
+    client_ctxt.check_hostname = False
+    client_ctxt.verify_mode = ssl.CERT_NONE
+    client_ctxt.set_ciphers('ECDHE-ECDSA-AES256-SHA384')
+    client_ctxt.options |= ssl.OP_NO_COMPRESSION
+    client_ctxt.load_verify_locations(cert_path)
+    # ******** SSL CONTEXT ********#
+
     main()
