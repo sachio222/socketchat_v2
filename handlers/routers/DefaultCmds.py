@@ -10,7 +10,6 @@ from handlers import EncryptionHandler
 import config.filepaths
 configs = utils.JSONLoader()
 
-
 def about(*args, **kwargs):
     """Read from file in config folder."""
     path = config.filepaths.about

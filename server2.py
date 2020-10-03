@@ -1,6 +1,7 @@
-import socket
-from threading import Thread, active_count
+import socket, ssl
+from threading import Thread
 from handlers import HandshakeHandler, ServMsgHandler
+from lib.encryption import x509
 
 from chatutils import utils
 from chatutils.chatio2 import ChatIO
@@ -23,6 +24,11 @@ def accept_client(server):
 
     while True:
         client_socket, addr = server.accept()
+        
+        # ******** SSL WRAPPER ********#
+        client_socket = server_ctxt.wrap_socket(client_socket, server_side=True)
+        # ******** SSL WRAPPER ********#
+
         active_sockets.append(client_socket)
         idle_thread = Thread(target=das_boot, daemon=True)
         idle_thread.start()
@@ -74,6 +80,7 @@ def das_boot():
 
 def main():
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
     server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     server.bind(ADDR)
     print(f"[*] Server spinning up at {ADDR}")
@@ -85,4 +92,20 @@ def main():
 
 
 if __name__ == "__main__":
+    # ******** SSL CONTEXT ********#
+    x509.X509()
+    rsa_key_path = paths.x509_path + 'rsa_key.pem'
+    cert_path = paths.x509_path + 'certificate.pem'
+
+    
+    server_ctxt = ssl.SSLContext(ssl.PROTOCOL_TLS)
+    server_ctxt.verify_mode = ssl.CERT_NONE
+    server_ctxt.set_ecdh_curve('prime256v1')
+    server_ctxt.set_ciphers('ECDHE-ECDSA-AES256-GCM-SHA384')
+    server_ctxt.options |= ssl.OP_NO_COMPRESSION
+    server_ctxt.options |= ssl.OP_SINGLE_ECDH_USE
+    server_ctxt.options |= ssl.OP_CIPHER_SERVER_PREFERENCE
+    server_ctxt.load_cert_chain(cert_path, rsa_key_path)
+    # ******** SSL CONTEXT ********#
+
     main()

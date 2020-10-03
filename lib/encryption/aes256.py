@@ -8,12 +8,12 @@ import secrets
 import codecs
 import time
 
-import config.filepaths as paths
 
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 from cryptography.hazmat.primitives import padding
 from cryptography.hazmat.backends import default_backend
 
+import config.filepaths as paths
 key_path = paths.aes256_keys + 'aes256.key'
 
 
@@ -75,7 +75,7 @@ class AES256Cipher():
         data = data + unpadder.finalize()
         return data
 
-    def encrypt(self, msg: bytes) -> (hex, hex):
+    def encrypt(self, msg: bytes) -> tuple:
         """Encrypts message. Use same nonce to decrypt.
 
         Returns:
@@ -99,7 +99,7 @@ class AES256Cipher():
         plaintext = decryptor.update(cipher_txt) + decryptor.finalize()
         return plaintext
 
-    def _rand_split(self, byt_str: bytes) -> (int, int, int):
+    def _rand_split(self, byt_str: bytes) -> tuple:
         """Returns lengths of 2 rand. split bytes."""
         str_length = len(byt_str)
         seed = secrets.randbelow(str_length)
@@ -121,7 +121,7 @@ class AES256Cipher():
         ) + nonce_b64[:a] + ct_b64 + nonce_b64[-b:] + str(b64_len).encode()
         return payload
 
-    def unpack_payload(self, payload: bytes) -> (hex, hex):
+    def unpack_payload(self, payload: bytes) -> tuple:
         """Unpacks the attached nonce and ciphertext.
         
         Returns

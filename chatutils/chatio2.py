@@ -80,9 +80,9 @@ class ChatIO:
     @staticmethod
     def make_buffer(sockets_dict: dict, user_dict: dict, msg_type: bytes) -> dict:
         buffer = {}
-        buffer["msg_type"] = msg_type
-        buffer["sockets"] = sockets_dict
         buffer["sender_nick"] = user_dict["nick"]
+        buffer["sockets"] = sockets_dict
+        buffer["msg_type"] = msg_type
         buffer["msg_bytes"] = ""
         return buffer
 
