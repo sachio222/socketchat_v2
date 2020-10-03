@@ -63,10 +63,10 @@ def das_boot():
         print(time.perf_counter())
         for s in sockets_dict.values():
             try:
-                start = time.perf_counter()
+                # start = time.perf_counter()
                 s.send(b"i")
-                stop = time.perf_counter()
-                print(f"Ping: {stop - start}ms")
+                # stop = time.perf_counter()
+                # print(f"Ping: {stop - start}ms")
             except:
                 # REMOVE from all dicts
                 pass
