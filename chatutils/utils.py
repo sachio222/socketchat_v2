@@ -1,9 +1,4 @@
-import os
-import sys
-from sys import hash_info
-import time
-import json
-import socket
+import os, sys, time, json, socket, inspect
 
 import argon2
 import config.filepaths as paths
@@ -83,6 +78,7 @@ class JSONLoader():
         try:
             self.dict = self.load()
         except:
+            # print(f"WARNING: {e}")
             self.dict = {}
             self.dict = self.update()
 
@@ -140,3 +136,11 @@ def delete_user(nick: str):
     user_dict = JSONLoader(paths.user_dict_path)
     del user_dict.dict[nick]
     user_dict.update()
+
+def debug_(value: any, name:str="value", called_from:str="None", override=False):
+    configs = JSONLoader()
+    if configs.dict["system"]["debug"] or override:
+        print(f"= DEBUG: CALLED IN: {called_from}")
+        print(f"= DEBUG: {name} VALUE: {value}")
+        print(f"= DEBUG: {name} TYPE:, {type(value)}")
+        print("=")

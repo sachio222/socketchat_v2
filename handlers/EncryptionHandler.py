@@ -1,3 +1,4 @@
+import json
 from chatutils import utils
 from handlers.routers import EncryptionCmds
 
@@ -46,9 +47,12 @@ def dispatch(msg:str, *args, **kwargs) -> bytes:
     cipher = EncryptionCmds.cipher_dict.get(cipher, "goober")
     cipher_text = cipher(msg)
 
-    # buffer["cipher"] = configs.dict["cipher"]
-    # buffer["cipherText"] = cipher_text
+    utils.debug_(cipher_text, "cipher_text")
 
-    # print(buffer)
+    buffer["cipher"] = configs.dict["cipher"]
+    buffer["cipherPkt"] = cipher_text
+    buffer = json.dumps(buffer)
 
-    return cipher_text
+    utils.debug_(buffer, "buffer")
+
+    return buffer

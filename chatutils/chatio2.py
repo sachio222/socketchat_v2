@@ -33,8 +33,11 @@ class ChatIO:
         except:
             pass
 
-        # data = data + "\n"
+        utils.debug_(data, "data", "pack_n_send")
+
         size = len(data)
+
+        utils.debug_(size, "size", "pack_n_send")
         header = self._make_header(size)
         packed_data = f"{typ_pfx}{header}{data}"
         return packed_data.encode()
@@ -69,13 +72,14 @@ class ChatIO:
     def unpack_data(cls, sock: socket) -> bytes:
         """UNPACK DATA"""
         msg_len = sock.recv(HEADER_LEN)
+        utils.debug_(msg_len, "msg_len", "unpack_data")
         try:
-            msg = sock.recv(int(msg_len))
+            msg_bytes = sock.recv(int(msg_len))
         except:
-            msg = ""
+            msg_bytes = ""
 
         # msg = msg.rstrip()
-        return msg
+        return msg_bytes
 
     @staticmethod
     def make_buffer(sockets_dict: dict, user_dict: dict, msg_type: bytes) -> dict:

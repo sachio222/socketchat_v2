@@ -41,7 +41,7 @@ def encryption(*args, **kwargs):
     def set_cipher(msg):
         choices = {}
         if msg not in ["list", "help", "h", "ls"]:
-            if msg in EncryptionHandler.cipher_dict.keys():
+            if msg in EncryptionHandler.EncryptionCmds.cipher_dict.keys():
                 configs.dict["cipher"] = msg
                 configs.update()
                 configs.reload()

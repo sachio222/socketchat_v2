@@ -1,21 +1,23 @@
 {
-    "cipher": "goober",
+    "cipher": "chacha",
     "introduced": false,
     "muted": true,
     "session": {
         "isUniqueId": false
     },
     "system": {
+        "debug": false,
         "defaultBufferLen": 4096,
         "defaultHost": "127.0.0.1",
         "defaultPort": 12222,
+        "idleTimeSec": 60,
         "prefixLen": 1,
         "headerLen": 10
     },
     "msg": {
         "getNick": "[+] What is your name? @",
         "getNickAgain": "[x] User already exists. Try something else: @",
-        "getNickErr": "[x] Handle needs at least one character. Try again: @",
+        "getNickErr": "[x] Handle needs at least one character. Try again",
         "welcome": "@Yo: You're in. Welcome to the underground."
     }
 }

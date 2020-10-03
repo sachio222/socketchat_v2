@@ -6,7 +6,8 @@
             "default": "M",
             "handshake": "H",
             "msg": "M",
-            "pubk": "k"
+            "pubk": "k",
+            "xfer": "X"
         },
         "handshake" :{
             "nick": "N",
@@ -21,7 +22,8 @@
             "data": "D",
             "default": "M",
             "msg": "M",
-            "pubk": "k"
+            "pubk": "k",
+            "xfer": "X"
         },
         "handshake": {
             "nick": "n",
