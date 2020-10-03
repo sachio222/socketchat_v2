@@ -1,9 +1,9 @@
-import json
 import socket
 from threading import Thread
 from handlers import HandshakeHandler, ServMsgHandler
 
-from chatutils import utils
+from chatutils import utils, db
+
 import config.filepaths as paths
 
 # sys.setrecursionlimit(20000)
