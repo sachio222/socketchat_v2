@@ -34,7 +34,7 @@ class Client(ChatIO):
             
             # ******** SSL WRAPPER ********#
             sock = client_ctxt.wrap_socket(sock, server_hostname=TARGET_HOST)
-            print(f'-+- SSL Established. {sock.version()}')
+            print(f'[+] SSL Established. {sock.version()}')
             # ******** SSL WRAPPER ********#
 
             configs.reload()
