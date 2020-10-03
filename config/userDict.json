@@ -1,11 +1,11 @@
 {
-    "Jake": {
-        "nick": "Jake",
+    "ok": {
+        "nick": "ok",
         "addr": [
             "127.0.0.1",
-            64204
+            52247
         ],
-        "public_key": "5I0r6nejkqPa6s2xHieAi04YEU4jGf07b7I4gQmT3nQ=",
+        "public_key": "h+EapGH5V5ywup/Oiw9laYP7i65BqAm/UkmiWr9ClgA=",
         "trusted": null
     }
 }
