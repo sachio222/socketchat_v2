@@ -1,6 +1,8 @@
 import socket, ssl
+
 from threading import Thread
 from handlers import HandshakeHandler, ServMsgHandler
+
 from lib.encryption import x509
 
 from chatutils import utils
@@ -17,6 +19,7 @@ PREFIX_LEN = configs.dict["system"]["prefixLen"]
 HOST = configs.dict["system"]["defaultHost"]
 PORT = configs.dict["system"]["defaultPort"]
 ADDR = (HOST, PORT)
+
 sockets_dict = {}
 active_sockets = []
 
@@ -38,11 +41,12 @@ def accept_client(server):
         client_thread = Thread(target=handle_client,
                                args=(client_socket, addr ),
                                daemon=True)
+
         client_thread.start()
 
 
 def handle_client(client_socket:socket , addr: tuple) -> None:
-
+    
     user_dict = HandshakeHandler.ServerSide(client_socket, addr).user
     print(f"[+] {user_dict['nick']} has joined the chat.")
     
@@ -65,6 +69,7 @@ def handle_client(client_socket:socket , addr: tuple) -> None:
     client_socket.close()
 
 def das_boot():
+
     import time
     while True:
         time.sleep(configs.dict["system"]["idleTimeSec"])
@@ -81,6 +86,7 @@ def das_boot():
 
 
 def main():
+
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
     server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -94,12 +100,11 @@ def main():
 
 
 if __name__ == "__main__":
-    
+
     # ******** SSL CONTEXT ******** #
     x509.X509()
     rsa_key_path = paths.x509_path + 'rsa_key.pem'
     cert_path = paths.x509_path + 'certificate.pem'
-
     
     server_ctxt = ssl.SSLContext(ssl.PROTOCOL_TLS)
     server_ctxt.verify_mode = ssl.CERT_NONE
