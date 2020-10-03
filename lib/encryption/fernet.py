@@ -1,7 +1,9 @@
 import os
 from cryptography.fernet import Fernet
 
-key_path = 'encryption/keys/fernet/secret.key'
+
+import config.filepaths as paths
+key_path = paths.fernet128_keys + 'secret.key'
 
 
 class FernetCipher():
