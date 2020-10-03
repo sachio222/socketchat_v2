@@ -100,6 +100,7 @@ class Client(ChatIO):
 
             # print(response.decode())
 
+        Thread.join()
         channel2.killit(sock)
 
     def start_threads(self, sock):

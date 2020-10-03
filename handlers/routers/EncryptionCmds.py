@@ -26,6 +26,7 @@ TO ADD CUSTOM ENCRYPTION:
 def fernet(data) -> bytes:
     """DECENT AES128 ENCRYPTION"""
     encrypted_msg = FernetCipher().encrypt(data)
+    # utils.debug_(encrypted_msg, "encrypted_msg", "fernet", True)
     return encrypted_msg
 
 

@@ -9,6 +9,7 @@ key_path = paths.fernet128_keys + 'secret.key'
 class FernetCipher():
 
     def __init__(self, path=key_path):
+        self.enc_dict = {}
         self.key_path = path
         self._check_path(self.key_path)
         try:
@@ -28,9 +29,11 @@ class FernetCipher():
         return open(self.key_path, 'rb').read()
 
     def encrypt(self, msg):
+        enc_dict = {}
         msg = msg.encode()  # byte encode
         enc_msg = self.f.encrypt(msg)
-        return enc_msg
+        enc_dict["ciphertext"] = enc_msg.decode()
+        return enc_dict
 
     def decrypt(self, msg):
         try:

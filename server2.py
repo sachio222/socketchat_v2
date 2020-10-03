@@ -50,6 +50,7 @@ def handle_client(client_socket:socket , addr: tuple) -> None:
     
     while True:
         msg_type = client_socket.recv(PREFIX_LEN)
+        utils.debug_(msg_type, "msg_type")
 
         if not msg_type:
             del sockets_dict[user_dict["nick"]]
@@ -57,6 +58,7 @@ def handle_client(client_socket:socket , addr: tuple) -> None:
             break
 
         buffer = ChatIO.make_buffer(sockets_dict, user_dict, msg_type)
+        utils.debug_(buffer, "buffer")
 
         ServMsgHandler.dispatch(client_socket, buffer)
 
