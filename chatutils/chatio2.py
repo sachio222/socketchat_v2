@@ -1,4 +1,5 @@
 import json
+from os import stat
 import socket
 from types import ModuleType
 from chatutils import utils
@@ -76,7 +77,26 @@ class ChatIO:
         # msg = msg.rstrip()
         return msg
 
-    def broadcast(self, send_sock: socket, client_list: dict, msg_bytes: bytes):
-        for client in client_list:
-            if client != send_sock:
-                self.pack_n_send(client, prefixes.dict["server"]["chat"]["default"], msg_bytes)
+    @staticmethod
+    def make_buffer(sockets_dict: dict, user_dict: dict, msg_type: bytes) -> dict:
+        buffer = {}
+        buffer["msg_type"] = msg_type
+        buffer["sockets"] = sockets_dict
+        buffer["sender_nick"] = user_dict["nick"]
+        buffer["msg_bytes"] = ""
+        return buffer
+
+    def add_sender_nick(self, buffer: dict) -> bytes:
+        sender_nick = buffer["sender_nick"]
+        msg_bytes = buffer["msg_bytes"].decode()
+        msg_bytes = f"@{sender_nick}: {msg_bytes}"
+        return msg_bytes.encode()
+
+
+    def broadcast(self, send_sock: socket, buffer: dict):
+        msg_bytes = self.add_sender_nick(buffer)
+        print(msg_bytes.decode())
+        sockets = buffer["sockets"]
+        for s in sockets.values():
+            if s != send_sock:
+                self.pack_n_send(s, prefixes.dict["server"]["chat"]["default"], msg_bytes)
