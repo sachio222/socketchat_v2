@@ -7,6 +7,7 @@
             "handshake": "H",
             "msg": "M",
             "pubk": "k",
+            "upload": "u",
             "xfer": "X"
         },
         "handshake" :{
@@ -23,6 +24,7 @@
             "default": "M",
             "msg": "M",
             "pubk": "k",
+            "relayData": "r",
             "xfer": "X"
         },
         "handshake": {
