@@ -1,16 +1,14 @@
 import os
-from server2 import BUFFER_LEN
 import sys
 import socket
 
 from chatutils import utils
 configs = utils.JSONLoader()
 
-BUFFER_LEN = configs.dict["system"]["defaultBufferLen"]
+BUFFER_LEN = configs.dict["system"]["bufferLen"]
 
-
-def download(client_socket):
-    path = 'Tamarindo-Concepts2.pdf'
+def write(sock):
+    path = 'testfile1.jpg'
 
     while True:
         file_buffer = b""
@@ -18,7 +16,7 @@ def download(client_socket):
 
         try:
             while recv_len:
-                data = client_socket.recv(BUFFER_LEN)
+                data = sock.recv(BUFFER_LEN)
                 recv_len = len(data)
 
                 # Overwrite file if exists.
@@ -31,7 +29,7 @@ def download(client_socket):
                 else:
                     with open(path, 'ab') as f:
                         while True:
-                            data = client_socket.recv(BUFFER_LEN)
+                            data = sock.recv(BUFFER_LEN)
                             recv_len = len(data)
 
                             # Append rest of data chunks
@@ -44,26 +42,29 @@ def download(client_socket):
             if not data:
                 break
 
-            client_socket.send(b"Successfully saved file.")
+            sock.send(b"M")
+            sock.send(b"Successfully saved file.")
+            sock
 
         except:
-            client_socket.send(b"File transfer failed.")
+            sock.send(b"M")
+            sock.send(b"File transfer failed.")
 
 
-def write_file(path: str,
-               client_socket: socket,
+def write_file(sock: socket,
+               path: str = "testimage1.jpg",
                recv_len: int = 1,
                open_mode: str = "wb"):
 
     if recv_len:
-        data = client_socket.recv(BUFFER_LEN)
+        data = sock.recv(BUFFER_LEN)
         recv_len = len(data)
 
         with open(path, open_mode) as f:
             f.write(data)
 
         if recv_len < BUFFER_LEN:
-            client_socket.send(b"File successfully transfered.")
+            sock.send(b"File successfully transfered.")
             return
         else:
-            write_file(path, client_socket, recv_len, "ab")
+            write_file(path, sock, recv_len, "ab")

@@ -1,5 +1,4 @@
 import json
-from os import stat
 import socket
 from types import ModuleType
 from chatutils import utils
@@ -9,8 +8,8 @@ configs = utils.JSONLoader()
 prefixes = utils.JSONLoader(paths.prefix_path)
 users = utils.JSONLoader(paths.user_dict_path)
 
-HEADER_LEN = configs.dict["system"]["headerLen"]
 PREFIX_LEN = configs.dict["system"]["prefixLen"]
+HEADER_LEN = configs.dict["system"]["headerLen"]
 
 
 class ChatIO:

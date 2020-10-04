@@ -1,12 +1,21 @@
 import json, socket
+from sys import prefix
 from chatutils import utils
 from chatutils.chatio2 import ChatIO
 
+from lib.xfer import download
+
 from handlers import HandshakeHandler
+import config.filepaths as paths
 
 configs = utils.JSONLoader()
+prefixes = utils.JSONLoader(paths.prefix_path)
 
-BUFFER_LEN = configs.dict["system"]["defaultBufferLen"]
+BUFFER_LEN = configs.dict["system"]["bufferLen"]
+
+def _f_handler(sock: socket, *args, **kwargs):
+    """INCOMING FILE INFO"""
+    pass
 
 def _i_handler(sock: socket, *args, **kwargs):
     """IDLE PING LISTENER"""
@@ -17,6 +26,41 @@ def _n_handler(sock: socket, *args, **kwargs):
     # print("running nhandler")
     bytes_data = ChatIO.unpack_data(sock)
     return bytes_data
+
+def _r_handler(sock: socket, *args, **kwargs):
+    """RECEIVE FILE AND WRITE TO DISK"""
+    download.write(sock=sock)
+
+    # incoming = b""
+    # recv_len = 1
+
+    # while recv_len:
+    #     data = sock.recv(BUFFER_LEN)
+    #     recv_len = len(data)
+    #     incoming += data
+
+    #     if recv_len < BUFFER_LEN:
+    #         break
+
+    #     if not data:
+    #         break
+    
+    # with open("testfile.img", 'wb') as f:
+    #     f.write(incoming)
+
+def _u_handler(sock: socket, *args, **kwargs):
+    """UPLOAD FILE TO SERVER"""
+    data = prefixes.dict["upload"]
+    
+    # if file exists:
+    if True:
+        sock.send(data.encode())
+        print("Sending file")
+        with open("testfile.jpg") as f:
+            sock.sendall(f)
+    else:
+        # File doesn't exist error. 
+        pass
 
 
 def _H_handler(sock: socket, *args, **kwargs):
@@ -63,7 +107,7 @@ dispatch = {
     "c": None,
     "d": None,
     "e": None,
-    "f": None,
+    "f": _f_handler,
     "g": None,
     "h": None,
     "i": _i_handler,
@@ -75,10 +119,10 @@ dispatch = {
     "o": None,
     "p": None,
     "q": None,
-    "r": None,
+    "r": _r_handler,
     "s": None,
     "t": None,
-    "u": None,
+    "u": _u_handler,
     "v": None,
     "w": None,
     "x": None,

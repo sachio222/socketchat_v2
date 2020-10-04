@@ -3,9 +3,18 @@
         "nick": "Jake",
         "addr": [
             "127.0.0.1",
-            61587
+            49429
         ],
-        "public_key": "cCG0WL0DBR2siGiadTT/Zla2g7ed4SNPCV6y2ZTsMXQ=",
+        "public_key": "3RMdBVQ30WAccpHln4Uqf11AP4A0eLx234501M1Pal0=",
+        "trusted": null
+    },
+    "danica": {
+        "nick": "danica",
+        "addr": [
+            "127.0.0.1",
+            49449
+        ],
+        "public_key": "4vrjrxH4hOkbpuPTnfydiRO+ENFHvdKLGlh8TVcyCWw=",
         "trusted": null
     }
 }

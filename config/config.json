@@ -7,7 +7,7 @@
     },
     "system": {
         "debug": false,
-        "defaultBufferLen": 4096,
+        "bufferLen": 4096,
         "defaultHost": "127.0.0.1",
         "defaultPort": 12222,
         "idleTimeSec": 60,  

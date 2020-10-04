@@ -83,11 +83,19 @@ def keys(*args, **kwargs):
     # Show what keys I have.
     pass
 
+def swooshit(*args, **kwargs):
+    sock = kwargs["sock"]
 
 def sendfile(*args, **kwargs):
     """Initiates Send File (SF) sequence."""
     sock = kwargs["sock"]
-    SenderOperations().show_prompts(sock)
+    # utils.debug_(sock, "sock", "sendfile", True)
+    sock.send(b"u")
+    with open("testfile.jpg") as f:
+        sock.sendall(f)
+    print("file sent")
+        
+    # SenderOperations().show_prompts(sock)
 
 
 def sendkey(*args, **kwargs):

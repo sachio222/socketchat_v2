@@ -4,8 +4,12 @@ from chatutils.chatio2 import ChatIO
 from handlers import HandshakeHandler
 from lib.cmd import cmd
 
+import config.filepaths as paths
 configs = utils.JSONLoader()
+prefixes = utils.JSONLoader(paths.prefix_path)
+
 HEADER_LEN = configs.dict["system"]["headerLen"]
+BUFFER_LEN = configs.dict["system"]["bufferLen"]
 
 
 def _i_handler(sock: socket, *args, **kwargs):
@@ -15,6 +19,27 @@ def _n_handler(sock: socket, *args, **kwargs) -> bytes:
     "RETURNS NICK FROM CLIENT"
     msg_bytes = ChatIO.unpack_data(sock)
     return msg_bytes
+
+def _u_handler(sock: socket, buffer: dict, *args, **kwargs):
+    """RELAY UPLOAD DATA FROM SENDER TO RECIEVER"""
+    sockets = buffer["sockets"]
+    
+    sndr_sock = sock
+    rcvr_sock = [s for s in sockets.values() if s != sndr_sock]
+
+    recv_len = 1
+    sndr_sock.send(prefixes.dict["server"]["chat"]["relayData"].encode())
+
+    while recv_len:
+        data = sndr_sock.recv(BUFFER_LEN)
+        rcvr_sock.send(data)
+        recv_len = len(data)
+
+        if recv_len < BUFFER_LEN:
+            break
+        
+        if not data:
+            break
 
 
 def _C_handler(sock: socket, *args, **kwargs):
@@ -79,7 +104,7 @@ dispatch = {
     "r": None,
     "s": None,
     "t": None,
-    "u": None,
+    "u": _u_handler,
     "v": None,
     "w": None,
     "x": None,

@@ -2,7 +2,6 @@ import socket, ssl
 
 from threading import Thread
 from handlers import HandshakeHandler, ServMsgHandler
-
 from lib.encryption import x509
 
 from chatutils import utils
@@ -14,8 +13,9 @@ configs = utils.JSONLoader()
 users = utils.JSONLoader(paths.user_dict_path)
 users.clear()
 
-BUFFER_LEN = configs.dict["system"]["defaultBufferLen"]
+BUFFER_LEN = configs.dict["system"]["bufferLen"]
 PREFIX_LEN = configs.dict["system"]["prefixLen"]
+
 HOST = configs.dict["system"]["defaultHost"]
 PORT = configs.dict["system"]["defaultPort"]
 ADDR = (HOST, PORT)
@@ -46,7 +46,7 @@ def accept_client(server):
 
 
 def handle_client(client_socket:socket , addr: tuple) -> None:
-    
+
     user_dict = HandshakeHandler.ServerSide(client_socket, addr).user
     print(f"[+] {user_dict['nick']} has joined the chat.")
     
@@ -54,7 +54,7 @@ def handle_client(client_socket:socket , addr: tuple) -> None:
     
     while True:
         msg_type = client_socket.recv(PREFIX_LEN)
-        utils.debug_(msg_type, "msg_type")
+        utils.debug_(msg_type, "msg_type", "handle_cient", True)
 
         if not msg_type:
             del sockets_dict[user_dict["nick"]]
@@ -83,7 +83,6 @@ def das_boot():
             except:
                 # REMOVE from all dicts
                 pass
-
 
 def main():
 

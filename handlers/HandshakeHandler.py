@@ -10,7 +10,7 @@ configs = utils.JSONLoader()
 prefixes = utils.JSONLoader(paths.prefix_path)
 users = utils.JSONLoader(paths.user_dict_path)
 
-BUFFER_LEN = configs.dict["system"]["defaultBufferLen"]
+BUFFER_LEN = configs.dict["system"]["bufferLen"]
 PREFIX_LEN = configs.dict["system"]["prefixLen"]
 
 

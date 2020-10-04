@@ -12,7 +12,7 @@ configs = utils.JSONLoader()
 prefixes = utils.JSONLoader(paths.prefix_path)
 
 PREFIX_LEN = configs.dict["system"]["prefixLen"]
-BUFFER_LEN = configs.dict["system"]["defaultBufferLen"]
+BUFFER_LEN = configs.dict["system"]["bufferLen"]
 HEADER_LEN = configs.dict["system"]["headerLen"]
 TARGET_HOST = configs.dict["system"]["defaultHost"]
 TARGET_PORT = configs.dict["system"]["defaultPort"]
