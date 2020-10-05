@@ -183,7 +183,7 @@ class RecipOperations():
         ServerOperations().deliver_accept_or_not_response(choice)
 
     @recip_logging
-    def receiving_payload(self, payload):
+    def receive_payload(self, payload):
         print("Saving payload.")
         print(payload)
 

@@ -1,16 +1,16 @@
-import os
-import sys
-import socket
+import os, sys, socket
+
+from chatutils.chatio2 import ChatIO
 
 from chatutils import utils
 configs = utils.JSONLoader()
 
 BUFFER_LEN = configs.dict["system"]["bufferLen"]
 
-def write(sock):
-    path = 'testfile1.jpg'
-
+def write(sock:socket, target_path:str = 'testfile1.jpg'):
+    """WRITE FILE TO TARGET_PATH FROM SOCK"""
     while True:
+        print("WRITNG FROM SERVER")
         file_buffer = b""
         recv_len = 1
 
@@ -19,15 +19,19 @@ def write(sock):
                 data = sock.recv(BUFFER_LEN)
                 recv_len = len(data)
 
+                if not data:
+                    break
+
                 # Overwrite file if exists.
-                with open(path, 'wb') as f:
+                with open(target_path, 'wb') as f:
                     f.write(data)
 
                 if recv_len < BUFFER_LEN:
+                    print(f"breaking 1. because recv_len is {recv_len}")
                     break
 
                 else:
-                    with open(path, 'ab') as f:
+                    with open(target_path, 'ab') as f:
                         while True:
                             data = sock.recv(BUFFER_LEN)
                             recv_len = len(data)
@@ -36,20 +40,17 @@ def write(sock):
                             f.write(data)
 
                             if recv_len < BUFFER_LEN:
+                                print(f"breaking 2 because recv_len is {recv_len}")
                                 break
+
+                ChatIO().pack_n_send(sock, "M", "[!] File transferred successfully.")
                 break
-
-            if not data:
-                break
-
-            sock.send(b"M")
-            sock.send(b"Successfully saved file.")
-            sock
-
+                
         except:
             sock.send(b"M")
-            sock.send(b"File transfer failed.")
+            sock.send(b"[x] File transfer failed.")
 
+        break
 
 def write_file(sock: socket,
                path: str = "testimage1.jpg",
@@ -67,4 +68,4 @@ def write_file(sock: socket,
             sock.send(b"File successfully transfered.")
             return
         else:
-            write_file(path, sock, recv_len, "ab")
+            write_file(sock, path, recv_len, "ab")

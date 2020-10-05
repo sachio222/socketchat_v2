@@ -1,20 +1,20 @@
 {
-    "Jake": {
-        "nick": "Jake",
+    "ok": {
+        "nick": "ok",
         "addr": [
             "127.0.0.1",
-            49429
+            53269
         ],
-        "public_key": "3RMdBVQ30WAccpHln4Uqf11AP4A0eLx234501M1Pal0=",
+        "public_key": "w6gTvKzaFM+DnUZ0BToc77E4+ylqR2XVWqaifUtIhT8=",
         "trusted": null
     },
-    "danica": {
-        "nick": "danica",
+    "ij": {
+        "nick": "ij",
         "addr": [
             "127.0.0.1",
-            49449
+            53277
         ],
-        "public_key": "4vrjrxH4hOkbpuPTnfydiRO+ENFHvdKLGlh8TVcyCWw=",
+        "public_key": "mL7Rl6TsjHT17PrqwNmcbOcexT2uVO5uohmkonsUCA8=",
         "trusted": null
     }
 }

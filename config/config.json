@@ -1,5 +1,5 @@
 {
-    "cipher": "chacha",
+    "cipher": "fernet",
     "introduced": false,
     "muted": true,
     "session": {
@@ -10,7 +10,7 @@
         "bufferLen": 4096,
         "defaultHost": "127.0.0.1",
         "defaultPort": 12222,
-        "idleTimeSec": 60,  
+        "idleTimeSec": 60,
         "prefixLen": 1,
         "headerLen": 10
     },

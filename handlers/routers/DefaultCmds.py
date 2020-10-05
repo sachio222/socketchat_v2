@@ -83,20 +83,22 @@ def keys(*args, **kwargs):
     # Show what keys I have.
     pass
 
-def swooshit(*args, **kwargs):
+def scuttle(*args, **kwargs):
     sock = kwargs["sock"]
 
-def sendfile(*args, **kwargs):
+def sendfile(sock: socket, *args, **kwargs):
     """Initiates Send File (SF) sequence."""
-    sock = kwargs["sock"]
-    # utils.debug_(sock, "sock", "sendfile", True)
-    sock.send(b"u")
-    with open("testfile.jpg") as f:
-        sock.sendall(f)
+    try:
+        sock.send(b"u")
+        with open("testfile.jpg", "rb") as f:
+            sent_bytes = sock.sendfile(f)
+            print(sent_bytes)
+    except Exception as e:
+        print(e)
     print("file sent")
+    return 
         
     # SenderOperations().show_prompts(sock)
-
 
 def sendkey(*args, **kwargs):
     pass
