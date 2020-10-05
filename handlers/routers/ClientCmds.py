@@ -56,8 +56,9 @@ def _u_handler(sock: socket, *args, **kwargs):
     if True:
         sock.send(data.encode())
         print("Sending file")
-        with open("testfile.jpg") as f:
-            sock.sendall(f)
+        with open("testfile.jpg", "rb") as f:
+            sent_bytes = sock.sendall(f)
+            print(sent_bytes)
     else:
         # File doesn't exist error. 
         pass
@@ -78,7 +79,8 @@ def _W_handler(sock: socket, *args, **kwargs):
 def _M_handler(sock: socket, *args, **kwargs) -> bytes:
     """DEFAULT MESSAGE"""
     bytes_data = ChatIO.unpack_data(sock)
-    print(bytes_data)
+    data_dict = json.loads(bytes_data)
+    ChatIO.print_to_client(ChatIO, data_dict)
 
     return bytes_data
     # response = b""

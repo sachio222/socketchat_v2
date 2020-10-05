@@ -44,7 +44,7 @@ def dispatch(msg:str, *args, **kwargs) -> bytes:
     utils.debug_(cipher_text, "cipher_text")
 
     buffer["cipher"] = configs.dict["cipher"]
-    buffer["cipherPacket"] = cipher_text
+    buffer["msg_pack"] = cipher_text
     buffer = json.dumps(buffer)
 
     utils.debug_(buffer, "buffer")

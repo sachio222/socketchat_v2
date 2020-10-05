@@ -79,9 +79,8 @@ class JSONLoader():
             self.dict = self.load()
         except:
             # print(f"WARNING: {e}")
-            # self.dict = {}
-            # self.dict = self.update()
-            pass
+            self.dict = {}
+            self.dict = self.update()
         
     def load(self):
         with open(self.path) as f:

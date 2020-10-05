@@ -91,8 +91,10 @@ class ChatIO:
 
     def add_sender_nick(self, buffer: dict) -> bytes:
         sender_nick = buffer["sender_nick"]
-        msg_bytes = buffer["msg_bytes"].decode()
-        msg_bytes = f"@{sender_nick}: {msg_bytes}"
+        buffer = json.loads(buffer["msg_bytes"])
+        buffer["sender"] = sender_nick
+        msg_bytes = json.dumps(buffer)
+        # msg_bytes = f"@{sender_nick}: {msg_bytes}"
         return msg_bytes.encode()
 
 
@@ -103,3 +105,7 @@ class ChatIO:
         for s in sockets.values():
             if s != send_sock:
                 self.pack_n_send(s, prefixes.dict["server"]["chat"]["default"], msg_bytes)
+
+    def print_to_client(self, data_dict: dict):
+        # print(f'@{data_dict["sender"]}: {data_dict["msg_pack"]}')
+        print(f'@{data_dict["sender"]}: {data_dict["msg_pack"]["ciphertext"]}')
