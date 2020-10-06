@@ -1,5 +1,5 @@
 {
-    "cipher": "chacha",
+    "cipher": "test",
     "introduced": false,
     "muted": true,
     "session": {
@@ -10,9 +10,10 @@
         "bufferLen": 4096,
         "defaultHost": "127.0.0.1",
         "defaultPort": 12222,
+        "headerLen": 10,
         "idleTimeSec": 60,
-        "prefixLen": 1,
-        "headerLen": 10
+        "sysNick": "Yo",
+        "prefixLen": 1
     },
     "msg": {
         "getNick": "[+] What is your name? @",

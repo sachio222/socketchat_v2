@@ -29,11 +29,9 @@ class FernetCipher():
         return open(self.key_path, 'rb').read()
 
     def encrypt(self, msg):
-        enc_dict = {}
         msg = msg.encode()  # byte encode
         enc_msg = self.f.encrypt(msg)
-        enc_dict["ciphertext"] = enc_msg.decode()
-        return enc_dict
+        return enc_msg
 
     def decrypt(self, msg):
         try:

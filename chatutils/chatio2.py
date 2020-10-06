@@ -32,13 +32,15 @@ class ChatIO:
         except:
             pass
 
-        utils.debug_(data, "data", "pack_n_send")
+
 
         size = len(data)
 
         utils.debug_(size, "size", "pack_n_send")
         header = self._make_header(size)
+
         packed_data = f"{typ_pfx}{header}{data}"
+        # utils.debug_(packed_data, "packed_data", "pack_data", override=True)
         return packed_data.encode()
 
     def _make_header(self, size: int, header_len: int = HEADER_LEN):
@@ -90,17 +92,33 @@ class ChatIO:
         return buffer
 
     def add_sender_nick(self, buffer: dict) -> bytes:
+        send_buffer = {}
+        # utils.debug_(buffer, "buffer", "RAW buffer DICT", override=False)
         sender_nick = buffer["sender_nick"]
-        buffer = json.loads(buffer["msg_bytes"])
-        buffer["sender"] = sender_nick
-        msg_bytes = json.dumps(buffer)
+        send_buffer = json.loads(buffer["msg_bytes"])
+        # utils.debug_(buffer, "buffer", "BUFFER AFTER JSON LOADS", override=False)
+        send_buffer["sender"] = sender_nick
+        msg_bytes = json.dumps(send_buffer)
         # msg_bytes = f"@{sender_nick}: {msg_bytes}"
         return msg_bytes.encode()
 
+    def add_system_handle(self, buffer: dict) -> bytes:
+        send_buffer = {}
+        system_nick = configs.dict["system"]["sysNick"]
+        send_buffer["msg_pack"] = buffer["msg_bytes"]
+        send_buffer["sender"] = system_nick
+        utils.debug_(send_buffer, "send_buffer", "AFTER NICK ADDED", override=False)
+        
+        # print(buffer)
+        return send_buffer
 
-    def broadcast(self, send_sock: socket, buffer: dict):
-        msg_bytes = self.add_sender_nick(buffer)
-        print(msg_bytes.decode())
+
+    def broadcast(self, send_sock: socket, buffer: dict, cast_type: "str" = None):
+        if cast_type == "sys":
+            msg_bytes = self.add_system_handle(buffer)
+        else:
+            msg_bytes = self.add_sender_nick(buffer)
+            print(msg_bytes.decode())
         sockets = buffer["sockets"]
         for s in sockets.values():
             if s != send_sock:

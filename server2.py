@@ -33,8 +33,6 @@ def accept_client(server):
         # ******** SSL WRAPPER ******** #
 
         active_sockets.append(client_socket)
-        idle_thread = Thread(target=das_boot, daemon=True)
-        idle_thread.start()
         
         print(f"[+] Connected to {addr}")
 
@@ -96,6 +94,9 @@ def main():
 
     accept_thread = Thread(target=accept_client, args=(server,))
     accept_thread.start()
+    
+    idle_thread = Thread(target=das_boot, daemon=True)
+    idle_thread.start()
 
 
 if __name__ == "__main__":
