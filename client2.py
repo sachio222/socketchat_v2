@@ -61,11 +61,6 @@ class Client(ChatIO):
                 self.pack_n_send(sock, prefixes.dict["client"]["chat"]["msg"],
                                  output_bytes)
 
-            # if buffer == "upload":
-            #     self.upload(sock)
-            # else:
-            #     buffer += "\n"
-            #     buffer = self.pack_n_send(sock, "M", buffer)
 
     def upload(self, sock):
         path = "image.jpg"

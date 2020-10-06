@@ -1,4 +1,5 @@
 from chatutils import utils
+from handlers import EncryptionHandler
 
 from lib.encryption import XChaCha20Poly1305, argon2kdf
 from lib.encryption.fernet import FernetCipher
@@ -26,14 +27,16 @@ TO ADD CUSTOM ENCRYPTION:
 def fernet(data) -> bytes:
     """DECENT AES128 ENCRYPTION"""
     encrypted_msg = FernetCipher().encrypt(data)
-    # utils.debug_(encrypted_msg, "encrypted_msg", "fernet", True)
-    return encrypted_msg
+    enc_dict = EncryptionHandler.pack_cipher_dict(encrypted_msg)
+    return enc_dict
 
 
 def aes256_ctc(data):
     """STATE OF THE ART AES256 ENCRYPTION"""
-    cipher_text = aes.full_encryption(data.encode())
-    return cipher_text
+    encrypted_msg = aes.full_encryption(data.encode())
+    encrypted_msg = EncryptionHandler.pack_cipher_dict(encrypted_msg)
+    # print(cipher_text)
+    return encrypted_msg
 
 
 def aes256_hmac(data):
@@ -70,14 +73,17 @@ def argon2(data):
 
 def goober(data) -> bytes:
     """LIKE RUNNING IN THE BUFF"""
-    # print("Running naked dawg")
-    return data.encode()
+    encrypted_msg = EncryptionHandler.pack_cipher_dict(data.encode())
+    return encrypted_msg
 
 
 def test(data) -> bytes:
-    encrypted_msg = f'<<{data}>>'
-    return encrypted_msg.encode()
+    data = f'<<{data}>>'
+    encrypted_msg = EncryptionHandler.pack_cipher_dict(data.encode())
+    return encrypted_msg
 
+def xsalsa20(data) -> bytes:
+    pass
 
 cipher_dict = {
     'fernet': fernet,
@@ -88,5 +94,6 @@ cipher_dict = {
     'chacha': chacha20_poly1305,
     'argon2': argon2,
     'goober': goober,
-    'test': test
+    'test': test,
+    'xsalsa20': xsalsa20
 }

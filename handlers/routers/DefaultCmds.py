@@ -6,6 +6,7 @@ from chatutils.chatio2 import ChatIO
 
 from lib.xfer.FileXfer import *
 from handlers import EncryptionHandler
+from handlers.routers import EncryptionCmds
 
 import config.filepaths
 configs = utils.JSONLoader()
@@ -41,14 +42,14 @@ def encryption(*args, **kwargs):
     def set_cipher(msg):
         choices = {}
         if msg not in ["list", "help", "h", "ls"]:
-            if msg in EncryptionHandler.EncryptionCmds.cipher_dict.keys():
+            if msg in EncryptionCmds.cipher_dict.keys():
                 configs.dict["cipher"] = msg
                 configs.update()
                 configs.reload()
         else:
             while True:
                 print("[?] Choose a cipher:")
-                for i, key in enumerate(EncryptionHandler.cipher_dict.keys(),
+                for i, key in enumerate(EncryptionCmds.cipher_dict.keys(),
                                         1):
                     choices[i] = key
                     print(f'{i}. {key}')
@@ -93,6 +94,7 @@ def sendfile(sock: socket, *args, **kwargs):
         with open("testfile.jpg", "rb") as f:
             sent_bytes = sock.sendfile(f)
             print(sent_bytes)
+            
     except Exception as e:
         print(e)
     print("file sent")

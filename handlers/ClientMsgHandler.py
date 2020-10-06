@@ -20,7 +20,7 @@ def dispatch(sock: socket, msg_type: str) -> bytes:
     return bytes_data
 
 
-def user_command_router(sock: socket, msg: str) -> None:
+def command_router(sock: socket, msg: str) -> None:
     """handles input command messages and calls controller funcs.
 
     All of the controller commands are routed through this function based

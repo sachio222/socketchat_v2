@@ -32,21 +32,32 @@ configs = utils.JSONLoader()
 # self.msg = Base64Encoder.encode(self.msg)
 # # self.msg = fernet.encrypt(self.msg)
 
+def message_router(msg:str, *args, **kwargs) -> bytes:
+    """RETURNS TRANSMIT BUFFER WITH MSG IN PROPER ENCRYPTION."""
+    cipher_func = get_current_encryption()
+    cipher_dict = cipher_func(msg)
+    buffer = make_cipher_buffer(cipher_dict)
+    return buffer
 
-def dispatch(msg:str, *args, **kwargs) -> bytes:
-    buffer = {}
+def pack_cipher_dict(cipher_text: bytes, *args, **kwargs) -> dict:
+    """PACK CIPHERTEXT OUTPUT INTO DICT."""
+    enc_dict = {}
+    enc_dict["ciphertext"] = cipher_text.decode()
+    enc_dict = json.dumps(enc_dict)
+    return enc_dict
 
+def get_current_encryption(cipher:str = None) -> object:
+    """RETURNS CIPHER FROM CONFIGS."""
     configs.reload() # Get current encryption setting.
     cipher = configs.dict["cipher"]
-    cipher = EncryptionCmds.cipher_dict.get(cipher, "goober")
-    cipher_text = cipher(msg)
+    cipher_func = EncryptionCmds.cipher_dict.get(cipher, "goober")
+    return cipher_func
 
-    utils.debug_(cipher_text, "cipher_text")
-
+def make_cipher_buffer(cipher_dict:dict):
+    """RETURNS TRANSMIT BUFFER WITH CIPHER TYPE APPENDED."""
+    buffer = {}
+    cipher_dict = json.loads(cipher_dict)
     buffer["cipher"] = configs.dict["cipher"]
-    buffer["msg_pack"] = cipher_text
+    buffer["msg_pack"] = cipher_dict
     buffer = json.dumps(buffer)
-
-    utils.debug_(buffer, "buffer")
-
     return buffer

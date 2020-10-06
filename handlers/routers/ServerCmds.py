@@ -1,3 +1,4 @@
+from chatutils.utils import debug_
 import socket
 from chatutils import utils
 from chatutils.chatio2 import ChatIO
@@ -53,24 +54,24 @@ def _u_handler(sock: socket, buffer: dict, *args, **kwargs):
 
 
 def _C_handler(sock: socket, *args, **kwargs):
-    """COMMAND LINE CONTROL"""
+    """COMMAND LINE CONTROL."""
     cmd.commands(sock)
 
 
 def _D_handler(sock: socket, *args, **kwargs) -> bytes:
-    """DATA FROM CLIENT"""
+    """DATA FROM CLIENT."""
     bytes_data = ChatIO.unpack_data(sock)
     return bytes_data
 
 
 def _H_handler(sock: socket, *args, **kwargs) -> bytes:
-    """RECEIVE HANDSHAKE DICT"""
+    """RECEIVE HANDSHAKE DICT."""
     bytes_data = ChatIO.unpack_data(sock)
     return bytes_data
 
 
 def _M_handler(sock: socket, buffer: dict, *args, **kwargs) -> bytes:
-    """DEFAULT MESSAGE HANDLER"""
+    """DEFAULT MESSAGE HANDLER."""
     msg_bytes = buffer["msg_bytes"] = ChatIO.unpack_data(sock)
     ChatIO().broadcast(sock, buffer)
     return msg_bytes
@@ -85,6 +86,10 @@ def _P_handler(sock: socket, *args, **kwargs):
     """ADD PUBLIC KEY"""
     pass
 
+def _S_handler(sock: socket, buffer: dict, *args, **kwargs):
+    """SYSTEM MESSAGE HANDLER."""
+    msg_bytes = buffer["msg_bytes"] = ChatIO.unpack_data(sock)
+    ChatIO().broadcast(sock, buffer, cast_type="sys")
 
 def error(*args, **kwargs):
     print(f'Message Type Error: Invalid message type {kwargs["msg_type"]}')
@@ -135,7 +140,7 @@ dispatch = {
     "P": None,
     "Q": None,
     "R": None,
-    "S": None,
+    "S": _S_handler,
     "T": None,
     "U": None,
     "V": None,

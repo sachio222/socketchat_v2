@@ -11,9 +11,9 @@ def dispatch(sock: socket, msg: str) -> bytes:
     """
     if len(msg):
         if msg[0] == '/':  # Check for command
-            msg = ClientMsgHandler.user_command_router(sock=sock, msg=msg)
+            msg = ClientMsgHandler.command_router(sock=sock, msg=msg)
         else:
-            msg = EncryptionHandler.dispatch(msg)
+            msg = EncryptionHandler.message_router(msg)
     else:
         # Send new line on enter press.
         msg = "\n"
