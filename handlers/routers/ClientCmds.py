@@ -79,7 +79,10 @@ def _W_handler(sock: socket, *args, **kwargs):
 def _M_handler(sock: socket, *args, **kwargs) -> bytes:
     """DEFAULT MESSAGE"""
     bytes_data = ChatIO.unpack_data(sock)
-    data_dict = json.loads(bytes_data)
+    try:
+        data_dict = json.loads(bytes_data)
+    except:
+        data_dict = bytes_data
     ChatIO.print_to_client(ChatIO, data_dict)
 
     return bytes_data

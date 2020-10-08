@@ -44,11 +44,11 @@ def write(sock:socket, target_path:str = 'testfile1.jpg'):
                                 break
 
                 # ChatIO().pack_n_send(sock, "M", '{"msg_pack": {"ciphertext": "DONE"}}')
-                ChatIO().pack_n_send(sock, "S", "[!] File transferred successfully.")
+                ChatIO().pack_n_send(sock, "M", "[!] File transferred successfully.")
                 break
                 
         except:
-            ChatIO().pack_n_send(sock, "S", "[x] File transfer failed")
+            ChatIO().pack_n_send(sock, "M", "[x] File transfer failed")
 
         break
 
