@@ -73,7 +73,6 @@ class ChatIO:
     def unpack_data(cls, sock: socket) -> bytes:
         """UNPACK DATA"""
         msg_len = sock.recv(HEADER_LEN)
-        utils.debug_(msg_len, "msg_len", "unpack_data")
         try:
             msg_bytes = sock.recv(int(msg_len))
         except:
@@ -92,38 +91,37 @@ class ChatIO:
         return buffer
 
     def add_sender_nick(self, buffer: dict) -> bytes:
-        send_buffer = {}
-        # utils.debug_(buffer, "buffer", "RAW buffer DICT", override=False)
         sender_nick = buffer["sender_nick"]
-        send_buffer = json.loads(buffer["msg_bytes"])
-        # utils.debug_(buffer, "buffer", "BUFFER AFTER JSON LOADS", override=False)
-        send_buffer["sender"] = sender_nick
-        msg_bytes = json.dumps(send_buffer)
-        # msg_bytes = f"@{sender_nick}: {msg_bytes}"
-        return msg_bytes.encode()
+        msg_bytes = buffer["msg_bytes"]
+        print("message bytes type is ", type(msg_bytes))
+        try:
+            msg_bytes = json.loads(msg_bytes)
+            msg_bytes["sender"] = sender_nick
+            msg_bytes = json.dumps(msg_bytes)
+            return msg_bytes.encode()
+        except:
+            send_buffer = {}
+            temp = {}
 
-    def add_system_handle(self, buffer: dict) -> bytes:
-        send_buffer = {}
-        system_nick = configs.dict["system"]["sysNick"]
-        send_buffer["msg_pack"] = buffer["msg_bytes"]
-        send_buffer["sender"] = system_nick
-        utils.debug_(send_buffer, "send_buffer", "AFTER NICK ADDED", override=False)
-        
-        # print(buffer)
-        return send_buffer
+            send_buffer["sender"] = sender_nick
+            temp["ciphertext"] = msg_bytes
+            send_buffer["msg_pack"] = temp
+            return send_buffer
+            
 
 
     def broadcast(self, send_sock: socket, buffer: dict, cast_type: "str" = None):
-        if cast_type == "sys":
-            msg_bytes = self.add_system_handle(buffer)
-        else:
-            msg_bytes = self.add_sender_nick(buffer)
+        msg_bytes = self.add_sender_nick(buffer)
+        try:
             print(msg_bytes.decode())
+        except:
+            print(msg_bytes)
         sockets = buffer["sockets"]
         for s in sockets.values():
             if s != send_sock:
                 self.pack_n_send(s, prefixes.dict["server"]["chat"]["default"], msg_bytes)
 
     def print_to_client(self, data_dict: dict):
+        print(data_dict)
         # print(f'@{data_dict["sender"]}: {data_dict["msg_pack"]}')
-        print(f'@{data_dict["sender"]}: {data_dict["msg_pack"]["ciphertext"]}')
+        # print(f'@{data_dict["sender"]}: {data_dict["msg_pack"]["ciphertext"]}')
