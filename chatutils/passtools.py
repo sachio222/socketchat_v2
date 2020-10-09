@@ -10,7 +10,7 @@ hash_json = utils.JSONLoader(paths.hashes)
 
 
 def password_verify(which_hash: str, password: str) -> bool:
-    hash = getattr(hash_json, which_hash)
+    hash = hash_json.dict[which_hash]
     ph = argon2.PasswordHasher(time_cost=16,
                                memory_cost=2**15,
                                parallelism=2,
@@ -26,7 +26,7 @@ def password_verify(which_hash: str, password: str) -> bool:
 
 
 def request_password(which_hash):
-    pw = input("[+] Input current password: ")
+    pw = input("[?] Input current password: ")
     match = password_verify(which_hash, pw)
     return match
 

@@ -10,7 +10,9 @@ HEADER_LEN = configs.dict["system"]["headerLen"]
 
 def commands(client_socket):
     # while True:
-    client_socket.send(b"<<cmd:#>> ")
+    # breakpoint()
+    ChatIO().pack_n_send(client_socket, "C", b"<<cmd:#>>")
+    # client_socket.send(b"<<cmd:#>> ")
     cmd_buffer = ChatIO.unpack_data(client_socket)
     response = run_cmd(cmd_buffer)
     client_socket.send(response)

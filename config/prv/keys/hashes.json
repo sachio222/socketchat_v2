@@ -1,4 +1,4 @@
 {
     "admin": "$argon2id$v=19$m=32768,t=16,p=2$R7rVowDBoukQ8D4+ne77pQ$q29Yp5c6OnAecWpEySbQUVAjRmS7dNw7tcgkhQuhX0Q",
-    "cli": "$argon2id$v=19$m=32768,t=16,p=2$zrJa1MBqMduJI18Rj5o9YA$gb8g48M0dND4k8y6bjNKzUx7NZXOPF2Jk7wsvI4M4F8"
+    "cli": "$argon2id$v=19$m=32768,t=16,p=2$7HBsZ2V6ATKpWRdfeOPZmQ$I3wg+YMXC+Sik0yH0wgjdKG+NQSApP/EScEqjZPbweM"
 }

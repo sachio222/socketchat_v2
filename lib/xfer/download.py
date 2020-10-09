@@ -10,7 +10,7 @@ BUFFER_LEN = configs.dict["system"]["bufferLen"]
 def write(sock:socket, target_path:str = 'testfile1.jpg'):
     """WRITE FILE TO TARGET_PATH FROM SOCK"""
     while True:
-        print("WRITNG FROM SERVER")
+        print("[<==] Downloading...")
         file_buffer = b""
         recv_len = 1
 
@@ -27,7 +27,8 @@ def write(sock:socket, target_path:str = 'testfile1.jpg'):
                     f.write(data)
 
                 if recv_len < BUFFER_LEN:
-                    print(f"breaking 1. because recv_len is {recv_len}")
+                    print("[*] File successfully downloaded.")
+                    # print(f"breaking 1. because recv_len is {recv_len}")
                     break
 
                 else:
@@ -40,15 +41,16 @@ def write(sock:socket, target_path:str = 'testfile1.jpg'):
                             f.write(data)
 
                             if recv_len < BUFFER_LEN:
-                                print(f"breaking 2 because recv_len is {recv_len}")
+                                print("[*] File successfully downloaded.")
+                                # print(f"breaking 2 because recv_len is {recv_len}")
                                 break
 
                 # ChatIO().pack_n_send(sock, "M", '{"msg_pack": {"ciphertext": "DONE"}}')
-                ChatIO().pack_n_send(sock, "M", "[!] File transferred successfully.")
+                ChatIO().pack_n_send(sock, "S", "[!] File transferred successfully.")
                 break
                 
         except:
-            ChatIO().pack_n_send(sock, "M", "[x] File transfer failed")
+            ChatIO().pack_n_send(sock, "S", "[x] File transfer failed")
 
         break
 

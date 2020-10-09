@@ -6,6 +6,7 @@
             "default": "M",
             "handshake": "H",
             "msg": "M",
+            "newLine": "l",
             "pubk": "k",
             "upload": "u",
             "xfer": "X"
@@ -23,8 +24,10 @@
             "data": "D",
             "default": "M",
             "msg": "M",
+            "newLine": "l",
             "pubk": "k",
             "relayData": "r",
+            "sysMsg": "s",
             "xfer": "X"
         },
         "handshake": {

@@ -1,5 +1,5 @@
 {
-    "cipher": "test",
+    "cipher": "aes256",
     "introduced": false,
     "muted": true,
     "session": {
@@ -11,8 +11,8 @@
         "defaultHost": "127.0.0.1",
         "defaultPort": 12222,
         "headerLen": 10,
-        "idleTimeSec": 60,
-        "sysNick": "Yo",
+        "idleTimeSec": 600,
+        "nick": "Yo",
         "prefixLen": 1
     },
     "msg": {
