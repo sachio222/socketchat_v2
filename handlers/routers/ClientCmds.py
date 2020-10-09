@@ -22,6 +22,12 @@ def _i_handler(sock: socket, *args, **kwargs):
     print("@Yo: Ping from server!")
     sock.send(b"i")
 
+def _l_handler(sock: socket, *args, **kwargs):
+    """LINE BREAK"""
+    bytes_data = ChatIO.unpack_data(sock)
+    print(bytes_data.decode())
+
+
 def _n_handler(sock: socket, *args, **kwargs):
     # print("running nhandler")
     bytes_data = ChatIO.unpack_data(sock)
@@ -48,6 +54,12 @@ def _r_handler(sock: socket, *args, **kwargs):
     # with open("testfile.img", 'wb') as f:
     #     f.write(incoming)
 
+def _s_handler(sock: socket, *args, **kwargs) -> bytes:
+    """INCOMING SERVER MESSAGES."""
+    bytes_data = ChatIO.unpack_data(sock)
+    print(bytes_data.decode())
+    return bytes_data
+
 def _u_handler(sock: socket, *args, **kwargs):
     """UPLOAD FILE TO SERVER"""
     data = prefixes.dict["upload"]
@@ -63,6 +75,11 @@ def _u_handler(sock: socket, *args, **kwargs):
         # File doesn't exist error. 
         pass
 
+def _C_handler(sock: socket, *args, **kwargs):
+    """INCOMING CMD LINE"""
+    ChatIO.recv_open(sock)
+        
+
 
 def _H_handler(sock: socket, *args, **kwargs):
     bytes_data = ChatIO.unpack_data(sock)
@@ -77,7 +94,7 @@ def _W_handler(sock: socket, *args, **kwargs):
 
 
 def _M_handler(sock: socket, *args, **kwargs) -> bytes:
-    """DEFAULT MESSAGE"""
+    """DEFAULT MESSAGE DICTS"""
     bytes_data = ChatIO.unpack_data(sock)
     try:
         data_dict = json.loads(bytes_data)
@@ -86,6 +103,7 @@ def _M_handler(sock: socket, *args, **kwargs) -> bytes:
     ChatIO.print_to_client(ChatIO, data_dict)
 
     return bytes_data
+
     # response = b""
     # recv_len = 1
 
@@ -100,6 +118,8 @@ def _M_handler(sock: socket, *args, **kwargs) -> bytes:
     #     if not data:
     #         break
     # print(response.decode())
+
+
 
 
 def error(sock: socket, *args, **kwargs):
@@ -118,14 +138,14 @@ dispatch = {
     "i": _i_handler,
     "j": None,
     "k": None,
-    "l": None,
+    "l": _M_handler,
     "m": None,
     "n": _n_handler,
     "o": None,
     "p": None,
     "q": None,
     "r": _r_handler,
-    "s": None,
+    "s": _s_handler,
     "t": None,
     "u": _u_handler,
     "v": None,
@@ -135,7 +155,7 @@ dispatch = {
     "z": None,
     "A": None,
     "B": None,
-    "C": None,
+    "C": _C_handler,
     "D": None,
     "E": None,
     "F": None,

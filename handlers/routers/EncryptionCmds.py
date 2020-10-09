@@ -1,3 +1,5 @@
+import chatutils
+from chatutils.chatio2 import ChatIO
 from chatutils import utils
 from handlers import EncryptionHandler
 
@@ -68,7 +70,8 @@ def argon2(data):
     """ARGON2 PASSWORD HASHER."""
     hash, _ = argon2kdf.passwordHasher(data)
     print("Argon2 hash (random salt):", hash)
-    return hash.encode()
+    enc_dict = EncryptionHandler.pack_cipher_dict(hash.encode())
+    return enc_dict
 
 
 def goober(data) -> bytes:

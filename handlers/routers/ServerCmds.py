@@ -16,6 +16,12 @@ BUFFER_LEN = configs.dict["system"]["bufferLen"]
 def _i_handler(sock: socket, *args, **kwargs):
     print("pinged back")
 
+def _l_handler(sock: socket, buffer: dict, *args, **kwargs):
+    """RELAY LINE BREAK"""
+    bytes_data = ChatIO.unpack_data(sock)
+    ChatIO().broadcast(sock, buffer, pfx_type="new_line")
+    return
+
 def _n_handler(sock: socket, *args, **kwargs) -> bytes:
     "RETURNS NICK FROM CLIENT"
     msg_bytes = ChatIO.unpack_data(sock)
@@ -24,7 +30,7 @@ def _n_handler(sock: socket, *args, **kwargs) -> bytes:
 def _u_handler(sock: socket, buffer: dict, *args, **kwargs):
     """RELAY UPLOAD DATA FROM SENDER TO RECIEVER"""
 
-    print("CALLED TO RELAY DATA TO SENDER")
+    print("[!] Relaying data.")
     sockets = buffer["sockets"]
     recv_len = 1
     
@@ -73,6 +79,7 @@ def _H_handler(sock: socket, *args, **kwargs) -> bytes:
 def _M_handler(sock: socket, buffer: dict, *args, **kwargs) -> bytes:
     """DEFAULT MESSAGE HANDLER."""
     msg_bytes = buffer["msg_bytes"] = ChatIO.unpack_data(sock)
+    print(msg_bytes)
     ChatIO().broadcast(sock, buffer)
     return msg_bytes
 
@@ -89,7 +96,8 @@ def _P_handler(sock: socket, *args, **kwargs):
 def _S_handler(sock: socket, buffer: dict, *args, **kwargs):
     """SYSTEM MESSAGE HANDLER."""
     msg_bytes = buffer["msg_bytes"] = ChatIO.unpack_data(sock)
-    ChatIO().broadcast(sock, buffer, cast_type="sys")
+    print("System message is:", msg_bytes)
+    ChatIO().broadcast(sock, buffer, pfx_type="sysMsg")
 
 def error(*args, **kwargs):
     print(f'Message Type Error: Invalid message type {kwargs["msg_type"]}')
@@ -107,7 +115,7 @@ dispatch = {
     "i": _i_handler,
     "j": None,
     "k": None,
-    "l": None,
+    "l": _l_handler,
     "m": None,
     "n": _n_handler,
     "o": None,

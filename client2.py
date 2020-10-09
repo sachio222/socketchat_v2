@@ -55,10 +55,10 @@ class Client(ChatIO):
             print("\x1B[F\x1B[2K", end="")
             print(f"@{USER_ID}: " + buffer)
 
-            output_bytes = InputHandler.dispatch(sock, buffer)
+            output_bytes, msg_type = InputHandler.dispatch(sock, buffer)
 
             if output_bytes:
-                self.pack_n_send(sock, prefixes.dict["client"]["chat"]["msg"],
+                self.pack_n_send(sock, msg_type,
                                  output_bytes)
 
 
