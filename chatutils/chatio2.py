@@ -114,7 +114,7 @@ class ChatIO:
         temp = {}
         # msg_bytes = msg_bytes.decode()
         send_buffer["cipher"] = "goober"
-        temp["ciphertext"] = msg_bytes
+        temp["cipher_text"] = msg_bytes
         send_buffer["msg_pack"] = temp
         send_buffer["sender"] = sender_nick
         send_buffer = json.dumps(send_buffer)
@@ -157,5 +157,5 @@ class ChatIO:
             if s != send_sock:
                 self.pack_n_send(s, prefixes.dict["server"]["chat"][pfx_type], msg_bytes)
 
-    def print_to_client(self, data_dict: dict):
-        print(f'@{data_dict["sender"]}: {data_dict["msg_pack"]["ciphertext"]}')
+    def print_to_client(self, sender: str, msg: str):
+        print(f'@{sender}: {msg}')

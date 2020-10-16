@@ -33,11 +33,11 @@ class FernetCipher():
         enc_msg = self.f.encrypt(msg)
         return enc_msg
 
-    def decrypt(self, msg):
+    def decrypt(self, data: bytes):
         try:
-            dec_msg = self.f.decrypt(msg)
-        except Exception:
-            dec_msg = msg
+            dec_msg = self.f.decrypt(data)
+        except Exception as e:
+            dec_msg = data
         return dec_msg
 
     def split(self, raw_msg):

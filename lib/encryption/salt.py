@@ -149,9 +149,9 @@ class NaclCipher():
             bytes_msg) + secret_box.NONCE_SIZE + secret_box.MACBYTES
         return cipher_txt
 
-    def open_secret_box(self, secret_box: SecretBox, ciphertext: hex) -> str:
+    def open_secret_box(self, secret_box: SecretBox, cipher_text: hex) -> str:
         """Decryptes secret box contents."""
-        cleartext = secret_box.decrypt(ciphertext)
+        cleartext = secret_box.decrypt(cipher_text)
         return cleartext.decode()
 
     #=== Generate Shared Keys ===#
@@ -263,7 +263,7 @@ if __name__ == "__main__":
 
     # Get encoded message from box.
     cipher_txt = salt.encrypt(box, msg.encode())
-    print('ciphertext is\n', cipher_txt)
+    print('cipher_text is\n', cipher_txt)
     cipher_txt64 = Base64Encoder.encode(cipher_txt)
     print(cipher_txt64)
     cipher_txtstr = cipher_txt64.decode()

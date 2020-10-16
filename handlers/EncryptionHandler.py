@@ -42,7 +42,7 @@ def message_router(msg:str, *args, **kwargs) -> bytes:
 def pack_cipher_dict(cipher_text: bytes, *args, **kwargs) -> dict:
     """PACK CIPHERTEXT OUTPUT INTO DICT."""
     enc_dict = {}
-    enc_dict["ciphertext"] = cipher_text.decode()
+    enc_dict["cipher_text"] = cipher_text.decode()
     enc_dict = json.dumps(enc_dict)
     return enc_dict
 

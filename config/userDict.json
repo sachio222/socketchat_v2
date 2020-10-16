@@ -1,20 +1,20 @@
 {
-    "jake": {
-        "nick": "jake",
+    "sf": {
+        "nick": "sf",
         "addr": [
             "127.0.0.1",
-            58276
+            52286
         ],
-        "public_key": "IuIZd4JEfjcCiGXJCD96Z91CBhUG1l9UtNW7ygh6ED4=",
+        "public_key": "2tvymOtn91YdnU7xBooXiMyPBL48qqVMK0MG8eA03ko=",
         "trusted": null
     },
-    " ": {
-        "nick": " ",
+    "adsf": {
+        "nick": "adsf",
         "addr": [
             "127.0.0.1",
-            58343
+            52294
         ],
-        "public_key": "d0LKLnBFr60wkSVwTU83jLQMAz8xujFfuqeHw3pxWkk=",
+        "public_key": "+j/5qJmi4a1x/sXqLYeB2uRX0An11VQsEKnDpGwTwQE=",
         "trusted": null
     }
 }

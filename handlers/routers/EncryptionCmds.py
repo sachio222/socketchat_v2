@@ -24,7 +24,7 @@ TO ADD CUSTOM ENCRYPTION:
     3. Add method below. 
     
     Args: plaintext,
-    Returns: bytes ciphertext(UTF-8)
+    Returns: bytes cipher_text(UTF-8)
 """
 def fernet(data) -> bytes:
     """DECENT AES128 ENCRYPTION"""

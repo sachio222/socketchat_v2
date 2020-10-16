@@ -1,11 +1,10 @@
 import json, socket
-from sys import prefix
 from chatutils import utils
 from chatutils.chatio2 import ChatIO
 
 from lib.xfer import download
+from handlers import DecryptionHandler
 
-from handlers import HandshakeHandler
 import config.filepaths as paths
 
 configs = utils.JSONLoader()
@@ -102,7 +101,8 @@ def _M_handler(sock: socket, *args, **kwargs) -> bytes:
         data_dict = json.loads(bytes_data)
     except:
         data_dict = bytes_data
-    ChatIO.print_to_client(ChatIO, data_dict)
+    sender, msg = DecryptionHandler.message_router(data_dict)
+    ChatIO.print_to_client(ChatIO, sender, msg)
 
     return bytes_data
 

@@ -1,11 +1,18 @@
+from lib.encryption import XChaCha20Poly1305
+from lib.encryption.aes256 import AES256Cipher
+from lib.encryption.fernet import FernetCipher
+
+aes = AES256Cipher()
+fernet_cipher = FernetCipher()
+
 def fernet(data) -> bytes:
-    encrypted_msg = FernetCipher().encrypt(data)
-    return encrypted_msg
+    decrypted_data = fernet_cipher.decrypt(data.encode())
+    return decrypted_data
 
 
-def aes256_ctc(data):
-    cipher_text = aes.full_encryption(data.encode())
-    return cipher_text
+def aes256_ctc(data) -> bytes:
+    decrypted_data = aes.full_decryption(data.encode())
+    return decrypted_data
 
 
 def aes256_hmac(data):
@@ -28,8 +35,8 @@ def nacl_secret_box(data):
 
 
 def chacha20_poly1305(data):
-    cipher_dict = XChaCha20Poly1305.encrypt(data)
-    return cipher_dict
+    decrypted_data = XChaCha20Poly1305.decrypt(data.encode())
+    return decrypted_data
 
 
 def argon2(data):
