@@ -108,7 +108,7 @@ class AES256Cipher():
         return split_a, split_b, str_length
 
     def pack_payload(self, msg: hex, nonce: hex) -> bytes:
-        """Packs nonce with the ciphertext. Ready for sending. """
+        """Packs nonce with the cipher_text. Ready for sending. """
         nonce_b64 = self.hex_to_b64(nonce)
         ct_b64 = self.hex_to_b64(msg)
         a, b, b64_len = self._rand_split(nonce_b64)
@@ -122,7 +122,7 @@ class AES256Cipher():
         return payload
 
     def unpack_payload(self, payload: bytes) -> tuple:
-        """Unpacks the attached nonce and ciphertext.
+        """Unpacks the attached nonce and cipher_text.
         
         Returns
             msg: (hex)

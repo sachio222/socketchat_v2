@@ -11,11 +11,11 @@ def encrypt(plaintext):
     key = get_random_bytes(32)
     cipher = ChaCha20_Poly1305.new(key=key)
     cipher.update(header)
-    ciphertext, tag = cipher.encrypt_and_digest(plaintext)
+    cipher_text, tag = cipher.encrypt_and_digest(plaintext)
 
-    jk = ['nonce', 'header', 'ciphertext', 'tag']
+    jk = ['nonce', 'header', 'cipher_text', 'tag']
     jv = [
-        b64encode(x).decode() for x in (cipher.nonce, header, ciphertext, tag)
+        b64encode(x).decode() for x in (cipher.nonce, header, cipher_text, tag)
     ]
     result = json.dumps(dict(zip(jk, jv)))
     # print(result)
@@ -32,14 +32,15 @@ def decrypt(result, key):
     # Assume key was shared.
     try:
         b64 = json.loads(result)
-        jk = ['nonce', 'header', 'ciphertext', 'tag']
+        jk = ['nonce', 'header', 'cipher_text', 'tag']
         jv = {k: b64decode(b64[k]) for k in jk}
         cipher = ChaCha20_Poly1305.new(key=key, nonce=jv['nonce'])
         cipher.update(jv['header'])
-        plaintext = cipher.decrypt_and_verify(jv['ciphertext'], jv['tag'])
+        plaintext = cipher.decrypt_and_verify(jv['cipher_text'], jv['tag'])
         print(plaintext)
 
-    except:
+    except Exception as e:
+        print(e)
         print('Incorrect decryption.')
 
 

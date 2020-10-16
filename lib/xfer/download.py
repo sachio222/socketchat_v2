@@ -45,7 +45,7 @@ def write(sock:socket, target_path:str = 'testfile1.jpg'):
                                 # print(f"breaking 2 because recv_len is {recv_len}")
                                 break
 
-                # ChatIO().pack_n_send(sock, "M", '{"msg_pack": {"ciphertext": "DONE"}}')
+                # ChatIO().pack_n_send(sock, "M", '{"msg_pack": {"cipher_text": "DONE"}}')
                 ChatIO().pack_n_send(sock, "S", "[!] File transferred successfully.")
                 break
                 
