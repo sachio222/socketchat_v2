@@ -78,6 +78,8 @@ def _u_handler(sock: socket, *args, **kwargs):
 def _C_handler(sock: socket, *args, **kwargs):
     """INCOMING CMD LINE"""
     ChatIO.recv_open(sock)
+    # sock.recv(1)
+    # pass
         
 
 
