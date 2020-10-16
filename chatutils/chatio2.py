@@ -73,6 +73,7 @@ class ChatIO:
 
                 if not data:
                     break
+            
             print(response.decode())
 
     def dispatch(self, sock: socket, msg_type: str,

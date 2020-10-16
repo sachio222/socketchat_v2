@@ -3,9 +3,18 @@
         "nick": "jake",
         "addr": [
             "127.0.0.1",
-            56265
+            58276
         ],
-        "public_key": "4TVVNTX3rVBfIkhxpUBDxD1FRXD7WJt6w4cPKBJpbVY=",
+        "public_key": "IuIZd4JEfjcCiGXJCD96Z91CBhUG1l9UtNW7ygh6ED4=",
+        "trusted": null
+    },
+    " ": {
+        "nick": " ",
+        "addr": [
+            "127.0.0.1",
+            58343
+        ],
+        "public_key": "d0LKLnBFr60wkSVwTU83jLQMAz8xujFfuqeHw3pxWkk=",
         "trusted": null
     }
 }
