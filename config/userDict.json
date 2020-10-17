@@ -1,20 +1,20 @@
 {
-    "sf": {
-        "nick": "sf",
+    "momoney": {
+        "nick": "momoney",
         "addr": [
             "127.0.0.1",
-            52286
+            63658
         ],
-        "public_key": "2tvymOtn91YdnU7xBooXiMyPBL48qqVMK0MG8eA03ko=",
+        "public_key": "Zh/8MFQ4qHV7ZxJ6jQFC3+LY72oXe/cRc2F1QUkpmzA=",
         "trusted": null
     },
-    "adsf": {
-        "nick": "adsf",
+    "moproblems": {
+        "nick": "moproblems",
         "addr": [
             "127.0.0.1",
-            52294
+            63668
         ],
-        "public_key": "+j/5qJmi4a1x/sXqLYeB2uRX0An11VQsEKnDpGwTwQE=",
+        "public_key": "mG8PAezXjCyiZkSYkuME5zPDEUagxGuBmsWwKXKMsgM=",
         "trusted": null
     }
 }

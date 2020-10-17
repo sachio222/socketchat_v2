@@ -3,6 +3,7 @@ from base64 import b64encode
 from Crypto.Cipher import ChaCha20_Poly1305
 from Crypto.Random import get_random_bytes
 
+# TODO: Add key writing...
 
 def encrypt(plaintext):
     plaintext = plaintext.encode()
