@@ -35,8 +35,8 @@ def _u_handler(sock: socket, buffer: dict, *args, **kwargs):
     recv_len = 1
     
     sndr_sock = sock
+    rcvr_sock = [s for s in sockets.values() if s != sndr_sock]
     try:
-        rcvr_sock = [s for s in sockets.values() if s != sndr_sock]
         rcvr_sock = rcvr_sock[0]
 
         rcvr_sock.send(prefixes.dict["server"]["chat"]["relayData"].encode())
@@ -82,6 +82,12 @@ def _M_handler(sock: socket, buffer: dict, *args, **kwargs) -> bytes:
     print(msg_bytes)
     ChatIO().broadcast(sock, buffer)
     return msg_bytes
+
+def _T_handler(sock: socket, *args, **kwargs):
+    msg_bytes = ChatIO.unpack_data(sock)
+    print("new things")
+    print(msg_bytes)
+
 
 
 def _X_handler(sock: socket, *args, **kwargs) -> bytes:
@@ -149,7 +155,7 @@ dispatch = {
     "Q": None,
     "R": None,
     "S": _S_handler,
-    "T": None,
+    "T": _T_handler,
     "U": None,
     "V": None,
     "W": None,
