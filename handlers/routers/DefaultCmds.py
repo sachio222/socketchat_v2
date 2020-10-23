@@ -127,7 +127,7 @@ def mute(*args, **kwargs):
 
 
 def trust(sock: socket, *args, **kwargs):
-    print("trust")
+    print("trusty")
     # print(sock)
     ChatIO.pack_n_send(sock, prefixes.dict["client"]["chat"]["trust"], "nothin")
     # SERVER: check other users, grab identities, send to truster.
