@@ -6,10 +6,11 @@ from chatutils.chatio2 import ChatIO
 
 from lib.xfer.FileXfer import *
 from handlers import EncryptionHandler
-from handlers.routers import EncryptionCmds
+from handlers.routers import EncryptionCmds 
 
-import config.filepaths
+import config.filepaths as paths
 configs = utils.JSONLoader()
+prefixes = utils.JSONLoader(paths.prefix_path)
 
 def about(*args, **kwargs):
     """Read from file in config folder."""
@@ -125,9 +126,12 @@ def mute(*args, **kwargs):
     ChatIO().print_message("@YO: Muted. Type /unmute to restore sound.")
 
 
-def trust(*args, **kwargs):
-    # trust(msg_parts)
-    pass
+def trust(sock: socket, *args, **kwargs):
+    print("trust")
+    # print(sock)
+    ChatIO.pack_n_send(sock, prefixes.dict["client"]["chat"]["trust"], "nothin")
+    # SERVER: check other users, grab identities, send to truster.
+    # CLIENT: 
 
 
 def unmute(*args, **kwargs):

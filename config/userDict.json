@@ -1,20 +1,11 @@
 {
-    "momoney": {
-        "nick": "momoney",
+    "jake": {
+        "nick": "jake",
         "addr": [
             "127.0.0.1",
-            63658
+            53902
         ],
-        "public_key": "Zh/8MFQ4qHV7ZxJ6jQFC3+LY72oXe/cRc2F1QUkpmzA=",
-        "trusted": null
-    },
-    "moproblems": {
-        "nick": "moproblems",
-        "addr": [
-            "127.0.0.1",
-            63668
-        ],
-        "public_key": "mG8PAezXjCyiZkSYkuME5zPDEUagxGuBmsWwKXKMsgM=",
+        "public_key": "m6bLX32crxqtCRpCqthNqYEMuvyPASA3o7PLEnoArWw=",
         "trusted": null
     }
 }
