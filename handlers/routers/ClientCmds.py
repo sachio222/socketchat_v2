@@ -16,7 +16,6 @@ prefixes = utils.JSONLoader(paths.prefix_path)
 
 BUFFER_LEN = configs.dict["system"]["bufferLen"]
 
-
 def _f_handler(sock: socket, *args, **kwargs):
     """INCOMING FILE INFO"""
     pass

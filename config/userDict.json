@@ -1,14 +1,4 @@
 {
-    "ij": {
-        "nick": "ij",
-        "addr": [
-            "127.0.0.1",
-            55525
-        ],
-        "public_key": "FioGwUZwTGUTZUJws42wD1Xk1Ya5LB1hWnscHmkInGE=",
-        "verify_key": "uF+XiAKnL+x3w5abk3Mf6mD/rRIQMRPW9fn5OGKCKIs=",
-        "trusted": null
-    },
     "ed": {
         "nick": "ed",
         "addr": [

@@ -12,7 +12,8 @@
             "xfer": "X"
         },
         "cmds":{
-            "trust": "T"
+            "trust": "T",
+            "trustKeys": "K"
         },
         "handshake" :{
             "nick": "N",
@@ -34,8 +35,9 @@
             "xfer": "X"
         },
         "cmds": {
-            "trust_sndr": "T",
-            "trust_rcvr": "t"
+            "trustSndr": "T",
+            "trustRcvr": "t",
+            "trustKeys": "K"
         },
         "handshake": {
             "nick": "n",
