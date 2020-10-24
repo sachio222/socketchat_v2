@@ -48,6 +48,7 @@ def argon2(data):
 
 def goober(data) -> bytes:
     # print("Running naked dawg")
+    data = data["cipher_text"]
     return data.encode()
 
 
