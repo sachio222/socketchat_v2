@@ -104,9 +104,9 @@ def _T_handler(sock: socket, buffer: dict, *args, **kwargs):
         if socket[1] != sock:
             recip_socket = socket[1]
 
-    ChatIO().pack_n_send(sock, prefixes.dict["server"]["cmds"]["trust"],
+    ChatIO().pack_n_send(sock, prefixes.dict["server"]["cmds"]["trust_sndr"],
                          pub_key_recip)
-    ChatIO().pack_n_send(recip_socket, prefixes.dict["server"]["cmds"]["trust"],
+    ChatIO().pack_n_send(recip_socket, prefixes.dict["server"]["cmds"]["trust_rcvr"],
                          pub_key_sender)
 
 
