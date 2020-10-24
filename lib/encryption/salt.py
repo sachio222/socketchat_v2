@@ -1,5 +1,4 @@
 import os
-from os import stat
 import nacl.utils
 from nacl.secret import SecretBox
 from nacl.public import PrivateKey, PublicKey, Box
@@ -127,8 +126,7 @@ class NaclCipher():
             prv_key = PrivateKey(prv_key, encoder=Base64Encoder)
             ur_pub_key = PublicKey(ur_pub_key, encoder=Base64Encoder)
         except:
-            print("[-] Keys not converted.")
-
+            pass
         box = Box(prv_key, ur_pub_key)
         return box
 
