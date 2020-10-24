@@ -1,7 +1,6 @@
 import os
 from cryptography.fernet import Fernet
 
-
 import config.filepaths as paths
 key_path = paths.fernet128_keys + 'secret.key'
 
@@ -34,6 +33,7 @@ class FernetCipher():
         return enc_msg
 
     def decrypt(self, data: bytes):
+        data = data["cipher_text"].encode()
         try:
             dec_msg = self.f.decrypt(data)
         except Exception as e:

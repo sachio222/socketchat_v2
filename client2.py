@@ -31,14 +31,14 @@ class Client(ChatIO):
         try:
             sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             sock.connect((TARGET_HOST, TARGET_PORT))
-            
+
             # ******** SSL WRAPPER ********#
             sock = client_ctxt.wrap_socket(sock, server_hostname=TARGET_HOST)
             print(f'[+] SSL Established. {sock.version()}')
             # ******** SSL WRAPPER ********#
 
             configs.reload()
-            
+
             USER_ID = HandshakeHandler.ClientSide(sock).nick
 
             self.start_threads(sock)
@@ -46,7 +46,6 @@ class Client(ChatIO):
         except Exception as e:
             print(e)
             print("[x] Connection failed. Check server address or port.")
-            
 
     def send(self, sock):
         while True:
@@ -58,9 +57,7 @@ class Client(ChatIO):
             output_bytes, msg_type = InputHandler.dispatch(sock, buffer)
 
             if output_bytes:
-                self.pack_n_send(sock, msg_type,
-                                 output_bytes)
-
+                self.pack_n_send(sock, msg_type, output_bytes)
 
     def upload(self, sock):
         path = "image.jpg"
@@ -113,13 +110,11 @@ def main():
 
 
 if __name__ == "__main__":
-    
 
     # ******** SSL CONTEXT ********#
     x509.X509()
     rsa_key_path = paths.x509_path + 'rsa_key.pem'
     cert_path = paths.x509_path + 'certificate.pem'
-
 
     client_ctxt = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
     client_ctxt.check_hostname = False

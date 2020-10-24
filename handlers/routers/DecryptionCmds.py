@@ -5,13 +5,14 @@ from lib.encryption.fernet import FernetCipher
 aes = AES256Cipher()
 fernet_cipher = FernetCipher()
 
-def fernet(data) -> bytes:
-    decrypted_data = fernet_cipher.decrypt(data.encode())
+
+def fernet(data:dict) -> bytes:
+    decrypted_data = fernet_cipher.decrypt(data)
     return decrypted_data
 
 
 def aes256_ctc(data) -> bytes:
-    decrypted_data = aes.full_decryption(data.encode())
+    decrypted_data = aes.full_decryption(data)
     return decrypted_data
 
 
@@ -34,8 +35,8 @@ def nacl_secret_box(data):
     pass
 
 
-def chacha20_poly1305(data):
-    decrypted_data = XChaCha20Poly1305.decrypt(data.encode())
+def xchacha20_poly1305(data):
+    decrypted_data = XChaCha20Poly1305.decrypt(data)
     return decrypted_data
 
 
@@ -61,7 +62,7 @@ cipher_dict = {
     'aes256-hmac': aes256_hmac,
     'naclpub': nacl_public_box,
     'nacl-secret-box': nacl_secret_box,
-    'chacha': chacha20_poly1305,
+    'xchacha': xchacha20_poly1305,
     'argon2': argon2,
     'goober': goober,
     'test': test

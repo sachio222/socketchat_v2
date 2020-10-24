@@ -23,33 +23,34 @@ ADDR = (HOST, PORT)
 sockets_dict = {}
 active_sockets = []
 
+
 def accept_client(server):
 
     while True:
         client_socket, addr = server.accept()
-        
+
         # ******** SSL WRAPPER ******** #
         client_socket = server_ctxt.wrap_socket(client_socket, server_side=True)
         # ******** SSL WRAPPER ******** #
 
         active_sockets.append(client_socket)
-        
+
         print(f"[+] Connected to {addr}")
 
         client_thread = Thread(target=handle_client,
-                               args=(client_socket, addr ),
+                               args=(client_socket, addr),
                                daemon=True)
 
         client_thread.start()
 
 
-def handle_client(client_socket:socket , addr: tuple) -> None:
+def handle_client(client_socket: socket, addr: tuple) -> None:
 
     user_dict = HandshakeHandler.ServerSide(client_socket, addr).user
     print(f"[+] {user_dict['nick']} has joined the chat.")
-    
+
     sockets_dict[user_dict["nick"]] = client_socket
-    
+
     while True:
         msg_type = client_socket.recv(PREFIX_LEN)
         # utils.debug_(msg_type, "msg_type", "handle_cient", True)
@@ -65,6 +66,7 @@ def handle_client(client_socket:socket , addr: tuple) -> None:
         ServMsgHandler.dispatch(client_socket, buffer)
 
     client_socket.close()
+
 
 def das_boot():
 
@@ -82,6 +84,7 @@ def das_boot():
                 # REMOVE from all dicts
                 pass
 
+
 def main():
 
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -94,7 +97,7 @@ def main():
 
     accept_thread = Thread(target=accept_client, args=(server,))
     accept_thread.start()
-    
+
     idle_thread = Thread(target=das_boot, daemon=True)
     idle_thread.start()
 
@@ -105,7 +108,7 @@ if __name__ == "__main__":
     x509.X509()
     rsa_key_path = paths.x509_path + 'rsa_key.pem'
     cert_path = paths.x509_path + 'certificate.pem'
-    
+
     server_ctxt = ssl.SSLContext(ssl.PROTOCOL_TLS)
     server_ctxt.verify_mode = ssl.CERT_NONE
     server_ctxt.set_ecdh_curve('prime256v1')

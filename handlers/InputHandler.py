@@ -6,6 +6,7 @@ from handlers import EncryptionHandler, ClientMsgHandler
 
 prefixes = utils.JSONLoader(paths.prefix_path)
 
+
 def dispatch(sock: socket, msg: str) -> bytes:
     """Splits input data between commands and transmissions.
 

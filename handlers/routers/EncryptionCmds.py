@@ -26,6 +26,8 @@ TO ADD CUSTOM ENCRYPTION:
     Args: plaintext,
     Returns: bytes cipher_text(UTF-8)
 """
+
+
 def fernet(data) -> bytes:
     """DECENT AES128 ENCRYPTION"""
     encrypted_msg = FernetCipher().encrypt(data)
@@ -60,7 +62,7 @@ def nacl_secret_box(data):
     pass
 
 
-def chacha20_poly1305(data):
+def xchacha20_poly1305(data):
     """HIGH SPEED AUTHENTICATED ENCRYPTION"""
     cipher_dict = XChaCha20Poly1305.encrypt(data)
     return cipher_dict
@@ -85,8 +87,10 @@ def test(data) -> bytes:
     encrypted_msg = EncryptionHandler.pack_cipher_dict(data.encode())
     return encrypted_msg
 
+
 def xsalsa20(data) -> bytes:
     pass
+
 
 cipher_dict = {
     'fernet': fernet,
@@ -94,7 +98,7 @@ cipher_dict = {
     'aes256-hmac': aes256_hmac,
     'naclpub': nacl_public_box,
     'nacl-secret-box': nacl_secret_box,
-    'chacha': chacha20_poly1305,
+    'xchacha': xchacha20_poly1305,
     'argon2': argon2,
     'goober': goober,
     'test': test,

@@ -7,7 +7,8 @@ configs = utils.JSONLoader()
 
 BUFFER_LEN = configs.dict["system"]["bufferLen"]
 
-def write(sock:socket, target_path:str = 'testfile1.jpg'):
+
+def write(sock: socket, target_path: str = 'testfile1.jpg'):
     """WRITE FILE TO TARGET_PATH FROM SOCK"""
     while True:
         print("[<==] Downloading...")
@@ -46,13 +47,15 @@ def write(sock:socket, target_path:str = 'testfile1.jpg'):
                                 break
 
                 # ChatIO().pack_n_send(sock, "M", '{"msg_pack": {"cipher_text": "DONE"}}')
-                ChatIO().pack_n_send(sock, "S", "[!] File transferred successfully.")
+                ChatIO().pack_n_send(sock, "S",
+                                     "[!] File transferred successfully.")
                 break
-                
+
         except:
             ChatIO().pack_n_send(sock, "S", "[x] File transfer failed")
 
         break
+
 
 def write_file(sock: socket,
                path: str = "testimage1.jpg",

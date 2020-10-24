@@ -121,15 +121,14 @@ class NaclCipher():
 
     #=== Public Boxes ===#
     @staticmethod
-    def make_public_box(prv_key: PrivateKey,
-                        ur_pub_key: PublicKey) -> Box:
+    def make_public_box(prv_key: PrivateKey, ur_pub_key: PublicKey) -> Box:
         """Make public box from one private, one public. Usually different."""
         try:
             prv_key = PrivateKey(prv_key, encoder=Base64Encoder)
             ur_pub_key = PublicKey(ur_pub_key, encoder=Base64Encoder)
         except:
             print("[-] Keys not converted.")
-            
+
         box = Box(prv_key, ur_pub_key)
         return box
 
@@ -179,7 +178,9 @@ class NaclCipher():
 
     #=== Signing ===#
     @staticmethod
-    def generate_signing_keys(path: str = PATH, sgn_fn: str = 'signing.key', ver_fn: str = 'verify.key') -> tuple:
+    def generate_signing_keys(path: str = PATH,
+                              sgn_fn: str = 'signing.key',
+                              ver_fn: str = 'verify.key') -> tuple:
         """Generates key for signing and authenticating.
         
         A valid digital signature gives a recipient reason to believe that the

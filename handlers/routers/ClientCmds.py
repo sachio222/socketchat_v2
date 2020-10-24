@@ -1,4 +1,7 @@
 import json, socket
+from json import encoder
+
+from nacl.encoding import Base64Encoder
 from chatutils import utils
 from chatutils.chatio2 import ChatIO
 
@@ -13,14 +16,17 @@ prefixes = utils.JSONLoader(paths.prefix_path)
 
 BUFFER_LEN = configs.dict["system"]["bufferLen"]
 
+
 def _f_handler(sock: socket, *args, **kwargs):
     """INCOMING FILE INFO"""
     pass
+
 
 def _i_handler(sock: socket, *args, **kwargs):
     """IDLE PING LISTENER"""
     print("@Yo: Ping from server!")
     sock.send(b"i")
+
 
 def _l_handler(sock: socket, *args, **kwargs):
     """LINE BREAK"""
@@ -32,6 +38,7 @@ def _n_handler(sock: socket, *args, **kwargs):
     # print("running nhandler")
     bytes_data = ChatIO.unpack_data(sock)
     return bytes_data
+
 
 def _r_handler(sock: socket, *args, **kwargs):
     """RECEIVE FILE AND WRITE TO DISK"""
@@ -50,9 +57,10 @@ def _r_handler(sock: socket, *args, **kwargs):
 
     #     if not data:
     #         break
-    
+
     # with open("testfile.img", 'wb') as f:
     #     f.write(incoming)
+
 
 def _s_handler(sock: socket, *args, **kwargs) -> bytes:
     """INCOMING SERVER MESSAGES."""
@@ -60,10 +68,11 @@ def _s_handler(sock: socket, *args, **kwargs) -> bytes:
     print(bytes_data.decode())
     return bytes_data
 
+
 def _u_handler(sock: socket, *args, **kwargs):
     """UPLOAD FILE TO SERVER"""
     data = prefixes.dict["upload"]
-    
+
     # if file exists:
     if True:
         sock.send(data.encode())
@@ -72,15 +81,15 @@ def _u_handler(sock: socket, *args, **kwargs):
             sent_bytes = sock.sendall(f)
             print(sent_bytes)
     else:
-        # File doesn't exist error. 
+        # File doesn't exist error.
         pass
+
 
 def _C_handler(sock: socket, *args, **kwargs):
     """INCOMING CMD LINE"""
     ChatIO.recv_open(sock)
     # sock.recv(1)
     # pass
-        
 
 
 def _H_handler(sock: socket, *args, **kwargs):
@@ -122,13 +131,12 @@ def _M_handler(sock: socket, *args, **kwargs) -> bytes:
     #         break
     # print(response.decode())
 
+
 def _T_handler(sock: socket, *args, **kwargs) -> bytes:
     """RECEIVES PUBKEYS FROM SERVER"""
     pub_key_trustee = ChatIO().unpack_data(sock)
-    print('What to do wth pub_key:',pub_key_trustee)
-    CipherTools.make_nacl_pub_box(pub_key=pub_key_trustee)
-    
-    return pub_key_trustee
+    key_pack = CipherTools.pack_keys_for_xfer(pub_key_trustee)
+    return key_pack
 
 
 def error(sock: socket, *args, **kwargs):

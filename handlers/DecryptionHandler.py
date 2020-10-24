@@ -1,9 +1,10 @@
 from handlers.routers import DecryptionCmds
 
+
 def message_router(data_dict: dict) -> tuple:
     sender = data_dict["sender"]
     cipher = data_dict["cipher"]
-    cipher_text = data_dict["msg_pack"]["cipher_text"]
+    cipher_text = data_dict["msg_pack"]
 
     func = DecryptionCmds.cipher_dict.get(cipher, DecryptionCmds.goober)
     try:

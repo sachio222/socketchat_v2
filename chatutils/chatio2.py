@@ -21,7 +21,7 @@ class ChatIO:
     def pack_n_send(self, sock: socket, typ_pfx: str, data: str) -> None:
         """Convenience function, packs data and sends data."""
         outgoing_data = self.pack_data(typ_pfx, data)
-        sock.send(outgoing_data)    
+        sock.send(outgoing_data)
 
     def pack_data(self, typ_pfx: str, data: str) -> bytes:
         """
@@ -74,7 +74,7 @@ class ChatIO:
 
                 if not data:
                     break
-            
+
             print(response.decode())
 
     def dispatch(self, sock: socket, msg_type: str,
@@ -99,14 +99,15 @@ class ChatIO:
         return msg_bytes
 
     @staticmethod
-    def make_buffer(sockets_dict: dict, user_dict: dict, msg_type: bytes) -> dict:
+    def make_buffer(sockets_dict: dict, user_dict: dict,
+                    msg_type: bytes) -> dict:
         buffer = {}
         buffer["sender_nick"] = user_dict["nick"]
         buffer["sockets"] = sockets_dict
         buffer["msg_type"] = msg_type
         buffer["msg_bytes"] = ""
         return buffer
-    
+
     def make_new_line_dict(self, msg_bytes, sender_nick) -> bytes:
         """SERVERSIDE: MAKE DICT FROM '/n' MESSAGE WITH SENDER + CIPHER TYPE ATTACHED.
         TODO: Could handle on sender side?
@@ -132,14 +133,17 @@ class ChatIO:
         """SERVERSIDE: PREP MSG FOR BROADCAST"""
         sender_nick = buffer["sender_nick"]
         msg_bytes = buffer["msg_bytes"]
-        
+
         if msg_bytes == "":
             msg_bytes = self.make_new_line_dict(msg_bytes, sender_nick)
         else:
             msg_bytes = self.add_sender_nick(msg_bytes, sender_nick)
         return msg_bytes
 
-    def broadcast(self, send_sock: socket, buffer: dict, pfx_type: str = "default"):
+    def broadcast(self,
+                  send_sock: socket,
+                  buffer: dict,
+                  pfx_type: str = "default"):
 
         msg_bytes = buffer["msg_bytes"]
 
@@ -156,7 +160,8 @@ class ChatIO:
         sockets = buffer["sockets"]
         for s in sockets.values():
             if s != send_sock:
-                self.pack_n_send(s, prefixes.dict["server"]["chat"][pfx_type], msg_bytes)
+                self.pack_n_send(s, prefixes.dict["server"]["chat"][pfx_type],
+                                 msg_bytes)
 
     def print_to_client(self, sender: str, msg: str):
         print(f'@{sender}: {msg}')
