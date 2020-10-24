@@ -65,13 +65,20 @@ class ClientSide(ChatIO):
         handshake_payload = {}
         nick = handshake_payload["nick"] = self.show_nick_request(prompt)
         handshake_payload["public_key"] = self.create_public_key().decode()
+        print("[+] New NACL keys generated.")
+        handshake_payload["verify_key"] = self.create_verify_key().decode()
+        print("[+] New NACL signing keys generated.")
         handshake_payload = json.dumps(handshake_payload)
         handshake_payload = handshake_payload.encode()
         return handshake_payload, nick
 
     def create_public_key(self) -> bytes:
-        _, pubk = CipherTools.gen_nacl_key()
+        _, pubk, _, _ = CipherTools.gen_nacl_key()
         return pubk
+
+    def create_verify_key(self) -> bytes:
+        _, _, _, vfyk = CipherTools.gen_nacl_key()
+        return vfyk
 
     def send_payload(self, sock: socket, payload: bytes):
         self.pack_n_send(sock, prefixes.dict["client"]["chat"]["data"], payload)
@@ -147,6 +154,7 @@ class ServerSide(ChatIO):
                    new_user: dict,
                    nick: str = None,
                    public_key: bytes = None,
+                   verify_key: bytes = None,
                    trusted: list = None) -> dict:
         """SERVERSIDE USER DICT"""
 
@@ -154,6 +162,7 @@ class ServerSide(ChatIO):
             "nick": new_user.get("nick", None) or nick,
             "addr": new_user.get("addr", None) or addr,
             "public_key": new_user.get("public_key", None) or public_key,
+            "verify_key": new_user.get("verify_key", None) or verify_key,
             "trusted": new_user.get("trusted", None) or trusted
         }
 

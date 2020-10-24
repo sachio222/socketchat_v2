@@ -3,7 +3,7 @@ from chatutils import utils
 from chatutils.chatio2 import ChatIO
 
 from lib.xfer import download
-from handlers import DecryptionHandler
+from handlers import DecryptionHandler, EncryptionHandler
 
 import config.filepaths as paths
 
@@ -123,11 +123,11 @@ def _M_handler(sock: socket, *args, **kwargs) -> bytes:
 
 def _T_handler(sock: socket, *args, **kwargs) -> bytes:
     """RECEIVES PUBKEYS FROM SERVER"""
-    print("RUNNING T HANDLER")
     pub_key = ChatIO().unpack_data(sock)
-    print(pub_key)
-    
+    print('What to do wth pub_key:',pub_key)
+    EncryptionHandler
     return pub_key
+
 
 def error(sock: socket, *args, **kwargs):
     print("Whoops. You did wrong, Sucka!")
