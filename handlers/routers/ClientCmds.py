@@ -77,7 +77,7 @@ def _t_handler(sock: socket, *args, **kwargs) -> bytes:
     print("Got my keys from sender!", pub_key)
 
     # "We each get keys"
-    pub_box = CipherTools.make_nacl_pub_box(pub_key)
+    CipherTools.make_nacl_pub_box(pub_key)
 
 
 def _u_handler(sock: socket, *args, **kwargs):
