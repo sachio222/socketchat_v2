@@ -8,7 +8,7 @@
     "system": {
         "debug": false,
         "bufferLen": 4096,
-        "defaultHost": "127.0.0.1",
+        "defaultHost": "192.168.68.142",
         "defaultPort": 12222,
         "headerLen": 10,
         "idleTimeSec": 600,
