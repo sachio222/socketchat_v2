@@ -21,7 +21,7 @@ class NaclCipher():
 
     def __init__(self, path: str = PATH):
         self.path = path
-        self.check_dir(self.path)
+        check_dir(self.path)
         self.prv_key, self.pub_key = self.generate_keys()
 
     @staticmethod
@@ -162,11 +162,12 @@ class NaclCipher():
         return cleartext.decode()
 
     #=== Generate Shared Keys ===#
-    def gen_shared_key(self, box: Box, fn: str = 'shared.key') -> bytes:
+    @staticmethod
+    def gen_shared_key(box: Box, fn: str = 'shared.key') -> bytes:
         """Generates a shared secret from a public box. Returns Hexbytes."""
 
-        path = self.path
-        self.check_dir(path)
+        path = PATH
+        check_dir(path)
         shr_key = box.shared_key()
         # Writes as base64 bytes.
         with open(path + fn, 'wb') as f:
@@ -232,10 +233,10 @@ class NaclCipher():
         verify_key = VerifyKey(verify_key_b64, encoder=Base64Encoder)
         return verify_key
 
-    #=== General Utilities ===#
-    def check_dir(self, path: str):
-        if not os.path.exists(path):
-            os.makedirs(path)
+#=== General Utilities ===#
+def check_dir(path: str = PATH):
+    if not os.path.exists(path):
+        os.makedirs(path)
 
 
 if __name__ == "__main__":
