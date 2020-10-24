@@ -84,10 +84,10 @@ def _M_handler(sock: socket, buffer: dict, *args, **kwargs) -> bytes:
     return msg_bytes
 
 def _T_handler(sock: socket, *args, **kwargs):
-    print("Trust")
-    msg_bytes = ChatIO.unpack_data(sock)
-    print("new things")
-    print(msg_bytes)
+    user = ChatIO.unpack_data(sock)
+    pub_key = user + b"asdf9a-s8df"
+    # Get keys from user_dict
+    ChatIO().pack_n_send(sock, prefixes.dict["server"]["cmds"]["trust"], pub_key)
 
 def _X_handler(sock: socket, *args, **kwargs) -> bytes:
     """TRANSFER HANDLER"""

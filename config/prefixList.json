@@ -8,9 +8,11 @@
             "msg": "M",
             "newLine": "l",
             "pubk": "k",
-            "trust": "T",
             "upload": "u",
             "xfer": "X"
+        },
+        "cmds":{
+            "trust": "T"
         },
         "handshake" :{
             "nick": "N",
@@ -30,6 +32,9 @@
             "relayData": "r",
             "sysMsg": "s",
             "xfer": "X"
+        },
+        "cmds": {
+            "trust": "T"
         },
         "handshake": {
             "nick": "n",

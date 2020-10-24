@@ -45,8 +45,9 @@ class ChatIO:
         return header
 
     def recv_n_unpack(self, sock: socket, shed_pfx: bool = False) -> bytes:
+        """Unpacks data from packed message, returns data without header."""
         if shed_pfx:
-            # Dump bytes into the ether.
+            # Dump prefix bytes into the ether.
             sock.recv(PREFIX_LEN)
         data = self.unpack_data(sock)
         return data
@@ -87,7 +88,7 @@ class ChatIO:
 
     @classmethod
     def unpack_data(cls, sock: socket) -> bytes:
-        """UNPACK DATA"""
+        """RETURNS MSG"""
         msg_len = sock.recv(HEADER_LEN)
         try:
             msg_bytes = sock.recv(int(msg_len))
