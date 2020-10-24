@@ -9,6 +9,7 @@ import config.filepaths as paths
 PATH = paths.chacha20_keys
 FN = "chacha20.key"
 
+
 def generate_key(path: str = PATH, fn: str = FN) -> bytes:
     """Generate and save keys."""
     key = get_random_bytes(32)
@@ -16,26 +17,31 @@ def generate_key(path: str = PATH, fn: str = FN) -> bytes:
         f.write(key)
     return key
 
+
 def load_key(path: str = PATH, fn: str = FN) -> bytes:
     try:
         with open(path + fn, 'rb') as f:
             key = f.read()
     except:
-        print(f"[+] File not found at {path + fn}. \n[+] Generating new XChaCha20 key.")
+        print(
+            f"[+] File not found at {path + fn}. \n[+] Generating new XChaCha20 key."
+        )
         key = generate_key()
 
     return key
+
 
 def load_key_for_xport(path: str = PATH, fn: str = FN) -> str:
     try:
         with open(path + fn, 'rb') as f:
             key = f.read()
     except:
-        print(f"[+] File not found at {path + fn}. \n[+] Generating new XChaCha20 key.")
+        print(
+            f"[+] File not found at {path + fn}. \n[+] Generating new XChaCha20 key."
+        )
         key = generate_key()
 
     return b64encode(key).decode()
-
 
 
 def encrypt(plaintext):
@@ -82,6 +88,7 @@ def decrypt(data):
 def check_dir(self, path: str = PATH):
     if not os.path.exists(path):
         os.makedirs(path)
+
 
 check_dir(PATH)
 generate_key()

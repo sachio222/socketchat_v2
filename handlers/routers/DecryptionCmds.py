@@ -6,7 +6,7 @@ aes = AES256Cipher()
 fernet_cipher = FernetCipher()
 
 
-def fernet(data:dict) -> bytes:
+def fernet(data: dict) -> bytes:
     decrypted_data = fernet_cipher.decrypt(data)
     return decrypted_data
 
