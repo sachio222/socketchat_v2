@@ -45,6 +45,14 @@ class AES256Cipher():
             self.key = self.b64_to_hex(self.key)
         return self.key
 
+    def load_key_for_xport(self) -> str:
+        if not os.path.exists(key_path):
+            self.key = self.generate_key()
+        else:
+            with open(key_path, 'rb') as kf:
+                self.key = kf.read()
+        return self.key.decode()
+
     def write_key(self, key: bytes, key_path=key_path) -> bool:
         try:
             self._check_path(key_path)

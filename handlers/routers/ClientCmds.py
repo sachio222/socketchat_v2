@@ -135,7 +135,10 @@ def _M_handler(sock: socket, *args, **kwargs) -> bytes:
 def _T_handler(sock: socket, *args, **kwargs) -> bytes:
     """RECEIVES PUBKEYS FROM SERVER"""
     pub_key_trustee = ChatIO().unpack_data(sock)
+    
+    # "We each get keys"
     key_pack = CipherTools.pack_keys_for_xfer(pub_key_trustee)
+    ChatIO().pack_n_send(sock, "K", key_pack)
     return key_pack
 
 
