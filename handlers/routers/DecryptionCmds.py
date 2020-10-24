@@ -7,7 +7,10 @@ fernet_cipher = FernetCipher()
 
 
 def fernet(data: dict) -> bytes:
-    decrypted_data = fernet_cipher.decrypt(data)
+    try:
+        decrypted_data = fernet_cipher.decrypt(data)
+    except:
+        decrypted_data =  goober(data)
     return decrypted_data
 
 
