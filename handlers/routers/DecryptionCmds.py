@@ -15,7 +15,10 @@ def fernet(data: dict) -> bytes:
 
 
 def aes256_ctc(data) -> bytes:
-    decrypted_data = aes.full_decryption(data)
+    try:
+        decrypted_data = aes.full_decryption(data)
+    except:
+        decrypted_data =  goober(data)
     return decrypted_data
 
 
@@ -39,7 +42,10 @@ def nacl_secret_box(data):
 
 
 def chacha20_poly1305(data):
-    decrypted_data = XChaCha20Poly1305.decrypt(data)
+    try:
+        decrypted_data = XChaCha20Poly1305.decrypt(data)
+    except:
+        decrypted_data =  goober(data)
     return decrypted_data
 
 
@@ -50,7 +56,6 @@ def argon2(data):
 
 
 def goober(data) -> bytes:
-    # print("Running naked dawg")
     data = data["cipher_text"]
     return data.encode()
 
