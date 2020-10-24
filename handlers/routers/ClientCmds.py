@@ -3,6 +3,7 @@ from chatutils import utils
 from chatutils.chatio2 import ChatIO
 
 from lib.xfer import download
+from lib.encryption import CipherTools
 from handlers import DecryptionHandler, EncryptionHandler
 
 import config.filepaths as paths
@@ -123,10 +124,11 @@ def _M_handler(sock: socket, *args, **kwargs) -> bytes:
 
 def _T_handler(sock: socket, *args, **kwargs) -> bytes:
     """RECEIVES PUBKEYS FROM SERVER"""
-    pub_key = ChatIO().unpack_data(sock)
-    print('What to do wth pub_key:',pub_key)
-    EncryptionHandler
-    return pub_key
+    pub_key_trustee = ChatIO().unpack_data(sock)
+    print('What to do wth pub_key:',pub_key_trustee)
+    CipherTools.make_nacl_pub_box(pub_key=pub_key_trustee)
+    
+    return pub_key_trustee
 
 
 def error(sock: socket, *args, **kwargs):

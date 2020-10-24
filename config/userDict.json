@@ -3,30 +3,20 @@
         "nick": "jake",
         "addr": [
             "127.0.0.1",
-            54975
+            49843
         ],
-        "public_key": "nhe147BW+cEqUIjyA9Q2un76OearEu1X8n3TnxlB1G8=",
-        "verify_key": "wSr7dv7pTfxIIwJbFOlnKa7qbBtXq0M9+sXtr2OmWic=",
+        "public_key": "GAgws5nFXR9mbOAEsaHbywJ06HOA/YB12pKHxMTo/zk=",
+        "verify_key": "QmCSInYGtQ0rtHBbBCrEtlo1coPd2RgRGaPsebXwqS4=",
         "trusted": null
     },
-    "ok": {
-        "nick": "ok",
+    "spake": {
+        "nick": "spake",
         "addr": [
             "127.0.0.1",
-            55031
+            49853
         ],
-        "public_key": "X2emO+vXqzW10+MaRH3XvzCg8iFGJXPwCIeQcRuOCxM=",
-        "verify_key": "Hg0TA+KssIOs9PbGCQsTW0P127ybJhJMfKk7VBTAc0s=",
-        "trusted": null
-    },
-    "crake": {
-        "nick": "crake",
-        "addr": [
-            "127.0.0.1",
-            55148
-        ],
-        "public_key": "e7oGd2lJ2N9yXK9OsSBg79wbzhZk2yEhUK3x+PNW7F0=",
-        "verify_key": "PNEmNRWEV+JzG+qO1Ewz3pvHjg5W7BlRz6i7bIgVSNA=",
+        "public_key": "jCI3q2rQmKwhuQPF8nJRtBMXYYU4Vso9EGMS20hf1zw=",
+        "verify_key": "bxsesP6CggESTRc0HPVBbv2usaubPgOC8DP7jXQzhxM=",
         "trusted": null
     }
 }
