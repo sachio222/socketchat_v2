@@ -8,7 +8,6 @@ import secrets
 import codecs
 import time
 
-
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 from cryptography.hazmat.primitives import padding
 from cryptography.hazmat.backends import default_backend
@@ -163,6 +162,7 @@ class AES256Cipher():
         return payload
 
     def full_decryption(self, payload: bytes) -> bytes:
+        payload = payload["cipher_text"].encode()
         msg, nonce = self.unpack_payload(payload)
         msg = self.decrypt(msg, nonce)
         msg = self.unpadder(msg)

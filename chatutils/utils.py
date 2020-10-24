@@ -66,12 +66,14 @@ def split_path_ext(path):
 #             default = json.load(f)
 #             self.__dict__.update(default)
 
-    # @property
-    # def dict(self):
-    #     """Access class as dict."""
-    #     self.__dict__
+# @property
+# def dict(self):
+#     """Access class as dict."""
+#     self.__dict__
+
 
 class JSONLoader():
+
     def __init__(self, path=paths.config_path):
         self.dict = {}
         self.path = path
@@ -81,25 +83,24 @@ class JSONLoader():
             # print(f"WARNING: {e}")
             self.dict = {}
             self.dict = self.update()
-        
+
     def load(self):
         with open(self.path) as f:
             json_file = json.load(f)
         return json_file
 
     def reload(self):
-            self.dict = self.load()
+        self.dict = self.load()
 
     def update(self):
         with open(self.path, "w") as f:
             json.dump(self.dict, f, indent=4)
         self.reload()
-    
+
     def clear(self):
         self.dict = {}
         with open(self.path, "w") as f:
             json.dump(self.dict, f)
-
 
 
 def store_user(sock: socket,
@@ -137,7 +138,11 @@ def delete_user(nick: str):
     del user_dict.dict[nick]
     user_dict.update()
 
-def debug_(value: any, name:str="value", called_from:str="None", override=False):
+
+def debug_(value: any,
+           name: str = "value",
+           called_from: str = "None",
+           override=False):
     configs = JSONLoader()
     if configs.dict["system"]["debug"] or override:
         print(f"= DEBUG: CALLED IN: {called_from}")

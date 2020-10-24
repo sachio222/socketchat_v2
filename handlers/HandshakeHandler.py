@@ -51,7 +51,7 @@ class ClientSide(ChatIO):
         while not valid_nick:
             nick = input(prompt)
             valid_nick = self.is_valid(nick)
-    
+
         return nick
 
     def is_valid(self, nick: str) -> bool:
@@ -105,7 +105,7 @@ class ServerSide(ChatIO):
             # 1. Get nick
             if first_request:
                 user = self.send_nick_request()
-                first_request = False   
+                first_request = False
             else:
                 user = self.resend_nick_request()
             user = json.loads(user)
@@ -119,13 +119,15 @@ class ServerSide(ChatIO):
 
     def send_nick_request(self) -> bytes:
         # Goes to handler
-        self.pack_n_send(self.sock, prefixes.dict["server"]["handshake"]["nick"],
+        self.pack_n_send(self.sock,
+                         prefixes.dict["server"]["handshake"]["nick"],
                          configs.dict["msg"]["getNick"])
         user_json = self.recv_n_unpack(self.sock, shed_pfx=True)
         return user_json
 
     def resend_nick_request(self):
-        self.pack_n_send(self.sock, prefixes.dict["server"]["handshake"]["nick"],
+        self.pack_n_send(self.sock,
+                         prefixes.dict["server"]["handshake"]["nick"],
                          configs.dict["msg"]["getNickAgain"])
         user_json = self.recv_n_unpack(self.sock, shed_pfx=True)
         return user_json
@@ -141,12 +143,14 @@ class ServerSide(ChatIO):
         except:
             unique = "True"
 
-        self.pack_n_send(self.sock, prefixes.dict["server"]["handshake"]["unique"],
+        self.pack_n_send(self.sock,
+                         prefixes.dict["server"]["handshake"]["unique"],
                          unique.encode())
         return unique
 
     def send_welcome_msg(self):
-        self.pack_n_send(self.sock, prefixes.dict["server"]["handshake"]["welcome"],
+        self.pack_n_send(self.sock,
+                         prefixes.dict["server"]["handshake"]["welcome"],
                          configs.dict["msg"]["welcome"])
 
     def store_user(self,

@@ -12,8 +12,10 @@ prefixes = utils.JSONLoader(paths.prefix_path)
 HEADER_LEN = configs.dict["system"]["headerLen"]
 BUFFER_LEN = configs.dict["system"]["bufferLen"]
 
+
 def _i_handler(sock: socket, *args, **kwargs):
     print("pinged back")
+
 
 def _l_handler(sock: socket, buffer: dict, *args, **kwargs):
     """RELAY LINE BREAK"""
@@ -21,10 +23,12 @@ def _l_handler(sock: socket, buffer: dict, *args, **kwargs):
     ChatIO().broadcast(sock, buffer, pfx_type="new_line")
     return
 
+
 def _n_handler(sock: socket, *args, **kwargs) -> bytes:
     "RETURNS NICK FROM CLIENT"
     msg_bytes = ChatIO.unpack_data(sock)
     return msg_bytes
+
 
 def _u_handler(sock: socket, buffer: dict, *args, **kwargs):
     """RELAY UPLOAD DATA FROM SENDER TO RECIEVER"""
@@ -32,7 +36,7 @@ def _u_handler(sock: socket, buffer: dict, *args, **kwargs):
     print("[!] Relaying data.")
     sockets = buffer["sockets"]
     recv_len = 1
-    
+
     sndr_sock = sock
     rcvr_sock = [s for s in sockets.values() if s != sndr_sock]
     try:
@@ -47,13 +51,15 @@ def _u_handler(sock: socket, buffer: dict, *args, **kwargs):
         try:
             rcvr_sock.send(data)
         except:
-            print("ERROR: Recipient no longer exists. Make sure they're still connected.")
-        
+            print(
+                "ERROR: Recipient no longer exists. Make sure they're still connected."
+            )
+
         recv_len = len(data)
 
         if recv_len < BUFFER_LEN:
             break
-        
+
         if not data:
             break
 
@@ -96,9 +102,11 @@ def _T_handler(sock: socket, buffer: dict, *args, **kwargs):
         if socket[1] != sock:
             recip_socket = socket[1]
 
-    ChatIO().pack_n_send(sock, prefixes.dict["server"]["cmds"]["trust"], pub_key_recip)
-    ChatIO().pack_n_send(recip_socket, prefixes.dict["server"]["cmds"]["trust"], pub_key_sender)
-    
+    ChatIO().pack_n_send(sock, prefixes.dict["server"]["cmds"]["trust"],
+                         pub_key_recip)
+    ChatIO().pack_n_send(recip_socket, prefixes.dict["server"]["cmds"]["trust"],
+                         pub_key_sender)
+
 
 def _X_handler(sock: socket, *args, **kwargs) -> bytes:
     """TRANSFER HANDLER"""
@@ -109,11 +117,13 @@ def _P_handler(sock: socket, *args, **kwargs):
     """ADD PUBLIC KEY"""
     pass
 
+
 def _S_handler(sock: socket, buffer: dict, *args, **kwargs):
     """SYSTEM MESSAGE HANDLER."""
     msg_bytes = buffer["msg_bytes"] = ChatIO.unpack_data(sock)
     print("System message is:", msg_bytes)
     ChatIO().broadcast(sock, buffer, pfx_type="sysMsg")
+
 
 def error(*args, **kwargs):
     print(f'Message Type Error: Invalid message type {kwargs["msg_type"]}')

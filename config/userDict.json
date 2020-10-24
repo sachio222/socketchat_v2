@@ -3,20 +3,10 @@
         "nick": "jake",
         "addr": [
             "127.0.0.1",
-            49843
+            65292
         ],
-        "public_key": "GAgws5nFXR9mbOAEsaHbywJ06HOA/YB12pKHxMTo/zk=",
-        "verify_key": "QmCSInYGtQ0rtHBbBCrEtlo1coPd2RgRGaPsebXwqS4=",
-        "trusted": null
-    },
-    "spake": {
-        "nick": "spake",
-        "addr": [
-            "127.0.0.1",
-            49853
-        ],
-        "public_key": "jCI3q2rQmKwhuQPF8nJRtBMXYYU4Vso9EGMS20hf1zw=",
-        "verify_key": "bxsesP6CggESTRc0HPVBbv2usaubPgOC8DP7jXQzhxM=",
+        "public_key": "qGBDtxeEH81IpsqktojLB8RhMtZvc1+JnQjdBeopJxY=",
+        "verify_key": "nU23/ekiHAenyY58ouS8HNSUQlU7buhZ0MHpbjPOa7Y=",
         "trusted": null
     }
 }

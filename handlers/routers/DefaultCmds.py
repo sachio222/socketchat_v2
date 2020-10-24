@@ -6,11 +6,12 @@ from chatutils.chatio2 import ChatIO
 
 from lib.xfer.FileXfer import *
 from handlers import EncryptionHandler
-from handlers.routers import EncryptionCmds 
+from handlers.routers import EncryptionCmds
 
 import config.filepaths as paths
 configs = utils.JSONLoader()
 prefixes = utils.JSONLoader(paths.prefix_path)
+
 
 def about(*args, **kwargs):
     """Read from file in config folder."""
@@ -53,8 +54,7 @@ def encryption(*args, **kwargs):
         else:
             while True:
                 print("[?] Choose a cipher:")
-                for i, key in enumerate(EncryptionCmds.cipher_dict.keys(),
-                                        1):
+                for i, key in enumerate(EncryptionCmds.cipher_dict.keys(), 1):
                     choices[i] = key
                     print(f'{i}. {key}')
                 choice = input(">> ")
@@ -88,8 +88,10 @@ def keys(*args, **kwargs):
     # Show what keys I have.
     pass
 
+
 def scuttle(*args, **kwargs):
     sock = kwargs["sock"]
+
 
 def sendfile(sock: socket, *args, **kwargs):
     """Initiates Send File (SF) sequence."""
@@ -98,13 +100,14 @@ def sendfile(sock: socket, *args, **kwargs):
         with open("testfile.jpg", "rb") as f:
             sent_bytes = sock.sendfile(f)
             print(sent_bytes)
-            
+
     except Exception as e:
         print(e)
     print("file sent")
-    return 
-        
+    return
+
     # SenderOperations().show_prompts(sock)
+
 
 def sendkey(*args, **kwargs):
     pass
@@ -128,9 +131,10 @@ def mute(*args, **kwargs):
 
 def trust(sock: socket, *args, **kwargs):
     """TELL SERVER TO SEND PUBKEYS"""
-    ChatIO().pack_n_send(sock, prefixes.dict["client"]["cmds"]["trust"], "user_names")
+    ChatIO().pack_n_send(sock, prefixes.dict["client"]["cmds"]["trust"],
+                         "user_names")
     # SERVER: check other users, grab identities, send to truster.
-    # CLIENT: 
+    # CLIENT:
 
 
 def unmute(*args, **kwargs):

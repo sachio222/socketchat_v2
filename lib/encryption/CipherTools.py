@@ -1,5 +1,8 @@
 import base64
 from json import decoder
+from cryptography.hazmat.primitives.ciphers import AEADCipherContext
+
+from nacl.public import Box, PrivateKey
 from chatutils import utils
 
 from lib.encryption import XChaCha20Poly1305
@@ -23,13 +26,36 @@ def gen_nacl_key(path=paths.nacl_keys, *args, **kwargs) -> tuple:
     vfyk_b64 = vfyk.encode(encoder=Base64Encoder)
     return prvk_b64, pubk_b64, sgnk_b64, vfyk_b64
 
-def make_nacl_pub_box(pub_key: base64 = None, prv_key: base64 = None, path=paths.nacl_keys, *args, **kwargs):
-    """Makes Nacl Public Box with mutual authentication."""
+
+def pack_keys_for_xfer(pub_key: base64 = None,
+                       prv_key: base64 = None,
+                       path=paths.nacl_keys,
+                       *args,
+                       **kwargs) -> dict:
+    key_pack = {}
     prv_key = NaclCipher.load_prv_key() or prv_key
+    public_box = make_nacl_pub_box(pub_key, prv_key)
+    nacl_shrk = public_box.shared_key()
+
+    aes_key = AES256Cipher().load_key()
+    key_pack["aes"] = aes_key
+
+    fernet_key = FernetCipher().load_key()
+    key_pack["fernet"] = fernet_key
+
+    print(key_pack)
+    return aes_key
+
+
+def make_nacl_pub_box(pub_key: base64 = None,
+                      prv_key: base64 = None,
+                      path=paths.nacl_keys,
+                      *args,
+                      **kwargs) -> Box:
+    """Makes Nacl Public Box with mutual authentication."""
     public_box = NaclCipher.make_public_box(prv_key, pub_key)
-    msg = public_box.encrypt(b"hello here")
-    # Put symmetric key in box.
-    print(msg)
+    return public_box
+
 
 # def NACL_DHKE(pub_key):
 #     """Generate shared key from both keys."""

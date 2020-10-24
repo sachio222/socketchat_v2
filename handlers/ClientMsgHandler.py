@@ -3,7 +3,6 @@ from chatutils import utils
 from handlers.routers import DefaultCmds, AddonCmds, ClientCmds
 
 configs = utils.JSONLoader()
-
 """
 1. send type in here.
 2. route it to the right place.

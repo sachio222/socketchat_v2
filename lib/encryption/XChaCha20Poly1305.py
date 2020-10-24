@@ -1,15 +1,40 @@
-import json
+import os, json
 from base64 import b64encode
 from Crypto.Cipher import ChaCha20_Poly1305
 from Crypto.Random import get_random_bytes
 
 # TODO: Add key writing...
+import config.filepaths as paths
+
+PATH = paths.xchacha20_keys
+FN = "xchacha20.key"
+
+def generate_key(path: str = PATH, fn: str = FN) -> bytes:
+    """Generate and save keys."""
+    key = get_random_bytes(32)
+    print("raw key:", key)
+    with open(path + fn, 'wb') as f:
+        f.write(key)
+    return key
+
+def load_key(path: str = PATH, fn: str = FN) -> bytes:
+    try:
+        with open(path + fn, 'rb') as f:
+            key = f.read()
+    except:
+        print(f"[+] File not found at {path + fn}. \n[+] Generating new XChaCha20 key.")
+        key = generate_key()
+
+    return key
+
 
 def encrypt(plaintext):
     plaintext = plaintext.encode()
     header = b'header'
     # plaintext = b'Half a league, Half a league...'
-    key = get_random_bytes(32)
+    key = load_key()
+    print("encode key:", key)
+
     cipher = ChaCha20_Poly1305.new(key=key)
     cipher.update(header)
     cipher_text, tag = cipher.encrypt_and_digest(plaintext)
@@ -29,21 +54,29 @@ from base64 import b64decode
 from Crypto.Cipher import ChaCha20_Poly1305
 
 
-def decrypt(result, key):
+def decrypt(data):
     # Assume key was shared.
+    plaintext = ""
+    key = load_key()
     try:
-        b64 = json.loads(result)
         jk = ['nonce', 'header', 'cipher_text', 'tag']
-        jv = {k: b64decode(b64[k]) for k in jk}
-        cipher = ChaCha20_Poly1305.new(key=key, nonce=jv['nonce'])
-        cipher.update(jv['header'])
-        plaintext = cipher.decrypt_and_verify(jv['cipher_text'], jv['tag'])
-        print(plaintext)
+        data = {k: b64decode(data[k]) for k in jk}
+        cipher = ChaCha20_Poly1305.new(key=key, nonce=data["nonce"])
+        cipher.update(data['header'])
+        plaintext = cipher.decrypt_and_verify(data['cipher_text'], data['tag'])
+        return plaintext
 
     except Exception as e:
         print(e)
         print('Incorrect decryption.')
 
+
+def check_dir(self, path: str = PATH):
+    if not os.path.exists(path):
+        os.makedirs(path)
+
+check_dir(PATH)
+generate_key()
 
 if __name__ == "__main__":
     msg = encrypt("hello")

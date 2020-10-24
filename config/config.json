@@ -1,5 +1,5 @@
 {
-    "cipher": "fernet",
+    "cipher": "xchacha",
     "introduced": false,
     "muted": true,
     "session": {

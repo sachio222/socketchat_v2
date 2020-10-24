@@ -3,7 +3,6 @@ from chatutils import utils
 from handlers.routers import EncryptionCmds
 
 configs = utils.JSONLoader()
-
 """
 # check config.
 # I have been intrduced.
@@ -32,12 +31,14 @@ configs = utils.JSONLoader()
 # self.msg = Base64Encoder.encode(self.msg)
 # # self.msg = fernet.encrypt(self.msg)
 
-def message_router(msg:str, *args, **kwargs) -> bytes:
+
+def message_router(msg: str, *args, **kwargs) -> bytes:
     """Returns transmit buffer with message in proper encryption."""
     cipher_func = get_current_encryption()
     cipher_dict = cipher_func(msg)
     buffer = make_cipher_buffer(cipher_dict)
     return buffer
+
 
 def pack_cipher_dict(cipher_text: bytes, *args, **kwargs) -> dict:
     """Pack ciphertext output into a dict."""
@@ -46,14 +47,16 @@ def pack_cipher_dict(cipher_text: bytes, *args, **kwargs) -> dict:
     enc_dict = json.dumps(enc_dict)
     return enc_dict
 
-def get_current_encryption(cipher:str = None) -> object:
+
+def get_current_encryption(cipher: str = None) -> object:
     """Returns cipher from config list."""
-    configs.reload() # Get current encryption setting.
+    configs.reload()  # Get current encryption setting.
     cipher = configs.dict["cipher"]
     cipher_func = EncryptionCmds.cipher_dict.get(cipher, "goober")
     return cipher_func
 
-def make_cipher_buffer(cipher_dict:dict):
+
+def make_cipher_buffer(cipher_dict: dict):
     """Returns transmit buffer with cipher type appended."""
     buffer = {}
     cipher_dict = json.loads(cipher_dict)
