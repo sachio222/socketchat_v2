@@ -16,6 +16,7 @@ prefixes = utils.JSONLoader(paths.prefix_path)
 
 BUFFER_LEN = configs.dict["system"]["bufferLen"]
 
+
 def _f_handler(sock: socket, *args, **kwargs):
     """INCOMING FILE INFO"""
     pass
@@ -66,6 +67,7 @@ def _s_handler(sock: socket, *args, **kwargs) -> bytes:
     bytes_data = ChatIO.unpack_data(sock)
     print(bytes_data.decode())
     return bytes_data
+
 
 def _t_handler(sock: socket, *args, **kwargs) -> bytes:
     """Recieves pubkey from sender.
@@ -148,7 +150,7 @@ def _T_handler(sock: socket, *args, **kwargs) -> bytes:
 
     pub_key = ChatIO().unpack_data(sock)
     print("Got my keys from recip!", pub_key)
-    
+
     # "We each get keys"
     key_pack = CipherTools.pack_keys_for_xfer(pub_key)
     print(key_pack)

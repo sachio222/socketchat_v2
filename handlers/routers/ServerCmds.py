@@ -106,7 +106,8 @@ def _T_handler(sock: socket, buffer: dict, *args, **kwargs):
 
     ChatIO().pack_n_send(sock, prefixes.dict["server"]["cmds"]["trustSndr"],
                          pub_key_recip)
-    ChatIO().pack_n_send(recip_socket, prefixes.dict["server"]["cmds"]["trustRcvr"],
+    ChatIO().pack_n_send(recip_socket,
+                         prefixes.dict["server"]["cmds"]["trustRcvr"],
                          pub_key_sender)
 
 
