@@ -61,11 +61,3 @@ def make_cipher_buffer(cipher_dict:dict):
     buffer["msg_pack"] = cipher_dict
     buffer = json.dumps(buffer)
     return buffer
-
-def NACL_DHKE(pub_key):
-    """Generate shared key from both keys."""
-    # Load my private_key
-    # Load their key.
-    # Make shared key.
-
-    return shared_key
