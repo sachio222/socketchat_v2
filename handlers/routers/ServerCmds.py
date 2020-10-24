@@ -1,9 +1,9 @@
-from chatutils.utils import debug_
 import socket
 from chatutils import utils
 from chatutils.chatio2 import ChatIO
 from handlers import HandshakeHandler
 from lib.cmd import cmd
+from lib.key_xfer import key_xchange
 
 import config.filepaths as paths
 configs = utils.JSONLoader()
@@ -11,7 +11,6 @@ prefixes = utils.JSONLoader(paths.prefix_path)
 
 HEADER_LEN = configs.dict["system"]["headerLen"]
 BUFFER_LEN = configs.dict["system"]["bufferLen"]
-
 
 def _i_handler(sock: socket, *args, **kwargs):
     print("pinged back")
@@ -79,15 +78,27 @@ def _H_handler(sock: socket, *args, **kwargs) -> bytes:
 def _M_handler(sock: socket, buffer: dict, *args, **kwargs) -> bytes:
     """DEFAULT MESSAGE HANDLER."""
     msg_bytes = buffer["msg_bytes"] = ChatIO.unpack_data(sock)
-    print(msg_bytes)
     ChatIO().broadcast(sock, buffer)
     return msg_bytes
 
-def _T_handler(sock: socket, *args, **kwargs):
+
+def _T_handler(sock: socket, buffer: dict, *args, **kwargs):
+    """Sends key to client."""
+    recip_socket = None
+    sender_nick = buffer["sender_nick"]
+
     user = ChatIO.unpack_data(sock)
-    pub_key = user + b"asdf9a-s8df"
     # Get keys from user_dict
-    ChatIO().pack_n_send(sock, prefixes.dict["server"]["cmds"]["trust"], pub_key)
+    # TODO: pass in recip name.
+    pub_key_sender, pub_key_recip = key_xchange.get_keys(sender_nick)
+
+    for socket in buffer["sockets"].items():
+        if socket[1] != sock:
+            recip_socket = socket[1]
+
+    ChatIO().pack_n_send(sock, prefixes.dict["server"]["cmds"]["trust"], pub_key_recip)
+    ChatIO().pack_n_send(recip_socket, prefixes.dict["server"]["cmds"]["trust"], pub_key_sender)
+    
 
 def _X_handler(sock: socket, *args, **kwargs) -> bytes:
     """TRANSFER HANDLER"""

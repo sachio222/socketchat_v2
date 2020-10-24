@@ -3,9 +3,30 @@
         "nick": "jake",
         "addr": [
             "127.0.0.1",
-            63345
+            54975
         ],
-        "public_key": "EjW/lRaiemwpdaXW9/xqyIMAhiLyivq5ohhMlmTXbAs=",
+        "public_key": "nhe147BW+cEqUIjyA9Q2un76OearEu1X8n3TnxlB1G8=",
+        "verify_key": "wSr7dv7pTfxIIwJbFOlnKa7qbBtXq0M9+sXtr2OmWic=",
+        "trusted": null
+    },
+    "ok": {
+        "nick": "ok",
+        "addr": [
+            "127.0.0.1",
+            55031
+        ],
+        "public_key": "X2emO+vXqzW10+MaRH3XvzCg8iFGJXPwCIeQcRuOCxM=",
+        "verify_key": "Hg0TA+KssIOs9PbGCQsTW0P127ybJhJMfKk7VBTAc0s=",
+        "trusted": null
+    },
+    "crake": {
+        "nick": "crake",
+        "addr": [
+            "127.0.0.1",
+            55148
+        ],
+        "public_key": "e7oGd2lJ2N9yXK9OsSBg79wbzhZk2yEhUK3x+PNW7F0=",
+        "verify_key": "PNEmNRWEV+JzG+qO1Ewz3pvHjg5W7BlRz6i7bIgVSNA=",
         "trusted": null
     }
 }
