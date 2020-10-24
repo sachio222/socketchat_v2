@@ -121,8 +121,13 @@ def _M_handler(sock: socket, *args, **kwargs) -> bytes:
     #         break
     # print(response.decode())
 
-
-
+def _T_handler(sock: socket, *args, **kwargs) -> bytes:
+    """RECEIVES PUBKEYS FROM SERVER"""
+    print("RUNNING T HANDLER")
+    pub_key = ChatIO().unpack_data(sock)
+    print(pub_key)
+    
+    return pub_key
 
 def error(sock: socket, *args, **kwargs):
     print("Whoops. You did wrong, Sucka!")
@@ -174,7 +179,7 @@ dispatch = {
     "Q": None,
     "R": None,
     "S": None,
-    "T": None,
+    "T": _T_handler,
     "U": None,
     "V": None,
     "W": _W_handler,
