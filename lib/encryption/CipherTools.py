@@ -57,7 +57,7 @@ def make_nacl_pub_box(pub_key: base64 = None,
     """Makes Nacl Public Box with mutual authentication."""
     prv_key = NaclCipher.load_prv_key() or prv_key
     public_box = NaclCipher.make_public_box(prv_key, pub_key)
-    nacl_shrk = public_box.shared_key()
+    nacl_shrk = NaclCipher.gen_shared_key(public_box)
     print("Sharedkey", nacl_shrk)
     return public_box
 
