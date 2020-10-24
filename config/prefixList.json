@@ -34,7 +34,8 @@
             "xfer": "X"
         },
         "cmds": {
-            "trust": "T"
+            "trust_sndr": "T",
+            "trust_rcvr": "t"
         },
         "handshake": {
             "nick": "n",

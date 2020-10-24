@@ -1,22 +1,22 @@
 {
-    "jake": {
-        "nick": "jake",
+    "ij": {
+        "nick": "ij",
         "addr": [
             "127.0.0.1",
-            53403
+            55525
         ],
-        "public_key": "0ZfD45Yb6s97oimd3qkPqEbntk1xqU+5JT/AqODQSCU=",
-        "verify_key": "9ORQC8Vsi7+Vlt4BXMuNbWpY/TDgaAVuooAhMBwkoes=",
+        "public_key": "FioGwUZwTGUTZUJws42wD1Xk1Ya5LB1hWnscHmkInGE=",
+        "verify_key": "uF+XiAKnL+x3w5abk3Mf6mD/rRIQMRPW9fn5OGKCKIs=",
         "trusted": null
     },
-    "ok": {
-        "nick": "ok",
+    "ed": {
+        "nick": "ed",
         "addr": [
             "127.0.0.1",
-            53411
+            55533
         ],
-        "public_key": "K6rN/L0jUT0AKneDGbgQ5pEfUjeiomd4sj7QF+hfJVs=",
-        "verify_key": "hQTTjFbBY8efe6EA3fXHbJifzpCEh72mU5EbL9FPmgQ=",
+        "public_key": "hlyFFJDb8QNMv8j0+ZE6c536n3MxKgDHsGfu7C70o0o=",
+        "verify_key": "qqf02miFgIxzAomR9cLYlFlGJrSKRNNci4Kqw11CIOo=",
         "trusted": null
     }
 }

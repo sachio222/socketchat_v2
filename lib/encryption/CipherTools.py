@@ -26,21 +26,25 @@ def gen_nacl_key(path=paths.nacl_keys, *args, **kwargs) -> tuple:
     return prvk_b64, pubk_b64, sgnk_b64, vfyk_b64
 
 
-def pack_keys_for_xfer(pub_key: base64 = None,
-                       prv_key: base64 = None,
+def pack_keys_for_xfer(pub_nacl_key: base64 = None,
+                       prv_nacl_key: base64 = None,
                        path=paths.nacl_keys,
                        *args,
                        **kwargs) -> dict:
     key_pack = {}
-    prv_key = NaclCipher.load_prv_key() or prv_key
-    public_box = make_nacl_pub_box(pub_key, prv_key)
-    nacl_shrk = public_box.shared_key()
+    # prv_key = NaclCipher.load_prv_key() or prv_key
+    public_box = make_nacl_pub_box(pub_nacl_key, prv_nacl_key)
+    
+
     aes_key = AES256Cipher().load_key_for_xport()
     key_pack["aes"] = aes_key
+    
     fernet_key = FernetCipher().load_key_for_xport()
     key_pack["fernet"] = fernet_key
+    
     chacha_key = XChaCha20Poly1305.load_key_for_xport()
     key_pack["chacha"] = chacha_key
+    
     key_pack = json.dumps(key_pack)
     enc_keys = public_box.encrypt(key_pack.encode())
     return enc_keys
@@ -52,7 +56,10 @@ def make_nacl_pub_box(pub_key: base64 = None,
                       *args,
                       **kwargs) -> Box:
     """Makes Nacl Public Box with mutual authentication."""
+    prv_key = NaclCipher.load_prv_key() or prv_key
     public_box = NaclCipher.make_public_box(prv_key, pub_key)
+    nacl_shrk = public_box.shared_key()
+    print("Sharedkey", nacl_shrk)
     return public_box
 
 

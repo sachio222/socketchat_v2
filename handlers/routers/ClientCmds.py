@@ -68,6 +68,16 @@ def _s_handler(sock: socket, *args, **kwargs) -> bytes:
     print(bytes_data.decode())
     return bytes_data
 
+def _t_handler(sock: socket, *args, **kwargs) -> bytes:
+    """Recieves pubkey from sender.
+    Sender receives recip pub_key in _T_handler.
+    """
+    pub_key = ChatIO().unpack_data(sock)
+    print("Got my keys from sender!", pub_key)
+
+    # "We each get keys"
+    pub_box = CipherTools.make_nacl_pub_box(pub_key)
+
 
 def _u_handler(sock: socket, *args, **kwargs):
     """UPLOAD FILE TO SERVER"""
@@ -133,11 +143,16 @@ def _M_handler(sock: socket, *args, **kwargs) -> bytes:
 
 
 def _T_handler(sock: socket, *args, **kwargs) -> bytes:
-    """RECEIVES PUBKEYS FROM SERVER"""
-    pub_key_trustee = ChatIO().unpack_data(sock)
+    """RECEIVES PUBKEYS FROM SERVER. SENDS KEYPACK.
+    Recip receives sender pub_key in _t_handler
+    """
+
+    pub_key = ChatIO().unpack_data(sock)
+    print("Got my keys from recip!", pub_key)
     
     # "We each get keys"
-    key_pack = CipherTools.pack_keys_for_xfer(pub_key_trustee)
+    key_pack = CipherTools.pack_keys_for_xfer(pub_key)
+    print(key_pack)
     ChatIO().pack_n_send(sock, "K", key_pack)
     return key_pack
 
@@ -166,7 +181,7 @@ dispatch = {
     "q": None,
     "r": _r_handler,
     "s": _s_handler,
-    "t": None,
+    "t": _t_handler,
     "u": _u_handler,
     "v": None,
     "w": None,
