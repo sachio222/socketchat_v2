@@ -6,13 +6,12 @@ from Crypto.Random import get_random_bytes
 # TODO: Add key writing...
 import config.filepaths as paths
 
-PATH = paths.xchacha20_keys
-FN = "xchacha20.key"
+PATH = paths.chacha20_keys
+FN = "chacha20.key"
 
 def generate_key(path: str = PATH, fn: str = FN) -> bytes:
     """Generate and save keys."""
     key = get_random_bytes(32)
-    print("raw key:", key)
     with open(path + fn, 'wb') as f:
         f.write(key)
     return key
@@ -27,14 +26,23 @@ def load_key(path: str = PATH, fn: str = FN) -> bytes:
 
     return key
 
+def load_key_for_xport(path: str = PATH, fn: str = FN) -> str:
+    try:
+        with open(path + fn, 'rb') as f:
+            key = f.read()
+    except:
+        print(f"[+] File not found at {path + fn}. \n[+] Generating new XChaCha20 key.")
+        key = generate_key()
+
+    return b64encode(key).decode()
+
+
 
 def encrypt(plaintext):
     plaintext = plaintext.encode()
     header = b'header'
     # plaintext = b'Half a league, Half a league...'
     key = load_key()
-    print("encode key:", key)
-
     cipher = ChaCha20_Poly1305.new(key=key)
     cipher.update(header)
     cipher_text, tag = cipher.encrypt_and_digest(plaintext)

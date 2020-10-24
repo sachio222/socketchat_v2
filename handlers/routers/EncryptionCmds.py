@@ -62,7 +62,7 @@ def nacl_secret_box(data):
     pass
 
 
-def xchacha20_poly1305(data):
+def chacha20_poly1305(data):
     """HIGH SPEED AUTHENTICATED ENCRYPTION"""
     cipher_dict = XChaCha20Poly1305.encrypt(data)
     return cipher_dict
@@ -98,7 +98,7 @@ cipher_dict = {
     'aes256-hmac': aes256_hmac,
     'naclpub': nacl_public_box,
     'nacl-secret-box': nacl_secret_box,
-    'xchacha': xchacha20_poly1305,
+    'chacha': chacha20_poly1305,
     'argon2': argon2,
     'goober': goober,
     'test': test,

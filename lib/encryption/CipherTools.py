@@ -1,5 +1,4 @@
-import base64
-from json import decoder
+import base64, json
 from cryptography.hazmat.primitives.ciphers import AEADCipherContext
 
 from nacl.public import Box, PrivateKey
@@ -36,15 +35,15 @@ def pack_keys_for_xfer(pub_key: base64 = None,
     prv_key = NaclCipher.load_prv_key() or prv_key
     public_box = make_nacl_pub_box(pub_key, prv_key)
     nacl_shrk = public_box.shared_key()
-
-    aes_key = AES256Cipher().load_key()
+    aes_key = AES256Cipher().load_key_for_xport()
     key_pack["aes"] = aes_key
-
-    fernet_key = FernetCipher().load_key()
+    fernet_key = FernetCipher().load_key_for_xport()
     key_pack["fernet"] = fernet_key
-
-    print(key_pack)
-    return aes_key
+    chacha_key = XChaCha20Poly1305.load_key_for_xport()
+    key_pack["chacha"] = chacha_key
+    key_pack = json.dumps(key_pack)
+    enc_keys = public_box.encrypt(key_pack.encode())
+    return enc_keys
 
 
 def make_nacl_pub_box(pub_key: base64 = None,

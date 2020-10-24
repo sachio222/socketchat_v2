@@ -27,6 +27,9 @@ class FernetCipher():
     def load_key(self):
         return open(self.key_path, 'rb').read()
 
+    def load_key_for_xport(self):
+        return open(self.key_path, 'rb').read().decode()
+
     def encrypt(self, msg):
         msg = msg.encode()  # byte encode
         enc_msg = self.f.encrypt(msg)
