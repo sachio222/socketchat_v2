@@ -30,6 +30,10 @@ def load_key(path: str = PATH, fn: str = FN) -> bytes:
 
     return key
 
+def write_key(key, path: str = PATH, fn: str = FN):
+    with open(path + fn, 'wb') as f:
+        f.write(key)
+
 
 def load_key_for_xport(path: str = PATH, fn: str = FN) -> str:
     try:
