@@ -36,8 +36,6 @@ def pack_keys_for_xfer(pub_nacl_key: base64 = None,
                        path=paths.nacl_keys,
                        *args,
                        **kwargs) -> dict:
-    
-    global public_box
 
     key_pack = {}
     # prv_key = NaclCipher.load_prv_key() or prv_key
@@ -54,19 +52,20 @@ def pack_keys_for_xfer(pub_nacl_key: base64 = None,
 
     key_pack = json.dumps(key_pack)
     enc_keys = public_box.encrypt(key_pack.encode())
+    print("enc_keys are:", enc_keys)
     return enc_keys
 
 def unpack_keys_from_xfer(key_pack_hex:hex, path=paths.nacl_keys,
                        *args,
                        **kwargs):
+
     global public_box
-    
+
     try:
         key_dict = public_box.decode(key_pack_hex)
         print(key_dict)
-        print(type(key_dict))
     except:
-        pass
+        print("[!] Keys not unpacked. Try again.")
 
 
 def make_nacl_pub_box(pub_key: base64 = None,
@@ -75,6 +74,9 @@ def make_nacl_pub_box(pub_key: base64 = None,
                       *args,
                       **kwargs) -> Box:
     """Makes Nacl Public Box with mutual authentication."""
+    
+    global public_box
+
     prv_key = NaclCipher.load_prv_key() or prv_key
     public_box = NaclCipher.make_public_box(prv_key, pub_key)
     nacl_shrk = NaclCipher.gen_shared_key(public_box)
