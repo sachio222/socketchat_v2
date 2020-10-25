@@ -1,11 +1,11 @@
-requests==2.24.0
-geocoder==1.38.1
 geopy==2.0.0
-folium==0.11.0
-wikipedia==1.4.0
-tqdm==4.48.2
+geocoder==1.38.1
 argon2_cffi==20.1.0
 cryptography==3.0
+wikipedia==1.4.0
+requests==2.24.0
+tqdm==4.48.2
+folium==0.11.0
 argon2==0.1.10
 Pillow==8.0.1
 pycryptodome==3.9.8
