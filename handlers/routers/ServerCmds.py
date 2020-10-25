@@ -86,7 +86,7 @@ def _K_handler(sock: socket, buffer: dict, *args, **kwargs):
     sender_nick = buffer["sender_nick"]
 
     enc_key_pack = ChatIO.unpack_data(sock)
-    
+
     # TODO: Add username
     for socket in buffer["sockets"].items():
         if socket[1] != sock:
@@ -187,7 +187,7 @@ dispatch = {
     "H": _H_handler,
     "I": None,
     "J": None,
-    "t": _K_handler,
+    "K": _K_handler,
     "L": None,
     "M": _M_handler,
     "N": None,

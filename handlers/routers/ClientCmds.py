@@ -108,7 +108,7 @@ def _H_handler(sock: socket, *args, **kwargs):
     print(bytes_data)
     return bytes_data
 
-def _L_handler(sock: socket, *args, **kwargs):
+def _K_handler(sock: socket, *args, **kwargs):
     enc_key_pack = ChatIO.unpack_data(sock)
     print(enc_key_pack)
 
