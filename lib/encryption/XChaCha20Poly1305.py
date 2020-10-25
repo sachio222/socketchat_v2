@@ -13,6 +13,7 @@ FN = "chacha20.key"
 def generate_key(path: str = PATH, fn: str = FN) -> bytes:
     """Generate and save keys."""
     key = get_random_bytes(32)
+    print("key is", key)
     with open(path + fn, 'wb') as f:
         f.write(key)
     return key
@@ -33,7 +34,6 @@ def load_key(path: str = PATH, fn: str = FN) -> bytes:
 def write_key(key, path: str = PATH, fn: str = FN):
     with open(path + fn, 'wb') as f:
         f.write(key)
-
 
 def load_key_for_xport(path: str = PATH, fn: str = FN) -> str:
     try:

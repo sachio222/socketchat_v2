@@ -116,7 +116,7 @@ def _T_handler(sock: socket, buffer: dict, *args, **kwargs):
     user = ChatIO.unpack_data(sock)
     # Get keys from user_dict
     # TODO: pass in recip name.
-    pub_key_sender, pub_key_recip = key_xchange.get_keys(sender_nick)
+    pub_key_sender, pub_key_recip, ver_key_sender, ver_key_recip = key_xchange.get_keys(sender_nick)
 
     for socket in buffer["sockets"].items():
         if socket[1] != sock:
