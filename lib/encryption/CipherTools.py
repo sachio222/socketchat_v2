@@ -20,10 +20,6 @@ def renew_keys():
     FernetCipher().generate_key()
     AES256Cipher().generate_key()
 
-def reload_keys():
-    FernetCipher()
-    AES256Cipher()
-
 def gen_nacl_keys(path=paths.nacl_keys, *args, **kwargs) -> tuple:
     """Generates public and private keys with nacl algorithm."""
     prvk, pubk = NaclCipher.generate_keys(path)
