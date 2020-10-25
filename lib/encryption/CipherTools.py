@@ -51,9 +51,8 @@ def pack_keys_for_xfer(pub_nacl_key: base64 = None,
     key_pack["chacha"] = chacha_key
 
     key_pack = json.dumps(key_pack)
-
     enc_keys = public_box.encrypt(key_pack.encode())
-    print("enc_keys are:", enc_keys)
+    
     return enc_keys
 
 def unpack_keys_from_xfer(key_pack_hex:hex, path=paths.nacl_keys,
