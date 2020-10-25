@@ -59,6 +59,8 @@ def pack_keys_for_xfer(pub_nacl_key: base64 = None,
 def unpack_keys_from_xfer(key_pack_hex:hex, path=paths.nacl_keys,
                        *args,
                        **kwargs):
+    global public_box
+    
     try:
         key_dict = public_box.decode(key_pack_hex)
         print(key_dict)
