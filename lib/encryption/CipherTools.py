@@ -15,16 +15,20 @@ from nacl.signing import SigningKey, VerifyKey
 import config.filepaths as paths
 
 
-def gen_nacl_key(path=paths.nacl_keys, *args, **kwargs) -> tuple:
+def gen_nacl_keys(path=paths.nacl_keys, *args, **kwargs) -> tuple:
     """Generates public and private keys with nacl algorithm."""
     prvk, pubk = NaclCipher.generate_keys(path)
-    sgnk, vfyk = NaclCipher.generate_signing_keys()
     prvk_b64 = prvk.encode(encoder=Base64Encoder)
     pubk_b64 = pubk.encode(encoder=Base64Encoder)
+    
+    return prvk_b64, pubk_b64
+
+def gen_nacl_sign_keys(path=paths.nacl_keys, *args, **kwargs) -> tuple:
+    sgnk, vfyk = NaclCipher.generate_signing_keys()
     sgnk_b64 = sgnk.encode(encoder=Base64Encoder)
     vfyk_b64 = vfyk.encode(encoder=Base64Encoder)
-    return prvk_b64, pubk_b64, sgnk_b64, vfyk_b64
-
+    
+    return sgnk_b64, vfyk_b64
 
 def pack_keys_for_xfer(pub_nacl_key: base64 = None,
                        prv_nacl_key: base64 = None,

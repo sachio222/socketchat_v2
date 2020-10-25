@@ -73,11 +73,11 @@ class ClientSide(ChatIO):
         return handshake_payload, nick
 
     def create_public_key(self) -> bytes:
-        _, pubk, _, _ = CipherTools.gen_nacl_key()
+        _, pubk= CipherTools.gen_nacl_keys()
         return pubk
 
     def create_verify_key(self) -> bytes:
-        _, _, _, vfyk = CipherTools.gen_nacl_key()
+        _, vfyk = CipherTools.gen_nacl_key()
         return vfyk
 
     def send_payload(self, sock: socket, payload: bytes):
