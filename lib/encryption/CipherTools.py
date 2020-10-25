@@ -50,7 +50,8 @@ def pack_keys_for_xfer(pub_nacl_key: base64 = None,
     chacha_key = XChaCha20Poly1305.load_key_for_xport()
     key_pack["chacha"] = chacha_key
 
-    key_pack = json.dumps(key_pack)
+    # key_pack = json.dumps(key_pack)
+    key_pack = "hello world"
     enc_keys = public_box.encrypt(key_pack.encode())
     print("enc_keys are:", enc_keys)
     return enc_keys
@@ -62,8 +63,9 @@ def unpack_keys_from_xfer(key_pack_hex:hex, path=paths.nacl_keys,
     global public_box
 
     try:
+        print(key_pack_hex)
         key_dict = public_box.decode(key_pack_hex)
-        print(key_dict)
+        print("key_dict is", key_dict)
     except:
         print("[!] Keys not unpacked. Try again.")
 
