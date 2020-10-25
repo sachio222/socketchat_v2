@@ -27,6 +27,10 @@ class FernetCipher():
     def load_key(self):
         return open(self.key_path, 'rb').read()
 
+    def write_key(self, key):
+        with open(self.key_path, 'wb') as key_file:
+            key_file.write(key)
+
     def load_key_for_xport(self):
         return open(self.key_path, 'rb').read().decode()
 

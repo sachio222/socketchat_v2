@@ -13,7 +13,7 @@ from cryptography.hazmat.primitives import padding
 from cryptography.hazmat.backends import default_backend
 
 import config.filepaths as paths
-key_path = paths.aes256_keys + 'aes256.key'
+KEY_PATH = paths.aes256_keys + 'aes256.key'
 
 
 class AES256Cipher():
@@ -37,23 +37,23 @@ class AES256Cipher():
         return key
 
     def load_key(self) -> hex:
-        if not os.path.exists(key_path):
+        if not os.path.exists(KEY_PATH):
             self.key = self.generate_key()
         else:
-            with open(key_path, 'rb') as kf:
+            with open(KEY_PATH, 'rb') as kf:
                 self.key = kf.read()
             self.key = self.b64_to_hex(self.key)
         return self.key
 
     def load_key_for_xport(self) -> str:
-        if not os.path.exists(key_path):
+        if not os.path.exists(KEY_PATH):
             self.key = self.generate_key()
         else:
-            with open(key_path, 'rb') as kf:
+            with open(KEY_PATH, 'rb') as kf:
                 self.key = kf.read()
         return self.key.decode()
 
-    def write_key(self, key: bytes, key_path=key_path) -> bool:
+    def write_key(self, key: bytes, key_path=KEY_PATH) -> bool:
         try:
             self._check_path(key_path)
             with open(key_path, 'wb') as kf:
