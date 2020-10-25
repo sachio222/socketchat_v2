@@ -37,12 +37,18 @@ class AES256Cipher():
         return key
 
     def load_key(self) -> hex:
-        if not os.path.exists(KEY_PATH):
-            self.key = self.generate_key()
-        else:
+        try:
             with open(KEY_PATH, 'rb') as kf:
                 self.key = kf.read()
             self.key = self.b64_to_hex(self.key)
+        except:
+            self.key = self.generate_key()
+        # if not os.path.exists(KEY_PATH):
+        #     self.key = self.generate_key()
+        # else:
+        #     with open(KEY_PATH, 'rb') as kf:
+        #         self.key = kf.read()
+        #     self.key = self.b64_to_hex(self.key)
         return self.key
 
     def load_key_for_xport(self) -> str:
