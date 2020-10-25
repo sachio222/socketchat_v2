@@ -8,6 +8,7 @@ from chatutils.chatio2 import ChatIO
 from lib.xfer import download
 from lib.encryption import CipherTools
 from handlers import DecryptionHandler, EncryptionHandler
+from handlers.routers import DecryptionCmds
 
 import config.filepaths as paths
 
@@ -112,6 +113,7 @@ def _K_handler(sock: socket, *args, **kwargs):
     enc_key_pack_64 = ChatIO.unpack_data(sock)
     enc_key_pack_hex = Base64Encoder.decode(enc_key_pack_64)
     CipherTools.unpack_keys_from_xfer(enc_key_pack_hex)
+    DecryptionCmds.refresh_keys()
     print("[+] Symmetric keys unpacked.")
 
 def _W_handler(sock: socket, *args, **kwargs):
