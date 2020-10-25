@@ -3,6 +3,7 @@
 written by J. Krajewski
 """
 
+from lib.encryption.XChaCha20Poly1305 import load_key
 import os
 import secrets
 import codecs
@@ -101,6 +102,7 @@ class AES256Cipher():
         Returns:
             plaintext: (bytes) plaintext message.
         """
+        self.key = load_key()
         cipher = self.new_cipher(self.key, nonce, self.backend)
         decryptor = cipher.decryptor()
         plaintext = decryptor.update(cipher_txt) + decryptor.finalize()

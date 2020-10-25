@@ -3,18 +3,9 @@ from lib.encryption.aes256 import AES256Cipher
 from lib.encryption.fernet import FernetCipher
 
 
-aes = AES256Cipher()
-fernet_cipher = FernetCipher()
-
-def refresh_keys():
-    global aes
-    global fernet_cipher
-    aes = AES256Cipher()
-    fernet_cipher = FernetCipher()
-
 def fernet(data: dict) -> bytes:
     try:
-        decrypted_data = fernet_cipher.decrypt(data)
+        decrypted_data = FernetCipher().decrypt(data)
     except:
         decrypted_data =  goober(data)
     return decrypted_data
@@ -22,7 +13,7 @@ def fernet(data: dict) -> bytes:
 
 def aes256_ctc(data) -> bytes:
     try:
-        decrypted_data = aes.full_decryption(data)
+        decrypted_data = AES256Cipher().full_decryption(data)
     except:
         decrypted_data =  goober(data)
     return decrypted_data
