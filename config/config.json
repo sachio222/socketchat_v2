@@ -1,5 +1,5 @@
 {
-    "cipher": "fernet",
+    "cipher": "aes256",
     "introduced": false,
     "muted": true,
     "session": {
