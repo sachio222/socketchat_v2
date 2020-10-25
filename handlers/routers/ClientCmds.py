@@ -108,6 +108,10 @@ def _H_handler(sock: socket, *args, **kwargs):
     print(bytes_data)
     return bytes_data
 
+def _L_handler(sock: socket, *args, **kwargs):
+    enc_key_pack = ChatIO.unpack_data(sock)
+    print(enc_key_pack)
+
 
 def _W_handler(sock: socket, *args, **kwargs):
     bytes_data = ChatIO.unpack_data(sock)
@@ -154,7 +158,7 @@ def _T_handler(sock: socket, *args, **kwargs) -> bytes:
     # "We each get keys"
     key_pack = CipherTools.pack_keys_for_xfer(pub_key)
     print(key_pack)
-    ChatIO().pack_n_send(sock, "K", key_pack)
+    ChatIO().pack_n_send(sock, prefixes["server"]["cmds"]["trustKeys"], key_pack)
     return key_pack
 
 
@@ -199,7 +203,7 @@ dispatch = {
     "H": _H_handler,
     "I": None,
     "J": None,
-    "K": None,
+    "K": _K_handler,
     "L": None,
     "M": _M_handler,
     "N": None,

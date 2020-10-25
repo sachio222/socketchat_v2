@@ -76,9 +76,27 @@ def _D_handler(sock: socket, *args, **kwargs) -> bytes:
 
 
 def _H_handler(sock: socket, *args, **kwargs) -> bytes:
-    """RECEIVE HANDSHAKE DICT."""
+    """Receive handshake dict with user info."""
     bytes_data = ChatIO.unpack_data(sock)
     return bytes_data
+
+def _K_handler(sock: socket, buffer: dict, *args, **kwargs):
+    """Relays key_packet to trustee."""
+    recip_socket = None
+    sender_nick = buffer["sender_nick"]
+
+    enc_key_pack = ChatIO.unpack_data(sock)
+    
+    # TODO: Add username
+    for socket in buffer["sockets"].items():
+        if socket[1] != sock:
+            recip_socket = socket[1]
+
+    ChatIO().pack_n_send(recip_socket,
+                         prefixes.dict["client"]["cmds"]["trustKeys"],
+                         enc_key_pack)
+
+
 
 
 def _M_handler(sock: socket, buffer: dict, *args, **kwargs) -> bytes:
@@ -169,7 +187,7 @@ dispatch = {
     "H": _H_handler,
     "I": None,
     "J": None,
-    "K": None,
+    "t": _K_handler,
     "L": None,
     "M": _M_handler,
     "N": None,

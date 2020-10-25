@@ -52,6 +52,14 @@ def pack_keys_for_xfer(pub_nacl_key: base64 = None,
     enc_keys = public_box.encrypt(key_pack.encode())
     return enc_keys
 
+def unpack_keys_from_xfer(path=paths.nacl_keys,
+                       *args,
+                       **kwargs):
+    try:
+        pass
+    except:
+        pass
+
 
 def make_nacl_pub_box(pub_key: base64 = None,
                       prv_key: base64 = None,
