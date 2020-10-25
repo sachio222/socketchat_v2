@@ -70,11 +70,11 @@ def unpack_keys_from_xfer(key_pack_hex:hex, path=paths.nacl_keys,
         aes_key = key_dict["aes"]
         AES256Cipher().write_key(aes_key)
 
-        fernet_key = key_dict["fernet"]
-        FernetCipher().write_key(fernet_key)
+        # fernet_key = key_dict["fernet"]
+        # FernetCipher().write_key(fernet_key)
 
-        chacha_key = key_dict["chacha"]
-        XChaCha20Poly1305.write_key(chacha_key)
+        # chacha_key = key_dict["chacha"]
+        # XChaCha20Poly1305.write_key(chacha_key)
 
     except:
         print("[!] Keys not unpacked. Try again.")
