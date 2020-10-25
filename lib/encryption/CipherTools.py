@@ -74,7 +74,7 @@ def unpack_keys_from_xfer(key_pack_hex:hex, path=paths.nacl_keys,
         FernetCipher().write_key(fernet_key.encode())
 
         chacha_key = key_dict["chacha"]
-        XChaCha20Poly1305.write_key(chacha_key.encode())
+        XChaCha20Poly1305.write_key(HexEncoder.encode(chacha_key))
 
     except:
         print("[!] Keys not unpacked. Try again.")

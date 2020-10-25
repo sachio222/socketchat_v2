@@ -1,5 +1,5 @@
 {
-    "cipher": "goober",
+    "cipher": "chacha",
     "introduced": false,
     "muted": true,
     "session": {
