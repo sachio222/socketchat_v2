@@ -14,6 +14,7 @@ from nacl.signing import SigningKey, VerifyKey
 
 import config.filepaths as paths
 
+public_box = None
 
 def gen_nacl_keys(path=paths.nacl_keys, *args, **kwargs) -> tuple:
     """Generates public and private keys with nacl algorithm."""
@@ -35,6 +36,9 @@ def pack_keys_for_xfer(pub_nacl_key: base64 = None,
                        path=paths.nacl_keys,
                        *args,
                        **kwargs) -> dict:
+    
+    global public_box
+
     key_pack = {}
     # prv_key = NaclCipher.load_prv_key() or prv_key
     public_box = make_nacl_pub_box(pub_nacl_key, prv_nacl_key)
@@ -52,11 +56,13 @@ def pack_keys_for_xfer(pub_nacl_key: base64 = None,
     enc_keys = public_box.encrypt(key_pack.encode())
     return enc_keys
 
-def unpack_keys_from_xfer(path=paths.nacl_keys,
+def unpack_keys_from_xfer(key_pack_hex:hex, path=paths.nacl_keys,
                        *args,
                        **kwargs):
     try:
-        pass
+        key_dict = public_box.decode(key_pack_hex)
+        print(key_dict)
+        print(type(key_dict))
     except:
         pass
 
