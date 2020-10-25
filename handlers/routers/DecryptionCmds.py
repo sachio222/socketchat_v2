@@ -2,13 +2,14 @@ from lib.encryption import XChaCha20Poly1305
 from lib.encryption.aes256 import AES256Cipher
 from lib.encryption.fernet import FernetCipher
 
+
 aes = AES256Cipher()
 fernet_cipher = FernetCipher()
 
 
 def fernet(data: dict) -> bytes:
     try:
-        decrypted_data = fernet_cipher.decrypt(data)
+        decrypted_data = FernetCipher().decrypt(data)
     except:
         decrypted_data =  goober(data)
     return decrypted_data
