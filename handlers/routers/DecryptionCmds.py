@@ -17,10 +17,9 @@ def fernet(data: dict) -> bytes:
 
 def aes256_ctc(data) -> bytes:
     try:
-        decrypted_data = AES256Cipher().full_decryption(data)
+        decrypted_data = aes.full_decryption(data)
     except:
-        pass
-        # decrypted_data =  goober(data)
+        decrypted_data =  goober(data)
     return decrypted_data
 
 
