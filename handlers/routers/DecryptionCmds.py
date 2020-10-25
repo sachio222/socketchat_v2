@@ -50,7 +50,7 @@ def chacha20_poly1305(data):
 
 
 def argon2(data):
-    hash, _ = argon2kdf.passwordHasher(data)
+    hash, _ = argon2.passwordHasher(data)
     print("Argon2 hash (random salt):", hash)
     return hash.encode()
 
