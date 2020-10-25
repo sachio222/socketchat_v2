@@ -1,12 +1,12 @@
 {
-    "ed": {
-        "nick": "ed",
+    "jake": {
+        "nick": "jake",
         "addr": [
-            "127.0.0.1",
-            55533
+            "192.168.68.142",
+            36940
         ],
-        "public_key": "hlyFFJDb8QNMv8j0+ZE6c536n3MxKgDHsGfu7C70o0o=",
-        "verify_key": "qqf02miFgIxzAomR9cLYlFlGJrSKRNNci4Kqw11CIOo=",
+        "public_key": "i9okN0ToKD+jGQHcgolo9cpLZlbkW14SpzT4UTPSJWs=",
+        "verify_key": "6WcboNsoVOiPsHcgp4uzJ4BYeEe0RMHsBH0Wj0AmQh0=",
         "trusted": null
     }
 }
