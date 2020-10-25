@@ -19,7 +19,8 @@ def aes256_ctc(data) -> bytes:
     try:
         decrypted_data = AES256Cipher().full_decryption(data)
     except:
-        decrypted_data =  goober(data)
+        pass
+        # decrypted_data =  goober(data)
     return decrypted_data
 
 
