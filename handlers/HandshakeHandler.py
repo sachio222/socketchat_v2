@@ -17,6 +17,7 @@ PREFIX_LEN = configs.dict["system"]["prefixLen"]
 class ClientSide(ChatIO):
 
     def __init__(self, sock: socket):
+        CipherTools.renew_keys()
         self.sock = sock
         self.nick = self.onboard_to_server()
 
