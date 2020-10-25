@@ -77,7 +77,7 @@ class ClientSide(ChatIO):
         return pubk
 
     def create_verify_key(self) -> bytes:
-        _, vfyk = CipherTools.gen_nacl_key()
+        _, vfyk = CipherTools.gen_nacl_sign_keys()
         return vfyk
 
     def send_payload(self, sock: socket, payload: bytes):
