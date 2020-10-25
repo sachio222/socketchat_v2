@@ -64,6 +64,7 @@ class AES256Cipher():
             return False
 
     def new_cipher(self, key, iv, backend):
+        key = self.load_key()
         cipher = Cipher(algorithms.AES(key), modes.CBC(iv), backend=backend)
         return cipher
 
@@ -102,8 +103,8 @@ class AES256Cipher():
         Returns:
             plaintext: (bytes) plaintext message.
         """
-        self.key = load_key()
-        cipher = self.new_cipher(self.key, nonce, self.backend)
+        key = self.load_key()
+        cipher = self.new_cipher(key, nonce, self.backend)
         decryptor = cipher.decryptor()
         plaintext = decryptor.update(cipher_txt) + decryptor.finalize()
         return plaintext
@@ -172,7 +173,6 @@ class AES256Cipher():
         return payload
 
     def full_decryption(self, payload: bytes) -> bytes:
-        self.load_key()
         payload = payload["cipher_text"].encode()
         msg, nonce = self.unpack_payload(payload)
         msg = self.decrypt(msg, nonce)
