@@ -113,7 +113,7 @@ def _K_handler(sock: socket, *args, **kwargs):
     enc_key_pack_64 = ChatIO.unpack_data(sock)
     enc_key_pack_hex = Base64Encoder.decode(enc_key_pack_64)
     CipherTools.unpack_keys_from_xfer(enc_key_pack_hex)
-    print([+] Symmetric keys unpacked.)
+    print("[+] Symmetric keys unpacked.")
 
 def _W_handler(sock: socket, *args, **kwargs):
     bytes_data = ChatIO.unpack_data(sock)
