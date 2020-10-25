@@ -157,7 +157,7 @@ def _T_handler(sock: socket, *args, **kwargs) -> bytes:
 
     # "We each get keys"
     key_pack = CipherTools.pack_keys_for_xfer(pub_key)
-    key_pack_64 = Base64Encoder(key_pack)
+    key_pack_64 = Base64Encoder().encode(key_pack)
     print(key_pack_64)
 
     ChatIO().pack_n_send(sock, prefixes.dict["server"]["cmds"]["trustKeys"], key_pack_64)
