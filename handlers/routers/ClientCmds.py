@@ -127,7 +127,8 @@ def _M_handler(sock: socket, *args, **kwargs) -> bytes:
         data_dict = json.loads(bytes_data)
     except:
         data_dict = bytes_data
-    sender, msg = DecryptionHandler.message_router(data_dict)
+    sender, msg, is_encrypted = DecryptionHandler.message_router(data_dict)
+    
     ChatIO.print_to_client(ChatIO, sender, msg)
 
     return bytes_data
