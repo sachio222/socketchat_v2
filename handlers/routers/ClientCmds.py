@@ -74,7 +74,7 @@ def _t_handler(sock: socket, *args, **kwargs) -> bytes:
     Sender receives recip pub_key in _T_handler.
     """
     pub_key = ChatIO().unpack_data(sock)
-    print("Got my keys from sender!", pub_key)
+    # print("Got my keys from sender!", pub_key)
 
     # "We each get keys"
     CipherTools.make_nacl_pub_box(pub_key)
@@ -155,7 +155,7 @@ def _T_handler(sock: socket, *args, **kwargs) -> bytes:
     """
 
     pub_key = ChatIO().unpack_data(sock)
-    print("Got my keys from recip!", pub_key)
+    # print("Got my keys from recip!", pub_key)
 
     # "We each get keys"
     key_pack = CipherTools.pack_keys_for_xfer(pub_key)
