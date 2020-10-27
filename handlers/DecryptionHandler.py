@@ -10,7 +10,7 @@ def message_router(data_dict: dict) -> tuple:
     func = DecryptionCmds.cipher_dict.get(cipher, DecryptionCmds.goober)
     
     try:
-        plain_text, is_encrypted = func(cipher_text).decode()
+        plain_text = func(cipher_text).decode()
 
     except Exception as e:
         print(e)
