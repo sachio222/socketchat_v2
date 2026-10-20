@@ -2,6 +2,7 @@
 """Encryptochat 2.0"""
 
 import os
+import re
 import sys
 import socket, ssl
 from threading import Thread
@@ -37,11 +38,17 @@ class Client(ChatIO):
         self.filesize = None
         self.path = None
         self.introduced = False
-        self.encrypt_flag = True
+        self.handle = None
+        # Chat starts plain. There's no shared key until /trust.
+        self.allow_encryption = True  # False with -g.
+        self.has_session_key = False
+        self.encrypt_flag = False
         self.encrypt_traffic = self.encrypt_flag
         self.recip_pub_key = None
         self.pub_box = None
         self.sec_box = None
+        # One set of keys per client. self.aes comes from ChatIO.
+        self.nacl = NaclCipher()
 
     #===================== SENDING METHODS =====================#
     def sender(self):
@@ -75,22 +82,22 @@ class Client(ChatIO):
                     else:
                         # If name has been given, encrypt everything else.
                         if self.introduced:
-                            if self.encrypt_traffic:
-                                try:
-                                    self.msg = aes.full_encryption(
-                                        self.msg.encode())
-                                    # print(self.msg)
-                                    # self.msg = aes.full_decryption(self.msg)
+                            self.msg = self.encrypt_outgoing(self.msg)
+                            if self.msg is None:
+                                continue
+                            # print(self.msg)
+                            # self.msg = aes.full_decryption(self.msg)
 
-                                    # print(self.msg)
+                            # print(self.msg)
 
-                                    # self.msg = nacl.encrypt(self.pub_box,
-                                    #                         self.msg.encode())
-                                    # self.msg = Base64Encoder.encode(self.msg)
+                            # self.msg = nacl.encrypt(self.pub_box,
+                            #                         self.msg.encode())
+                            # self.msg = Base64Encoder.encode(self.msg)
 
-                                    # # self.msg = fernet.encrypt(self.msg)
-                                except:
-                                    pass
+                            # # self.msg = fernet.encrypt(self.msg)
+                        else:
+                            # Not in yet, so this is the handle we asked for.
+                            self.handle = self.msg
                 else:
                     self.msg = ''
 
@@ -104,6 +111,39 @@ class Client(ChatIO):
             # !!!!! Always revert to default message_type and encryption.
             self.message_type = 'M'
             self.encrypt_traffic = self.encrypt_flag
+
+    def encrypt_outgoing(self, msg: str):
+        """Encrypts msg with the AES256 session key when encryption is on.
+
+        Returns the payload, or msg untouched when encryption is off. If
+        encryption is on and fails, returns None so nothing gets sent. Never
+        falls back to plaintext.
+        """
+        if not self.encrypt_traffic:
+            return msg
+        try:
+            return self.aes.full_encryption(msg.encode())
+        except Exception as e:
+            print(f'-x- Could not encrypt that, so it was not sent. ({e})')
+            return None
+
+    def start_encryption(self):
+        """Both sides hold the session key now. Encrypt from here on."""
+        self.has_session_key = True
+        self.encrypt_flag = self.allow_encryption
+        self.encrypt_traffic = self.encrypt_flag
+
+    def use_key_dir(self, handle: str):
+        """Keeps this client's keys in a folder named after its handle.
+
+        Two clients run from one folder used to share encryption/keys/nacl/
+        and overwrite each other's keys.
+        """
+        safe = re.sub(r'[^A-Za-z0-9_-]', '_', handle or '') or '_'
+        key_dir = os.path.join('encryption', 'keys', 'clients', safe)
+        self.nacl.path = key_dir + os.sep  # NaclCipher adds the filename.
+        self.nacl.check_dir(self.nacl.path)
+        self.aes.key_path = os.path.join(key_dir, 'aes256', 'aes256.key')
 
     def input_control_handler(self, sock: socket, msg: str):
 
@@ -219,7 +259,9 @@ class Client(ChatIO):
         # # print(msg64)
         # decrypted = self.pub_box.decrypt(msg64)
         # print(decrypted)
-        self.print_message(trim_msg, enc=self.encrypt_traffic, box=self.pub_box)
+        # Try the session key whenever we have one. Plain messages from
+        # anyone else fall through and print as is.
+        self.print_message(trim_msg, enc=self.has_session_key, box=self.pub_box)
 
     def _c_handler(self, sock: socket):
         """Incoming controller message."""
@@ -327,9 +369,11 @@ class Client(ChatIO):
         data = self.unpack_msg(sock)
         # print('enc_key:', data )
         data = Base64Encoder.decode(data)
-        data = nacl.open_secret_box(self.secret_box, data)
+        data = self.nacl.open_secret_box(self.secret_box, data)
         # print('aes256key:', data)
-        if aes.write_key(data.encode()):
+        # Load it, don't just write it to a file.
+        if self.aes.set_key(data.encode()):
+            self.start_encryption()
             print('-%- AES256 session key received.')
 
     def _w_handler(self, sock: socket):
@@ -338,9 +382,10 @@ class Client(ChatIO):
         msg = f"-=- {msg}"
         self.print_message(msg, style_name='GREEN_INVERT')
 
-        # Generate and upload public nacl key.
-        _, my_pubk = nacl.generate_keys()
-        my_pubk64 = nacl.encode_b64(my_pubk)
+        # Generate and upload public nacl key, into this handle's own folder.
+        self.use_key_dir(self.handle)
+        _, my_pubk = self.nacl.generate_keys()
+        my_pubk64 = self.nacl.encode_b64(my_pubk)
         self.pack_n_send(sock, 'P', my_pubk64)
         # print('my b64 public key:', my_pubk64)
 
@@ -365,21 +410,21 @@ class Client(ChatIO):
         # print('Their public key:', pbk64)
         recip_pbk = PublicKey(pbk64, Base64Encoder)
         print('-%- Public keys exchanged.')
-        pvk64 = nacl.load_prv_key()
+        pvk64 = self.nacl.load_prv_key()
         pvk = PrivateKey(pvk64, encoder=Base64Encoder)
-        self.pub_box = nacl.make_public_box(pvk, recip_pbk)
+        self.pub_box = self.nacl.make_public_box(pvk, recip_pbk)
         # print(self.pub_box)
-        shrk = nacl.gen_shared_key(self.pub_box)
+        shrk = self.nacl.gen_shared_key(self.pub_box)
         print('-%- Shared key generated.')
         # print("Shared key is", shrk)
-        self.secret_box = nacl.make_secret_box(shrk)
+        self.secret_box = self.nacl.make_secret_box(shrk)
         # print('Made secret box')
-        aes_key = aes.generate_key()
+        # New session key. generate_key() loads it too.
+        aes_key = self.aes.generate_key()
         # print("I also made you an aes key:", aes_key)
-        self.encrypt_flag = True
-        self.encrypt_traffic = True
-        aes_key = aes.hex_to_b64(aes_key)
-        enc_key = nacl.put_in_secret_box(self.secret_box, aes_key)
+        self.start_encryption()
+        aes_key = self.aes.hex_to_b64(aes_key)
+        enc_key = self.nacl.put_in_secret_box(self.secret_box, aes_key)
         # print('encoded aes_key:', enc_key)
         enc_key = Base64Encoder.encode(enc_key)
         # print(enc_key)
@@ -391,17 +436,17 @@ class Client(ChatIO):
         pbk64 = self.unpack_msg(sock)
         recip_pbk = PublicKey(pbk64, Base64Encoder)
         print('-%- Public keys exchanged.')
-        pvk64 = nacl.load_prv_key()
+        pvk64 = self.nacl.load_prv_key()
         pvk = PrivateKey(pvk64, encoder=Base64Encoder)
-        self.pub_box = nacl.make_public_box(pvk, recip_pbk)
+        self.pub_box = self.nacl.make_public_box(pvk, recip_pbk)
         # print(self.pub_box)
-        shrk = nacl.gen_shared_key(self.pub_box)
+        shrk = self.nacl.gen_shared_key(self.pub_box)
         print('-%- Shared keys generated.')
         # print('Shared key is: ',shrk)
-        self.secret_box = nacl.make_secret_box(shrk)
+        self.secret_box = self.nacl.make_secret_box(shrk)
         # print('Made secret box')
-        self.encrypt_flag = True
-        self.encrypt_traffic = True
+        # Don't encrypt yet. The session key shows up next, as an 'x'
+        # message, and _lil_x_handler turns encryption on.
 
     def _err_handler(self, *args):
         # print('Prefix: ', typ_pfx)
@@ -531,7 +576,7 @@ if __name__ == "__main__":
     addr_group.add_argument(
         '-H',
         '--host',
-        help='Input host name or address. eg: xxx.xxx.xxx.xxx',
+        help='Input host name or address. eg: xxx.xxx.xxx.xxx (default 127.0.0.1)',
         action='store',
         type=str,
         dest='host')
@@ -547,8 +592,8 @@ if __name__ == "__main__":
 
     if not args.addr:
         if not args.host:
-            host = input('-+- Enter hostname of server: ')
-            host = host or 'ubuntu'
+            host = input('-+- Enter hostname of server (127.0.0.1): ')
+            host = host or '127.0.0.1'
         else:
             host = args.host
             print(f'-+- Hostname: {host}')
@@ -560,6 +605,9 @@ if __name__ == "__main__":
         else:
             port = args.port
             print(f'-+- Port: {port}')
+    else:
+        host, port = args.addr.rsplit(':', 1)
+        port = int(port)
 
     BFFR = 4096
     # host = '127.0.0.1'
@@ -573,18 +621,28 @@ if __name__ == "__main__":
 
     # Establish keys
     fernet = FernetCipher()
-    nacl = NaclCipher()
-    aes = AES256Cipher()
+    # Same objects the client uses, so there's one set of keys.
+    nacl = channel.nacl
+    aes = channel.aes
 
     rsa_key_path = 'encryption/keys/TLS/rsa_key.pem'
     cert_path = 'encryption/keys/TLS/certificate.pem'
 
-    client_ctxt = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
+    # SERVER_AUTH is the client side. Since Python 3.10, CLIENT_AUTH makes a
+    # server-only context and the client can't connect with it.
+    client_ctxt = ssl.create_default_context(ssl.Purpose.SERVER_AUTH)
     client_ctxt.check_hostname = False
     client_ctxt.verify_mode = ssl.CERT_NONE
     client_ctxt.set_ciphers('ECDHE-ECDSA-AES256-SHA384')
     client_ctxt.options |= ssl.OP_NO_COMPRESSION
-    client_ctxt.load_verify_locations(cert_path)
+    try:
+        client_ctxt.load_verify_locations(cert_path)
+    except (FileNotFoundError, ssl.SSLError):
+        print(f"-x- No server certificate at {cert_path}\n"
+              f"-x- Copy {cert_path} from the server's folder into the same "
+              f"spot in this one.\n"
+              f"-x- The server makes a new one every time it starts.")
+        sys.exit(1)
 
     # If you want to lock with cert password.
     # client_ctxt.load_cert_chain(cert_path, rsa_key_path)
@@ -600,14 +658,13 @@ if __name__ == "__main__":
     # print(f'Peer certificate: {serv_sock.getpeercert()}')
     # print(f'Ciphers: {client_ctxt.get_ciphers()}')
 
-    # Lock to false for now.
-    args.is_encrypted = False
-
-    channel.encrypt_flag = args.is_encrypted
-    if channel.encrypt_flag:
-        encr_msg = f'\n-!- 🔐 Encryption is ON.\n-!- However, your handle may still be visible in plaintext.'
+    # Encryption needs a session key, and that only comes from /trust.
+    # -g (goober) keeps your messages plain even after that.
+    channel.allow_encryption = args.is_encrypted
+    if channel.allow_encryption:
+        encr_msg = f'-!- 🔓 Encryption is OFF. Type /trust <handle> to turn it on.\n-!- Even then, your handle is still visible in plaintext.'
     else:
-        encr_msg = f'-!- 🔓 Encryption is OFF.'
+        encr_msg = f'-!- 🔓 Encryption is OFF (goober mode), even after /trust.'
 
     channel.print_message(encr_msg, style_name='BLUEWHITE')
     channel.start()

@@ -20,8 +20,9 @@ class AES256Cipher():
     There is currently no sender verification.
     """
 
-    def __init__(self):
+    def __init__(self, key_path: str = key_path):
         self.backend = default_backend()
+        self.key_path = key_path
         self.iv = self.new_iv()
         self.key = self.load_key()
         self.cipher = self.new_cipher(self.key, self.iv, self.backend)
@@ -29,22 +30,39 @@ class AES256Cipher():
         self.IVb = 16
 
     def generate_key(self) -> bytes:
-        """Returns key as base64 bytes."""
+        """Makes a new key, starts using it, saves it. Returns raw bytes."""
         key = secrets.token_bytes(32)
         key_b64 = codecs.encode(key, 'hex')
         self.write_key(key_b64)
+        # Use it now too. Writing it to a file alone changes nothing.
+        self.key = key
         return key
 
+    def set_key(self, key_hex: bytes) -> bool:
+        """Starts using a hex key someone shared with us, and saves it."""
+        key = self.b64_to_hex(key_hex)
+        if len(key) != 32:
+            return False
+        self.key = key
+        self.write_key(key_hex)
+        return True
+
     def load_key(self) -> hex:
-        if not os.path.exists(key_path):
+        self.key = None
+        if os.path.exists(self.key_path):
+            with open(self.key_path, 'rb') as kf:
+                stored = kf.read()
+            try:
+                self.key = self.b64_to_hex(stored)
+            except ValueError:
+                pass
+        # Missing, or half written by another client. Make a fresh one.
+        if not self.key or len(self.key) != 32:
             self.key = self.generate_key()
-        else:
-            with open(key_path, 'rb') as kf:
-                self.key = kf.read()
-            self.key = self.b64_to_hex(self.key)
         return self.key
 
-    def write_key(self, key: bytes, key_path=key_path) -> bool:
+    def write_key(self, key: bytes, key_path: str = None) -> bool:
+        key_path = key_path or self.key_path
         try:
             self._check_path(key_path)
             with open(key_path, 'wb') as kf:

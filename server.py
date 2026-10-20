@@ -377,11 +377,11 @@ class Server(ChatIO, Channel):
 if __name__ == "__main__":
 
     MAX_CNXN = 5
-    if sys.argv[-1] == 'debug':
-        # Runs if last arg to server.py is 'debug'
-        debug = True
-    else:
-        debug = False
+    # 'debug' anywhere runs on 127.0.0.1. A number anywhere is the port.
+    #   python server.py debug          -> 127.0.0.1:12222
+    #   python server.py debug 12345    -> 127.0.0.1:12345
+    debug = 'debug' in sys.argv[1:]
+    port_arg = next((a for a in sys.argv[1:] if a.isdigit()), None)
 
     # TODO: Add inputs.
     x509 = x509.X509()
@@ -400,8 +400,7 @@ if __name__ == "__main__":
         print(f'-+- Host IP: {ip}')
 
         #-- use last cmd line arg as port #
-        port = input(
-            '-+- Choose port: ') if not sys.argv[-1].isdigit() else sys.argv[-1]
+        port = input('-+- Choose port: ') if not port_arg else port_arg
         if not port:
             port = 12222
 
@@ -410,7 +409,7 @@ if __name__ == "__main__":
         addy = (ip, int(port))
     else:
         # DEBUG for super quick server startup.
-        addy = ('127.0.0.1', 12222)
+        addy = ('127.0.0.1', int(port_arg or 12222))
         print(f'-!- Using debug parameters: {addy}')
 
     # TLS security is TLSv1.3, but is self signing for now.
@@ -418,7 +417,7 @@ if __name__ == "__main__":
     rsa_key_path = 'encryption/keys/TLS/rsa_key.pem'
     cert_path = 'encryption/keys/TLS/certificate.pem'
 
-    server_ctxt = ssl.SSLContext(ssl.PROTOCOL_TLS)
+    server_ctxt = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
     server_ctxt.verify_mode = ssl.CERT_NONE
     server_ctxt.set_ecdh_curve('prime256v1')
     server_ctxt.set_ciphers('ECDHE-ECDSA-AES256-SHA384')
