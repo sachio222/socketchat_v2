@@ -531,7 +531,7 @@ if __name__ == "__main__":
     addr_group.add_argument(
         '-H',
         '--host',
-        help='Input host name or address. eg: xxx.xxx.xxx.xxx',
+        help='Input host name or address. eg: xxx.xxx.xxx.xxx (default 127.0.0.1)',
         action='store',
         type=str,
         dest='host')
@@ -547,8 +547,8 @@ if __name__ == "__main__":
 
     if not args.addr:
         if not args.host:
-            host = input('-+- Enter hostname of server: ')
-            host = host or 'ubuntu'
+            host = input('-+- Enter hostname of server (127.0.0.1): ')
+            host = host or '127.0.0.1'
         else:
             host = args.host
             print(f'-+- Hostname: {host}')
@@ -560,6 +560,9 @@ if __name__ == "__main__":
         else:
             port = args.port
             print(f'-+- Port: {port}')
+    else:
+        host, port = args.addr.rsplit(':', 1)
+        port = int(port)
 
     BFFR = 4096
     # host = '127.0.0.1'
@@ -579,12 +582,21 @@ if __name__ == "__main__":
     rsa_key_path = 'encryption/keys/TLS/rsa_key.pem'
     cert_path = 'encryption/keys/TLS/certificate.pem'
 
-    client_ctxt = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
+    # SERVER_AUTH is the client side. Since Python 3.10, CLIENT_AUTH makes a
+    # server-only context and the client can't connect with it.
+    client_ctxt = ssl.create_default_context(ssl.Purpose.SERVER_AUTH)
     client_ctxt.check_hostname = False
     client_ctxt.verify_mode = ssl.CERT_NONE
     client_ctxt.set_ciphers('ECDHE-ECDSA-AES256-SHA384')
     client_ctxt.options |= ssl.OP_NO_COMPRESSION
-    client_ctxt.load_verify_locations(cert_path)
+    try:
+        client_ctxt.load_verify_locations(cert_path)
+    except (FileNotFoundError, ssl.SSLError):
+        print(f"-x- No server certificate at {cert_path}\n"
+              f"-x- Copy {cert_path} from the server's folder into the same "
+              f"spot in this one.\n"
+              f"-x- The server makes a new one every time it starts.")
+        sys.exit(1)
 
     # If you want to lock with cert password.
     # client_ctxt.load_cert_chain(cert_path, rsa_key_path)
