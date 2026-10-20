@@ -14,6 +14,7 @@ Accepted commands:
 /unmute - Resume channel sounds.
 /sendfile - Send file to chosen recipient by nickname.
 /status - Server status. Shows who is currently online.
+/trust <handle> - Start encrypted chat with that person. They answer Y/N.
 
 
 Add-ons:
