@@ -417,7 +417,7 @@ if __name__ == "__main__":
     rsa_key_path = 'encryption/keys/TLS/rsa_key.pem'
     cert_path = 'encryption/keys/TLS/certificate.pem'
 
-    server_ctxt = ssl.SSLContext(ssl.PROTOCOL_TLS)
+    server_ctxt = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
     server_ctxt.verify_mode = ssl.CERT_NONE
     server_ctxt.set_ecdh_curve('prime256v1')
     server_ctxt.set_ciphers('ECDHE-ECDSA-AES256-SHA384')
