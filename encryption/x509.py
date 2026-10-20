@@ -48,13 +48,16 @@ class X509():
         if not os.path.exists(folders):
             os.makedirs(folders)
 
-        with open(path, 'wb') as f:
+        # No pass phrase, so the server starts without a prompt. Instead the
+        # file is owner read/write only (0600), same as an ssh key.
+        fd = os.open(path, os.O_WRONLY | os.O_CREAT | os.O_TRUNC, 0o600)
+        os.fchmod(fd, 0o600)  # In case an older, looser file was there.
+        with os.fdopen(fd, 'wb') as f:
             f.write(
                 key.private_bytes(
                     encoding=serialization.Encoding.PEM,
                     format=serialization.PrivateFormat.TraditionalOpenSSL,
-                    encryption_algorithm=serialization.BestAvailableEncryption(
-                        b'pw')))
+                    encryption_algorithm=serialization.NoEncryption()))
         return key
 
     def load_private_rsa_key(self, path):
